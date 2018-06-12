@@ -29,23 +29,38 @@ Red [
 ]
 
 hid: context [
+	enumerate-connected-devices: routine [
+		ids			[block!]
+		return:		[block!]
+	][
+		hid/enumerate-connected-devices ids
+	]
+
+	free-enum: routine [][
+		hid/hid-free-enumeration
+	]
 
 	open: routine [
-		vendor_id	[integer!]
-		product_id	[integer!]
+		id			[integer!]
+		index		[integer!]
 		/local
 			h		[int-ptr!]
 	][
-		h: hid/open vendor_id product_id null
-		either null? h [stack/set-last none-value][
+		if hid/enum-freed? [stack/set-last none-value]
+
+		h: hid/open id index
+		either null? h [
+			stack/set-last none-value
+		][
 			handle/box as-integer h
 		]
 	]
 
 	read: routine [
-		dev		[handle!]
-		buffer	[binary!]
-		timeout [integer!]		;-- millisec
+		dev			[handle!]
+		buffer		[binary!]
+		timeout		[integer!]		;-- millisec
+		return:		[integer!]
 		/local
 			s	[series!]
 			p	[byte-ptr!]
@@ -54,24 +69,24 @@ hid: context [
 		s: GET_BUFFER(buffer)
 		p: (as byte-ptr! s/offset) + buffer/head
 		sz: hid/read-timeout as int-ptr! dev/value p s/size timeout
-		either sz = -1 [
-			;probe "read error"
-			stack/set-last none-value
-		][
+		if sz <> -1 [
 			s/tail: as cell! (p + sz)
 		]
+		sz
 	]
 
 	write: routine [
-		dev		[handle!]
-		data	[binary!]
+		dev			[handle!]
+		data		[binary!]
+		return:		[integer!]
 		/local
-			sz	[integer!]
+			sz		[integer!]
 	][
 		sz: hid/write as int-ptr! dev/value binary/rs-head data binary/rs-length? data
 		;if sz = -1 [
 		;	probe "write error"
 		;]
+		sz
 	]
 
 	close: routine [

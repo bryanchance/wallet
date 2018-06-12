@@ -33,7 +33,6 @@ hid: context [
 	#define HID_LOWORD(param) (param and FFFFh << 16 >> 16)
 	#define HID_HIWORD(param) (param >> 16)
 
-
 	;the hid header files aren't part of the sdk, we have to define
 	;all this stuff here. In C'lookup_functions(). the func pointers
 	;defined below are set.
@@ -330,6 +329,10 @@ hid: context [
 				string2 	[c-string!]
 				return: 	[integer!]
 			]
+			wcslen: "wcslen" [
+				wcs   		[c-string!]
+				return: 	[integer!]
+			]
 			strstr: "strstr" [
 				str			[c-string!]
 				substr		[c-string!]
@@ -338,6 +341,7 @@ hid: context [
 			strtol: "strtol" [
 				Result 		[c-string!]
 				String 		[c-string!]
+				Base		[integer!]
 				return: 	[integer!]
 			]
 			strcmp: "strcmp" [
@@ -448,11 +452,10 @@ hid: context [
 
 	;--hid_enumerate function
 	enumerate: func [
-		id 		[integer!] ;vendor-id and product-id
-		return: [hid-device-info]
+		ids 		[red-block!]
+		return:		[hid-device-info]
 		/local
 			res 				[logic!]
-			root				[hid-device-info]
 			cur-dev 			[hid-device-info]
 			devinterface-data 	[dev-interface-data value]
 			devinterface-detail	[dev-interface-detail]
@@ -582,7 +585,7 @@ hid: context [
 				;--Get the Vendor ID and Product ID for this device.
 				attrib/Size: size? HIDD-ATTRIBUTES
 				HidD_GetAttributes write-handle attrib
-				if any [id = 0 attrib/ID = id][
+				if id-filter? attrib/ID ids [
 					tmp: as hid-device-info allocate size? hid-device-info
 
 					;--vid/pid match . create the record
@@ -653,12 +656,12 @@ hid: context [
 						interface-component: declare c-string!
 						interface-component: strstr cur-dev/path "&mi_"
 						if as logic! interface-component [
-						hex-str: interface-component + 4
-						endptr: 0
-						cur-dev/interface-number: strtol hex-str (as c-string! :endptr) 16
-						if (as c-string! endptr) = hex-str [
-							cur-dev/interface-number: -1
-						]
+							hex-str: interface-component + 4
+							endptr: 0
+							cur-dev/interface-number: strtol hex-str (as c-string! :endptr) 16
+							if (as c-string! endptr) = hex-str [
+								cur-dev/interface-number: -1
+							]
 						]
 					]
 				]
@@ -672,67 +675,7 @@ hid: context [
 		return root
 	]
 
-	hid-free-enumeration: func [
-		devs 		[hid-device-info]
-		/local
-			d 		[hid-device-info]
-			next 	[hid-device-info]
-	][
-		d: devs
-		while [as logic! d] [
-			next: d/next
-			free as byte-ptr! d/path
-			free as byte-ptr! d/serial-number
-			free as byte-ptr! d/manufacturer-string
-			free as byte-ptr! d/product-string
-			free as byte-ptr! d
-			d: next
-		]
-	]
-
-	open: func [
-		vendor-id 		[integer!] ;vid
-		product-id 		[integer!] ;pid
-		serial-number	[c-string!]
-		return:			[int-ptr!]
-		/local
-		devs 			[hid-device-info]
-		cur-dev			[hid-device-info]
-		path-to-open	[c-string!]
-		handle 			[hid-device]
-		tmp				[integer!]
-		id 				[integer!]
-	][
-		path-to-open: null
-		handle: null
-		id: product-id * 65536 + vendor-id
-
-		devs: enumerate id
-		cur-dev: devs
-		while [cur-dev <> null] [
-			if cur-dev/id = id [
-				either as logic! serial-number [
-					tmp: wcscmp serial-number cur-dev/serial-number
-					if tmp = 0 [
-						path-to-open: cur-dev/path
-						break
-					]
-				][
-					path-to-open: cur-dev/path
-					break
-				]
-			]
-			cur-dev: cur-dev/next
-		]
-
-		if path-to-open <> null [
-			;--open the device
-			handle: open-path path-to-open ;--have not been defined
-		]
-
-		hid-free-enumeration devs  ;--have not been defined
-		as int-ptr! handle
-	]
+	#include %common.reds
 
 	open-path: func [
 		path 		[c-string!]

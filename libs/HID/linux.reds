@@ -12,7 +12,6 @@ Red/System [
 ]
 
 hid: context [
-
 	;--symbolic names for the properties above
 	#define DEVICE_STRING_MANUFACTURER  0
 	#define DEVICE_STRING_PRODUCT       1
@@ -148,6 +147,10 @@ hid: context [
 			wcscmp: "wcscmp" [
 				str1 		[c-string!]
 				str2 		[c-string!]
+				return: 	[integer!]
+			]
+			wcslen: "wcslen" [
+				wcs   		[c-string!]
 				return: 	[integer!]
 			]
 			linux-open: "open" [
@@ -377,15 +380,13 @@ hid: context [
 	]
 
 	enumerate: func [
-		vendor_id 		[integer!]
-		product_id 		[integer!]
+		ids 			[red-block!]
 		return: 		[hid-device-info]
 		/local 	
 			udev 					[int-ptr!]
 			enumerate 				[int-ptr!]
 			devices 				[int-ptr!]
 			dev_list_entry			[int-ptr!]
-			root 					[hid-device-info]
 			cur_dev 				[hid-device-info]
 			prev_dev				[hid-device-info]
 			sysfs_path				[c-string!]
@@ -397,6 +398,7 @@ hid: context [
 			intf_dev 				[int-ptr!]
 			dev_vid					[integer!]
 			dev_pid 				[integer!]
+			id						[integer!]
 			serial_number_utf8		[c-string!]
 			product_name_utf8		[c-string!]
 			bus_type				[integer!]
@@ -473,10 +475,8 @@ hid: context [
 					udev_device_unref raw_dev 
 					;--go to next
 				]
-				if all [
-					any [vendor_id = 0  vendor_id = dev_vid]	
-					any [product_id = 0 product_id = dev_pid]
-					][
+				id: dev_pid << 16 or dev_vid
+				if id-filter? id ids [
 					tmp: as hid-device-info allocate size? hid-device-info
 					either cur_dev <> null [
 						cur_dev/next: tmp
@@ -491,7 +491,7 @@ hid: context [
 					cur_dev/path: either dev_path <> null [strdup dev_path][null]
 
 					;--vid/pid
-					cur_dev/id: dev_vid << 16 or dev_pid
+					cur_dev/id: id
 
 					;--serial number
 					cur_dev/serial-number: utf8_to_wchar_t serial_number_utf8
@@ -567,65 +567,9 @@ hid: context [
 		root 
 	]
 
-	free_enumeration: func [
-		devs 		[hid-device-info]
-		/local
-			d 		[hid-device-info]
-			next 	[hid-device-info]
-	][
-		d: devs 
-		while [d <> null] [
-			next: d/next
-			free as byte-ptr! d/path
-			free as byte-ptr! d/serial-number
-			free as byte-ptr! d/manufacturer-string
-			free as byte-ptr! d/product-string
-			free as byte-ptr! d 
-			d: next
-		]	
-	]
+	#include %common.reds
 
-	open: func [
-		vendor_id		[integer!]
-		product_id		[integer!]
-		serial-number	[c-string!]
-		return: 		[int-ptr!]
-		/local
-			devs 			[hid-device-info]
-			cur_dev			[hid-device-info]
-			path_to_open	[c-string!]
-			handle			[hid_device]
-			id 				[integer!]
-	][
-		path_to_open: null
-		handle: null
-
-		devs: enumerate vendor_id product_id
-		id: vendor_id << 16 + product_id
-		cur_dev: devs 
-		while [cur_dev <> null] [
-			if cur_dev/id = id [
-				either serial-number <> null [
-					if (wcscmp serial-number cur_dev/serial-number) = 0 [
-						path_to_open: cur_dev/path
-						break
-					]
-				][
-					path_to_open: cur_dev/path
-					break
-				]
-
-			]
-			cur_dev: cur_dev/next
-		]
-		if path_to_open <> null [
-			handle: open_path path_to_open
-		]
-		free_enumeration devs 
-		as int-ptr! handle		
-	]
-
-	open_path: func [
+	open-path: func [
 		path			[c-string!]
 		return: 		[hid_device]
 		/local

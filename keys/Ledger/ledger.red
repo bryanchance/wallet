@@ -9,28 +9,12 @@ Red [
 	}
 ]
 
-#include %rlp.red
-
-to-bin8: func [v [integer! char!]][
-	to binary! to char! 256 + v and 255
-]
-
-to-bin16: func [v [integer! char!]][	;-- big-endian encoding
-	skip to-binary to-integer v 2
-]
-
-to-bin32: func [v [integer! char!]][	;-- big-endian encoding
-	to-binary to-integer v
-]
-
-to-int16: func [b [binary!]][
-	to-integer copy/part b 2
-]
-
 ledger: context [
+	name: "Ledger Nano S"
 
 	vendor-id:			2C97h
 	product-id:			1
+	id: product-id << 16 or vendor-id
 
 	DEFAULT_CHANNEL:	0101h
 	TAG_APDU:			05h
@@ -41,11 +25,29 @@ ledger: context [
 	buffer:		make binary! MAX_APDU_SIZE
 	data-frame: make binary! PACKET_SIZE
 
-	connect: func [][
+	filter?: func [
+		_id				[integer!]
+		_usage			[integer!]
+		return:			[logic!]
+	][
+		if _id <> id [return false]
+		true
+	]
+
+	opened?: func [return: [logic!]] [
+		if dongle = none [return false]
+		true
+	]
+
+	connect: func [index [integer!]][
 		unless dongle [
-			dongle: hid/open vendor-id product-id
+			dongle: hid/open id index
 		]
 		dongle
+	]
+
+	set-init: func [][
+		return 'InitSuccess
 	]
 
 	read-apdu: func [
@@ -55,7 +57,7 @@ ledger: context [
 		idx: 0
 		clear buffer
 		until [
-			if none? hid/read dongle clear data-frame timeout * 1000 [
+			if -1 = hid/read dongle clear data-frame timeout * 1000 [
 				return buffer
 			]
 
@@ -115,7 +117,7 @@ ledger: context [
 		]
 	]
 
-	get-address: func [idx [integer!] /local data pub-key-len addr-len][
+	get-eth-address: func [idx [block!] /local data pub-key-len addr-len][
 		data: make binary! 20
 		append data reduce [
 			E0h
@@ -124,10 +126,10 @@ ledger: context [
 			0
 			4 * 4 + 1
 			4
-			to-bin32 8000002Ch
-			to-bin32 8000003Ch
-			to-bin32 80000000h
-			to-bin32 idx
+			to-bin32 idx/1
+			to-bin32 idx/2
+			to-bin32 idx/3
+			to-bin32 idx/4
 		]
 		write-apdu data
 		data: read-apdu 1
@@ -145,7 +147,7 @@ ledger: context [
 		]
 	]
 
-	sign-eth-tx: func [addr-idx [integer!] tx [block!] /local data max-sz sz signed][
+	sign-eth-tx: func [addr-idx [block!] tx [block!] /local data max-sz sz signed][
 		;-- tx: [nonce, gasprice, startgas, to, value, data]
 		tx-bin: rlp/encode tx
 		chunk: make binary! 200
@@ -162,10 +164,10 @@ ledger: context [
 			if head? tx-bin [
 				append chunk reduce [
 					4
-					to-bin32 8000002Ch
-					to-bin32 8000003Ch
-					to-bin32 80000000h
-					to-bin32 addr-idx
+					to-bin32 addr-idx/1
+					to-bin32 addr-idx/2
+					to-bin32 addr-idx/3
+					to-bin32 addr-idx/4
 				]
 			]
 			append/part chunk tx-bin sz
@@ -177,7 +179,7 @@ ledger: context [
 		either 4 > length? signed [none][signed]
 	]
 
-	get-signed-data: func [idx tx /local signed][
+	get-eth-signed-data: func [idx tx /local signed][
 		signed: sign-eth-tx idx tx
 		either all [signed binary? signed][
 			append tx reduce [
@@ -189,7 +191,12 @@ ledger: context [
 		][signed]
 	]
 
-	close: does [hid/close dongle dongle: none]
+	close: does [
+		if dongle <> none [
+			hid/close dongle 
+			dongle: none
+		]
+	]
 ]
 
 ;ledger/connect

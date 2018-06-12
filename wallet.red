@@ -15,9 +15,12 @@ Red [
 
 #include %libs/int256.red
 #include %libs/JSON.red
+#include %libs/rlp.red
+#include %libs/proto-encode.red
 #include %libs/ethereum.red
+#include %libs/bitcoin.red
 #include %libs/HID/hidapi.red
-#include %keys/Ledger/ledger.red
+#include %keys/keys.red
 
 #system [
 	with gui [#include %libs/usb-monitor.reds]
@@ -30,38 +33,58 @@ wallet: context [
 	signed-data: addr-list: min-size: none
 	addr-per-page: 5
 
-	networks: [
-		https://eth.red-lang.org/mainnet
-		https://eth.red-lang.org/rinkeby
-		https://eth.red-lang.org/kovan
-		https://eth.red-lang.org/ropsten
-	]
+	;-- m / purpose' / coin_type' / account' / change / address_index
+	default-purpose: 80000000h + 44
+	segwit-purpose: 80000000h + 49
+	btc-coin: 80000000h + 0
+	btc-test-coin: 80000000h + 1
+	eth-coin: 80000000h + 60
+	default-account: 80000000h + 0
+	default-change: 0
 
-	explorers: [
-		https://etherscan.io/tx/
-		https://rinkeby.etherscan.io/tx/
-		https://kovan.etherscan.io/tx/
-		https://ropsten.etherscan.io/tx/
-	]
-
-	contracts: [
+	coins: compose/deep [
 		"ETH" [
-			"mainnet" #[none]
-			"Rinkeby" #[none]
-			"Kovan"	  #[none]
-			"Ropsten" #[none]
+			;net name		;net server										;explorer server									;BIP32 path																		;chain id			;contract address
+			"mainnet"		https://eth.red-lang.org/mainnet				https://etherscan.io/tx/							[(default-purpose) (eth-coin) (default-account) (default-change)]				1					#[none]
+			"Rinkeby"		https://eth.red-lang.org/rinkeby				https://rinkeby.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				4					#[none]
+			"Kovan"			https://eth.red-lang.org/kovan					https://kovan.etherscan.io/tx/						[(default-purpose) (eth-coin) (default-account) (default-change)]				42					#[none]
+			"Ropsten"		https://eth.red-lang.org/ropsten				https://ropsten.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				3					#[none]
 		]
 		"RED" [
-			"mainnet" "76960Dccd5a1fe799F7c29bE9F19ceB4627aEb2f"
-			"Rinkeby" "43df37f66b8b9fececcc3031c9c1d2511db17c42"
+			"mainnet"		https://eth.red-lang.org/mainnet				https://etherscan.io/tx/							[(default-purpose) (eth-coin) (default-account) (default-change)]				1					"76960Dccd5a1fe799F7c29bE9F19ceB4627aEb2f"
+			"Rinkeby"		https://eth.red-lang.org/rinkeby				https://rinkeby.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				4					"43df37f66b8b9fececcc3031c9c1d2511db17c42"
+		]
+		"BTC" [
+			"mainnet"		https://api.blockcypher.com/v1/btc/main			https://live.blockcypher.com/btc/tx					[(segwit-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
+			"testnet"		https://api.blockcypher.com/v1/btc/test3		https://live.blockcypher.com/btc-testnet/tx			[(segwit-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
+		]
+		"BTC-Legacy" [
+			"mainnet"		https://api.blockcypher.com/v1/btc/main			https://live.blockcypher.com/btc/tx					[(default-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
+			"testnet"		https://api.blockcypher.com/v1/btc/test3		https://live.blockcypher.com/btc-testnet/tx			[(default-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
 		]
 	]
 
-	explorer: explorers/2
-	network: networks/2
-	net-name: "rinkeby"
-	token-name: "ETH"
-	token-contract: none
+	get-network: does [pick find coins/:token-name net-name 2]
+	get-explorer: does [pick find coins/:token-name net-name 3]
+	get-bip32-path: does [pick find coins/:token-name net-name 4]
+	get-chain-id: does [pick find coins/:token-name net-name 5]
+	get-contract-addr: does [pick find coins/:token-name net-name 6]
+
+	tokens: extract coins 2
+
+	;-- current token name
+	token-name: tokens/1			;-- default "ETH"
+	
+	net-names: extract coins/:token-name 6
+	networks: extract/index coins/:token-name 6 2
+	explorers: extract/index coins/:token-name 6 3
+
+	;-- current net name
+	net-name: net-names/2			;-- default "Rinkeby"
+	network: get-network
+	explorer: get-explorer
+	token-contract: get-contract-addr
+	bip32-path: get-bip32-path
 
 	connected?:		no
 	address-index:	0
@@ -74,13 +97,192 @@ wallet: context [
 		head insert/dup value #" " 8 - ((index? pos) - 1)
 	]
 
-	list-addresses: func [/prev /next /local addresses addr n][
+	enumerate-connected-devices: func [/local len] [
+		key/enumerate-connected-devices
+		dev-list/data: key/get-valid-names key/valid-device-names
+		len: length? dev-list/data
+		if len < dev-list/selected [dev-list/selected: len]
+		if all [len = 1 dev-list/data/1 = key/no-dev] [
+			info-msg/text: "Please plug in your key..."
+			dev-list/selected: 1
+			clear addr-list/data
+		]
+	]
+
+	free-enumerate-connected-devices: does [
+		key/free-enum
+	]
+
+	get-device-name: func [
+		return:			[string!]
+		/local
+			index
+			names
+			blk
+	][
+		index: dev-list/selected
+		names: dev-list/data
+		if names = none [return key/no-dev]
+		blk: split names/:index ": "
+		blk/1
+	]
+
+	get-device-index: func [
+		return:			[integer!]
+		/local
+			index
+			names
+			blk
+	][
+		index: dev-list/selected
+		names: dev-list/data
+		if names = none [return 0]		
+		blk: split names/:index ": "
+		if blk/2 = none [return 0]
+		blk/2
+	]
+
+	connect-device: func [
+		/local name index
+	][
 		update-ui no
-		either ledger/connect [
-			usb-device/rate: none
-			connected?: yes
-			dev/text: "Ledger Nano S"
+
+		name: get-device-name
+		index: get-device-index
+
+		if name = key/no-dev [
+			;update-ui yes
+			exit
+		]
+
+		either none <> key/connect name index [
 			process-events
+			usb-device/rate: none
+
+			if 'InitSuccess <> key/set-init name [
+				info-msg/text: "Initialize the key failed..."
+				;update-ui yes
+				exit
+			]
+
+			if 'Init = key/get-request-pin-state-by-name name [
+				if 'HasRequested <> key/request-pin-by-name name [
+					usb-device/rate: 0:0:1
+					info-msg/text: "Please unlock your key"
+				]
+				;-- print 'Init
+			]
+			connected?: yes			
+		][
+			info-msg/text: "This device can't be recognized"
+		]
+		;update-ui yes
+	]
+
+	show-eth-address: func [
+		name			[string!]
+		n				[integer!]
+		addresses		[block!]
+		/local
+			addr		[string!]
+	][
+		addr: key/get-eth-address name bip32-path n
+		either string? addr [
+			info-msg/text: "Please wait while loading addresses..."
+		][
+			info-msg/text: case [
+				addr = 'browser-support-on [{Please set "Browser support" to "No"}]
+				addr = 'locked [
+					usb-device/rate: 0:0:3
+					"Please unlock your key"
+				]
+				true [{Please open the "Ethereum" application}]
+			]
+			update-ui yes
+			return false
+		]
+		append addresses rejoin [addr "      <loading>"]
+		addr-list/data: addresses
+		return true
+	]
+
+	enum-eth-address-balance: func [
+		/local
+			address		[string!]
+			addr		[string!]
+	][
+		info-msg/text: "Please wait while loading balances..."
+		update-ui no
+		either error? try [
+			foreach address addr-list/data [
+				addr: copy/part address find address space
+				replace address "      <loading>" form-amount either token-contract [
+					eth/get-balance-token network token-contract addr
+				][
+					eth/get-balance network addr
+				]
+				process-events
+			]
+		][
+			info-msg/text: {Fetch balance: Timeout. Please try "Reload" again}
+		][
+			info-msg/text: ""
+		]
+	]
+
+	show-btc-address: func [
+		name			[string!]
+		n				[integer!]
+		addresses		[block!]
+		/local
+			addr		[string!]
+			res
+	][
+		res: key/get-btc-address name bip32-path n 0 network
+		either map? res [
+			addr: pick back back tail select res 'origin 1
+		][
+			addr: res
+		]
+		either string? addr [
+			info-msg/text: "Please wait while loading addresses..."
+		][
+			info-msg/text: case [
+				addr = 'browser-support-on [{Please set "Browser support" to "No"}]
+				addr = 'locked [
+					usb-device/rate: 0:0:3
+					"Please unlock your key"
+				]
+				true [{Get Address Failed!}]
+			]
+			update-ui yes
+			return false
+		]
+		append addresses rejoin [addr "      " form-amount select res 'balance]
+		addr-list/data: addresses
+		return true
+	]
+
+	list-addresses: func [
+		/prev /next 
+		/local
+			name
+			addresses addr n
+			res
+			req-pin-state
+	][
+		update-ui no
+
+		if connected? [
+			name: get-device-name
+			;-- print name
+			req-pin-state: key/get-request-pin-state-by-name name
+			;-- print req-pin-state
+			if req-pin-state <> 'HasRequested [
+				update-ui yes
+				exit
+			]
+			info-msg/text: "Please wait while loading addresses..."
 
 			addresses: clear []
 			if next [page: page + 1]
@@ -88,46 +290,21 @@ wallet: context [
 			n: page * addr-per-page
 			
 			loop addr-per-page [
-				addr: ledger/get-address n
-				either string? addr [
-					info-msg/text: "Please wait while loading addresses..."
-				][
-					info-msg/text: case [
-						addr = 'browser-support-on [{Please set "Browser support" to "No"}]
-						addr = 'locked [
-							usb-device/rate: 0:0:3
-							"Please unlock your key"
-						]
-						true [{Please open the "Ethereum" application}]
-					]
-					exit
-				]
-				append addresses rejoin [addr "      <loading>"]
-				addr-list/data: addresses
-				process-events
-				n: n + 1
-			]
-			info-msg/text: "Please wait while loading balances..."
-			update-ui no
-			either error? try [
-				foreach address addr-list/data [
-					addr: copy/part address find address space
-					replace address "   <loading>" form-amount either token-contract [
-						eth/get-balance-token network token-contract addr
-					][
-						eth/get-balance network addr
-					]
+				either any [token-name = "ETH" token-name = "RED"][
+					if not show-eth-address name n addresses [exit]
 					process-events
+					n: n + 1
+				][
+					if not show-btc-address name n addresses [exit]
+					process-events
+					n: n + 1
 				]
-			][
-				info-msg/text: {Fetch balance: Timeout. Please try "Reload" again}
-			][
-				info-msg/text: ""
+			]
+			if any [token-name = "ETH" token-name = "RED"][
+				enum-eth-address-balance
 			]
 			update-ui yes
 			do-auto-size addr-list
-		][
-			dev/text: "<No Device>"
 		]
 	]
 
@@ -152,13 +329,23 @@ wallet: context [
 		]
 	]
 
+	do-select-dev: func [face [object!] event [event!]][
+		connected?: no
+		key/close
+		enumerate-connected-devices
+		connect-device
+		list-addresses
+		free-enumerate-connected-devices
+	]
+
 	do-select-network: func [face [object!] event [event!] /local idx][
 		idx: face/selected
 		
 		net-name: face/data/:idx
 		network:  networks/:idx
 		explorer: explorers/:idx
-		token-contract: contracts/:token-name/:net-name
+		token-contract: get-contract-addr
+		bip32-path: get-bip32-path
 		do-reload
 	]
 
@@ -167,10 +354,17 @@ wallet: context [
 		net: net-list/selected
 		token-name: face/data/:idx
 
-		net-list/data: extract contracts/:token-name 2
+		net-names: extract coins/:token-name 6
+		networks: extract/index coins/:token-name 6 2
+		explorers: extract/index coins/:token-name 6 3
+
+		net-list/data: net-names
 		net: net-list/selected: either net > length? net-list/data [1][net]
 		net-name: net-list/data/:net
-		token-contract: contracts/:token-name/:net-name
+		network:  networks/:net
+		explorer: explorers/:net
+		token-contract: get-contract-addr
+		bip32-path: get-bip32-path
 		do-reload
 	]
 	
@@ -240,7 +434,7 @@ wallet: context [
 		process-events
 	]
 
-	do-sign-tx: func [face [object!] event [event!] /local tx nonce price limit amount][
+	do-sign-tx: func [face [object!] event [event!] /local tx nonce price limit amount name][
 		unless check-data [exit]
 
 		notify-user
@@ -256,8 +450,9 @@ wallet: context [
 			exit
 		]
 
+		name: get-device-name
 		;-- Edge case: ledger key may locked in this moment
-		unless string? ledger/get-address 0 [
+		unless string? key/get-eth-address name bip32-path 0 [
 			reset-sign-button
 			view/flags unlock-dev-dlg 'modal
 			exit
@@ -287,7 +482,7 @@ wallet: context [
 			]
 		]
 
-		signed-data: ledger/get-signed-data address-index tx
+		signed-data: key/get-eth-signed-data name bip32-path address-index tx get-chain-id
 
 		either all [
 			signed-data
@@ -328,9 +523,10 @@ wallet: context [
 		]
 	]
 
-	copy-addr: func [][
+	copy-addr: func [/local addr][
 		if btn-send/enabled? [
-			write-clipboard copy/part pick addr-list/data addr-list/selected 42
+			addr: pick addr-list/data addr-list/selected 
+			write-clipboard copy/part addr find addr space
 		]
 	]
 
@@ -388,10 +584,11 @@ wallet: context [
 
 	ui: layout compose [
 		title "RED Wallet"
-		text 50 "Device:" dev: text 135 "<No Device>"
+		text 50 "Device:"
+		dev-list: drop-list data key/get-valid-names key/valid-device-names 135 select 1 :do-select-dev
 		btn-send: button "Send" :do-send disabled
-		token-list: drop-list data ["ETH" "RED"] 60 select 1 :do-select-token
-		net-list:   drop-list data ["mainnet" "rinkeby" "kovan" "ropsten"] select 2 :do-select-network
+		token-list: drop-list data tokens 60 select 1 :do-select-token
+		net-list:   drop-list data net-names select 2 :do-select-network
 		btn-reload: button "Reload" :do-reload disabled
 		return
 		
@@ -437,37 +634,76 @@ wallet: context [
 	]
 
 	support-device?: func [
-		vendor-id	[integer!]
-		product-id	[integer!]
+		id			[integer!]
 		return:		[logic!]
 	][
-		all [
-			vendor-id = ledger/vendor-id
-			product-id = ledger/product-id
-		]
+		key/support? id
 	]
 
 	monitor-devices: does [
 		append ui/pane usb-device: make face! [
 			type: 'usb-device offset: 0x0 size: 10x10 rate: 0:0:1
 			actors: object [
-				on-up: func [face [object!] event [event!]][
-					if support-device? face/data/1 face/data/2 [
-						list-addresses
+				on-up: func [face [object!] event [event!] /local id [integer!] len [integer!]][
+					id: face/data/2 << 16 or face/data/1
+					if support-device? id [
+						;-- print "on-up"
+						enumerate-connected-devices
+						len: length? dev-list/data
+						either len > 1 [								;-- if we have multi devices, just reset all
+							;-- print [len " devices"]
+							face/rate: none
+							connected?: no
+							info-msg/text: ""
+							key/close-pin-requesting-by-id id			;-- for trezor pin request
+							key/close
+							connect-device
+							list-addresses
+						][
+							if any [
+								not key/opened? id
+								'Init = key/get-request-pin-state-by-id id
+							][
+								;-- print "need unlock key"
+								connected?: no
+								key/close
+								connect-device
+								list-addresses
+							]
+						]
+						free-enumerate-connected-devices
 					]
 				]
-				on-down: func [face [object!] event [event!]][
-					if support-device? face/data/1 face/data/2 [
+				on-down: func [face [object!] event [event!] /local id [integer!]][
+					id: face/data/2 << 16 or face/data/1
+					if support-device? id [
+						;-- print "on-down"
 						face/rate: none
 						connected?: no
-						ledger/close
-						dev/text: "<No Device>"
 						info-msg/text: ""
 						clear addr-list/data
+						key/close-pin-requesting-by-id id			;-- for trezor pin request
+						key/close
+						enumerate-connected-devices
+						connect-device
+						list-addresses
+						free-enumerate-connected-devices
 					]
 				]
-				on-time: func [face event][
-					if connected? [face/rate: none]
+				on-time: func [face event /local name][
+					name:  get-device-name
+					if all [
+						connected?
+						'Requesting <> key/get-request-pin-state-by-name name
+					][face/rate: none]
+					;-- print "on-time"
+					if not key/any-opened? [
+						;-- print "need to enumerate"
+						key/close
+						enumerate-connected-devices
+						connect-device
+						free-enumerate-connected-devices
+					]
 					list-addresses
 				]
 			]
@@ -477,7 +713,7 @@ wallet: context [
 	setup-actors: does [
 		ui/actors: context [
 			on-close: func [face event][
-				ledger/close
+				key/close
 			]
 			on-resizing: function [face event] [
 				if any [event/offset/x < min-size/x event/offset/y < min-size/y][exit]
