@@ -14,7 +14,6 @@ key: context [
 	no-dev: "<No Device>"
 	enumerated-devices: []
 	valid-device-names: []
-	new-valid-names:	[]
 	dev-names-in-block: []
 
 	support?: func [
@@ -79,7 +78,7 @@ key: context [
 
 	free-enum: does [hid/free-enum]
 
-	get-valid-names: func [valid-names [block!] /local len i j id usg index name index-string][
+	get-valid-names: func [/local len i j id usg index name index-string][
 		len: length? enumerated-devices
 		if len = 0 [return reduce [no-dev]]
 		i: 1
@@ -108,21 +107,21 @@ key: context [
 		len: length? dev-names-in-block
 		if len = 0 [return reduce [no-dev]]
 		i: 1
-		clear valid-names
+		clear valid-device-names
 		until [
 			name: dev-names-in-block/:i
 			j: i + 1
 			index: dev-names-in-block/:j
 			either index = 0 [
-				append valid-names name
+				append valid-device-names name
 			][
-				append valid-names rejoin [name ": " to string! index]
+				append valid-device-names rejoin [name ": " to string! index]
 			]
 
 			i: i + 2
 			i > len
 		]
-		valid-names
+		valid-device-names
 	]
 
 	get-enum-index: func [
