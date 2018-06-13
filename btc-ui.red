@@ -118,7 +118,7 @@ btc-ui: context [
 			addr-from/text: copy/part from find from space
 			fee/text: "229"
 			reset-sign-button
-			label-unit/text: token-name
+			label-unit/text: "BTC"    ;token-name
 			clear addr-to/text
 			clear amount-field/text
 			view/flags dlg 'modal

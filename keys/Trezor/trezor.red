@@ -149,7 +149,7 @@ trezor: context [
 			return reduce ['get-btc-address len]
 		]
 		if res/address = none [return ['NoneAddress]]
-		rejoin ["0x" res/address]
+		res/address
 	]
 
 	get-btc-addresses: func [
@@ -173,7 +173,7 @@ trezor: context [
 			addr: get-btc-address ids
 			if block? addr [return reduce ['get-btc-addresses addr]]
 
-			btc-res: btc/balance-empty? network skip addr 2
+			btc-res: btc/balance-empty? network addr
 			if word? btc-res [return 'error]
 			if true = btc-res [
 				append c-list reduce [addr none]
@@ -181,7 +181,7 @@ trezor: context [
 				break
 			]
 
-			txs: btc/get-tx-hash network skip addr 2
+			txs: btc/get-tx-hash network addr
 			if word? txs [return 'error]
 			if txs = [][
 				append c-list reduce [addr to-i256 0]
@@ -205,7 +205,7 @@ trezor: context [
 			addr: get-btc-address ids
 			if block? addr [return reduce ['get-btc-addresses addr]]
 
-			btc-res: btc/balance-empty? network skip addr 2
+			btc-res: btc/balance-empty? network addr
 			if word? btc-res [return 'error]
 			if true = btc-res [
 				append o-list reduce [addr none]
@@ -213,7 +213,7 @@ trezor: context [
 				break
 			]
 
-			txs: btc/get-tx-hash network skip addr 2
+			txs: btc/get-tx-hash network addr
 			if word? txs [return 'error]
 			if txs = [][
 				append o-list reduce [addr to-i256 0]
