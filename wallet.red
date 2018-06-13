@@ -280,9 +280,10 @@ wallet: context [
 			btn-sign/text: "Sign"
 		]
 
-		do-send: func [face [object!] event [event!] /local from][
+		do-send: func [face [object!] event [event!] /local from dlg][
 			if addr-list/data [
 				if addr-list/selected = -1 [addr-list/selected: 1]
+				dlg: send-dialog
 				network-to/text: net-name
 				from: pick addr-list/data addr-list/selected
 				addr-from/text: copy/part from find from space
@@ -291,7 +292,7 @@ wallet: context [
 				label-unit/text: token-name
 				clear addr-to/text
 				clear amount-field/text
-				view/flags send-dialog 'modal
+				view/flags dlg 'modal
 			]
 		]
 
@@ -330,7 +331,7 @@ wallet: context [
 			process-events
 		]
 
-		do-sign-tx: func [face [object!] event [event!] /local tx nonce price limit amount name][
+		do-sign-tx: func [face [object!] event [event!] /local tx nonce price limit amount name dlg][
 			unless check-data [exit]
 
 			notify-user
@@ -347,7 +348,7 @@ wallet: context [
 			]
 
 			name: get-device-name
-			;-- Edge case: ledger key may locked in this moment
+			;-- Edge case: key may locked in this moment
 			unless string? key/get-eth-address name bip32-path 0 [
 				reset-sign-button
 				view/flags unlock-dev-dlg 'modal
@@ -384,6 +385,7 @@ wallet: context [
 				signed-data
 				binary? signed-data
 			][
+				dlg: confirm-sheet
 				info-from/text:		addr-from/text
 				info-to/text:		copy addr-to/text
 				info-amount/text:	rejoin [amount-field/text " " token-name]
@@ -396,7 +398,7 @@ wallet: context [
 				]
 				info-nonce/text: mold tx/1
 				unview
-				view/flags confirm-sheet 'modal
+				view/flags dlg 'modal
 			][
 				if signed-data = 'token-error [
 					unview
@@ -419,7 +421,7 @@ wallet: context [
 			]
 		]
 
-		send-dialog: layout [
+		send-dialog: does [layout [
 			title "Send Ether & Tokens"
 			style label: text  100 middle
 			style lbl:   text  360 middle font [name: font-fixed size: 10]
@@ -431,9 +433,9 @@ wallet: context [
 			label "Gas Price:"		gas-price:	  field 120 "21" return
 			label "Gas Limit:"		gas-limit:	  field 120 "21000" return
 			pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
-		]
+		]]
 
-		confirm-sheet: layout [
+		confirm-sheet: does [layout [
 			title "Confirm Transaction"
 			style label: text 120 right bold 
 			style info: text 330 middle font [name: font-fixed size: 10]
@@ -446,7 +448,7 @@ wallet: context [
 			label "Max TX Fee:" 	info-fee:	  info return
 			label "Nonce:"			info-nonce:	  info return
 			pad 164x10 button "Cancel" [signed-data: none unview] button "Send" :do-confirm
-		]
+		]]
 	]
 
 	btc-ui: context [
@@ -491,9 +493,10 @@ wallet: context [
 			btn-sign/text: "Sign"
 		]
 
-		do-send: func [face [object!] event [event!] /local from][
+		do-send: func [face [object!] event [event!] /local from dlg][
 			if addr-list/data [
 				if addr-list/selected = -1 [addr-list/selected: 1]
+				dlg: send-dialog
 				network-to/text: net-name
 				from: pick addr-list/data addr-list/selected
 				addr-from/text: copy/part from find from space
@@ -502,7 +505,7 @@ wallet: context [
 				label-unit/text: token-name
 				clear addr-to/text
 				clear amount-field/text
-				view/flags send-dialog 'modal
+				view/flags dlg 'modal
 			]
 		]
 
@@ -630,7 +633,7 @@ wallet: context [
 			]
 		]
 
-		send-dialog: layout [
+		send-dialog: does [layout [
 			title "Send Bitcoin"
 			style label: text  100 middle
 			style lbl:   text  360 middle font [name: font-fixed size: 10]
@@ -641,9 +644,9 @@ wallet: context [
 			label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
 			label "Fee:"			fee:		  field 120 "229" return
 			pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
-		]
+		]]
 
-		confirm-sheet: layout [
+		confirm-sheet: does [layout [
 			title "Confirm Transaction"
 			style label: text 120 right bold 
 			style info: text 330 middle font [name: font-fixed size: 10]
@@ -654,7 +657,7 @@ wallet: context [
 			label "Fee:" 			info-fee:	  info return
 			label "Nonce:"			info-nonce:	  info return
 			pad 164x10 button "Cancel" [signed-data: none unview] button "Send" :do-confirm
-		]
+		]]
 	]
 
 	do-select-dev: func [face [object!] event [event!]][
