@@ -99,7 +99,7 @@ wallet: context [
 
 	enumerate-connected-devices: func [/local len] [
 		key/enumerate-connected-devices
-		dev-list/data: key/get-valid-names key/valid-device-names
+		dev-list/data: key/get-valid-names
 		len: length? dev-list/data
 		if len < dev-list/selected [dev-list/selected: len]
 		if all [len = 1 dev-list/data/1 = key/no-dev] [
@@ -151,7 +151,6 @@ wallet: context [
 		index: get-device-index
 
 		if name = key/no-dev [
-			;update-ui yes
 			exit
 		]
 
@@ -161,7 +160,6 @@ wallet: context [
 
 			if 'InitSuccess <> key/set-init name [
 				info-msg/text: "Initialize the key failed..."
-				;update-ui yes
 				exit
 			]
 
@@ -176,91 +174,6 @@ wallet: context [
 		][
 			info-msg/text: "This device can't be recognized"
 		]
-		;update-ui yes
-	]
-
-	show-eth-address: func [
-		name			[string!]
-		n				[integer!]
-		addresses		[block!]
-		/local
-			addr		[string!]
-	][
-		addr: key/get-eth-address name bip32-path n
-		either string? addr [
-			info-msg/text: "Please wait while loading addresses..."
-		][
-			info-msg/text: case [
-				addr = 'browser-support-on [{Please set "Browser support" to "No"}]
-				addr = 'locked [
-					usb-device/rate: 0:0:3
-					"Please unlock your key"
-				]
-				true [{Please open the "Ethereum" application}]
-			]
-			update-ui yes
-			return false
-		]
-		append addresses rejoin [addr "      <loading>"]
-		addr-list/data: addresses
-		return true
-	]
-
-	enum-eth-address-balance: func [
-		/local
-			address		[string!]
-			addr		[string!]
-	][
-		info-msg/text: "Please wait while loading balances..."
-		update-ui no
-		either error? try [
-			foreach address addr-list/data [
-				addr: copy/part address find address space
-				replace address "      <loading>" form-amount either token-contract [
-					eth/get-balance-token network token-contract addr
-				][
-					eth/get-balance network addr
-				]
-				process-events
-			]
-		][
-			info-msg/text: {Fetch balance: Timeout. Please try "Reload" again}
-		][
-			info-msg/text: ""
-		]
-	]
-
-	show-btc-address: func [
-		name			[string!]
-		n				[integer!]
-		addresses		[block!]
-		/local
-			addr		[string!]
-			res
-	][
-		res: key/get-btc-address name bip32-path n 0 network
-		either map? res [
-			addr: pick back back tail select res 'origin 1
-		][
-			addr: res
-		]
-		either string? addr [
-			info-msg/text: "Please wait while loading addresses..."
-		][
-			info-msg/text: case [
-				addr = 'browser-support-on [{Please set "Browser support" to "No"}]
-				addr = 'locked [
-					usb-device/rate: 0:0:3
-					"Please unlock your key"
-				]
-				true [{Get Address Failed!}]
-			]
-			update-ui yes
-			return false
-		]
-		append addresses rejoin [addr "      " form-amount select res 'balance]
-		addr-list/data: addresses
-		return true
 	]
 
 	list-addresses: func [
@@ -279,7 +192,6 @@ wallet: context [
 			req-pin-state: key/get-request-pin-state-by-name name
 			;-- print req-pin-state
 			if req-pin-state <> 'HasRequested [
-				update-ui yes
 				exit
 			]
 			info-msg/text: "Please wait while loading addresses..."
@@ -291,41 +203,457 @@ wallet: context [
 			
 			loop addr-per-page [
 				either any [token-name = "ETH" token-name = "RED"][
-					if not show-eth-address name n addresses [exit]
+					if not eth-ui/show-address name n addresses [exit]
 					process-events
 					n: n + 1
 				][
-					if not show-btc-address name n addresses [exit]
+					if not btc-ui/show-address name n addresses [exit]
 					process-events
 					n: n + 1
 				]
 			]
 			if any [token-name = "ETH" token-name = "RED"][
-				enum-eth-address-balance
+				eth-ui/enum-address-balance
 			]
 			update-ui yes
 			do-auto-size addr-list
 		]
 	]
 
-	reset-sign-button: does [
-		btn-sign/enabled?: yes
-		btn-sign/offset/x: 215
-		btn-sign/size/x: 60
-		btn-sign/text: "Sign"
+	eth-ui: context [
+
+		show-address: func [
+			name			[string!]
+			n				[integer!]
+			addresses		[block!]
+			/local
+				addr		[string!]
+		][
+			addr: key/get-eth-address name bip32-path n
+			either string? addr [
+				info-msg/text: "Please wait while loading addresses..."
+			][
+				info-msg/text: case [
+					addr = 'browser-support-on [{Please set "Browser support" to "No"}]
+					addr = 'locked [
+						usb-device/rate: 0:0:3
+						"Please unlock your key"
+					]
+					true [{Please open the "Ethereum" application}]
+				]
+				update-ui yes
+				return false
+			]
+			append addresses rejoin [addr "      <loading>"]
+			addr-list/data: addresses
+			return true
+		]
+
+		enum-address-balance: func [
+			/local
+				address		[string!]
+				addr		[string!]
+		][
+			info-msg/text: "Please wait while loading balances..."
+			update-ui no
+			either error? try [
+				foreach address addr-list/data [
+					addr: copy/part address find address space
+					replace address "      <loading>" form-amount either token-contract [
+						eth/get-balance-token network token-contract addr
+					][
+						eth/get-balance network addr
+					]
+					process-events
+				]
+			][
+				info-msg/text: {Fetch balance: Timeout. Please try "Reload" again}
+			][
+				info-msg/text: ""
+			]
+		]
+
+		reset-sign-button: does [
+			btn-sign/enabled?: yes
+			btn-sign/offset/x: 215
+			btn-sign/size/x: 60
+			btn-sign/text: "Sign"
+		]
+
+		do-send: func [face [object!] event [event!] /local from][
+			if addr-list/data [
+				if addr-list/selected = -1 [addr-list/selected: 1]
+				network-to/text: net-name
+				from: pick addr-list/data addr-list/selected
+				addr-from/text: copy/part from find from space
+				gas-limit/text: either token-contract ["79510"]["21000"]
+				reset-sign-button
+				label-unit/text: token-name
+				clear addr-to/text
+				clear amount-field/text
+				view/flags send-dialog 'modal
+			]
+		]
+
+		check-data: func [/local addr amount balance from][
+			addr: trim any [addr-to/text ""]
+			unless all [
+				addr/1 = #"0"
+				addr/2 = #"x"
+				42 = length? addr
+				debase/base skip addr 2 16
+			][
+				addr-to/text: copy "Invalid address"
+				return no
+			]
+			amount: attempt [to float! amount-field/text]
+			either all [amount amount > 0.0][
+				from: pick addr-list/data addr-list/selected
+				balance: to float! find/tail from space
+				if amount > balance [
+					amount-field/text: copy "Insufficient Balance"
+					return no
+				]
+			][
+				amount-field/text: copy "Invalid amount"
+				return no
+			]
+			yes
+		]
+
+		notify-user: does [
+			btn-sign/enabled?: no
+			process-events
+			btn-sign/offset/x: 133
+			btn-sign/size/x: 225
+			btn-sign/text: "Confirm the transaction on your device"
+			process-events
+		]
+
+		do-sign-tx: func [face [object!] event [event!] /local tx nonce price limit amount name][
+			unless check-data [exit]
+
+			notify-user
+
+			price: eth/gwei-to-wei gas-price/text			;-- gas price
+			limit: to-integer gas-limit/text				;-- gas limit
+			amount: eth/eth-to-wei amount-field/text		;-- send amount
+			nonce: eth/get-nonce network addr-from/text		;-- nonce
+			if nonce = -1 [
+				unview
+				view/flags nonce-error-dlg 'modal
+				reset-sign-button
+				exit
+			]
+
+			name: get-device-name
+			;-- Edge case: ledger key may locked in this moment
+			unless string? key/get-eth-address name bip32-path 0 [
+				reset-sign-button
+				view/flags unlock-dev-dlg 'modal
+				exit
+			]
+
+			either token-contract [
+				tx: reduce [
+					nonce
+					price
+					limit
+					debase/base token-contract 16			;-- to address
+					eth/eth-to-wei 0						;-- value
+					rejoin [								;-- data
+						#{a9059cbb}							;-- method ID
+						debase/base eth/pad64 copy skip addr-to/text 2 16
+						eth/pad64 i256-to-bin amount
+					]
+				]
+			][
+				tx: reduce [
+					nonce
+					price
+					limit
+					debase/base skip addr-to/text 2 16		;-- to address
+					amount
+					#{}										;-- data
+				]
+			]
+
+			signed-data: key/get-eth-signed-data name bip32-path address-index tx get-chain-id
+
+			either all [
+				signed-data
+				binary? signed-data
+			][
+				info-from/text:		addr-from/text
+				info-to/text:		copy addr-to/text
+				info-amount/text:	rejoin [amount-field/text " " token-name]
+				info-network/text:	net-name
+				info-price/text:	rejoin [gas-price/text " Gwei"]
+				info-limit/text:	gas-limit/text
+				info-fee/text:		rejoin [
+					mold (to float! gas-price/text) * (to float! gas-limit/text) / 1e9
+					" Ether"
+				]
+				info-nonce/text: mold tx/1
+				unview
+				view/flags confirm-sheet 'modal
+			][
+				if signed-data = 'token-error [
+					unview
+					view/flags contract-data-dlg 'modal
+				]
+				reset-sign-button
+			]
+		]
+
+		do-confirm: func [face [object!] event [event!] /local result][
+			result: eth/call-rpc network 'eth_sendRawTransaction reduce [
+				rejoin ["0x" enbase/base signed-data 16]
+			]
+			unview
+			either string? result [
+				browse rejoin [explorer result]
+			][							;-- error
+				tx-error/text: rejoin ["Error! Please try again^/^/" form result]
+				view/flags tx-error-dlg 'modal
+			]
+		]
+
+		send-dialog: layout [
+			title "Send Ether & Tokens"
+			style label: text  100 middle
+			style lbl:   text  360 middle font [name: font-fixed size: 10]
+			style field: field 360 font [name: font-fixed size: 10]
+			label "Network:"		network-to:	  lbl return
+			label "From Address:"	addr-from:	  lbl return
+			label "To Address:"		addr-to:	  field return
+			label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
+			label "Gas Price:"		gas-price:	  field 120 "21" return
+			label "Gas Limit:"		gas-limit:	  field 120 "21000" return
+			pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
+		]
+
+		confirm-sheet: layout [
+			title "Confirm Transaction"
+			style label: text 120 right bold 
+			style info: text 330 middle font [name: font-fixed size: 10]
+			label "From Address:" 	info-from:    info return
+			label "To Address:" 	info-to: 	  info return
+			label "Amount to Send:" info-amount:  info return
+			label "Network:"		info-network: info return
+			label "Gas Price:" 		info-price:	  info return
+			label "Gas Limit:" 		info-limit:	  info return
+			label "Max TX Fee:" 	info-fee:	  info return
+			label "Nonce:"			info-nonce:	  info return
+			pad 164x10 button "Cancel" [signed-data: none unview] button "Send" :do-confirm
+		]
 	]
 
-	do-send: func [face [object!] event [event!]][
-		if addr-list/data [
-			if addr-list/selected = -1 [addr-list/selected: 1]
-			network-to/text: net-name
-			addr-from/text: copy/part pick addr-list/data addr-list/selected 42
-			gas-limit/text: either token-contract ["79510"]["21000"]
-			reset-sign-button
-			label-unit/text: token-name
-			clear addr-to/text
-			clear amount-field/text
-			view/flags send-dialog 'modal
+	btc-ui: context [
+
+		show-address: func [
+			name			[string!]
+			n				[integer!]
+			addresses		[block!]
+			/local
+				addr		[string!]
+				res
+		][
+			res: key/get-btc-address name bip32-path n 0 network
+			either map? res [
+				addr: pick back back tail select res 'origin 1
+			][
+				addr: res
+			]
+			either string? addr [
+				info-msg/text: "Please wait while loading addresses..."
+			][
+				info-msg/text: case [
+					addr = 'browser-support-on [{Please set "Browser support" to "No"}]
+					addr = 'locked [
+						usb-device/rate: 0:0:3
+						"Please unlock your key"
+					]
+					true [{Get Address Failed!}]
+				]
+				update-ui yes
+				return false
+			]
+			append addresses rejoin [addr "      " form-amount select res 'balance]
+			addr-list/data: addresses
+			return true
+		]
+
+		reset-sign-button: does [
+			btn-sign/enabled?: yes
+			btn-sign/offset/x: 215
+			btn-sign/size/x: 60
+			btn-sign/text: "Sign"
+		]
+
+		do-send: func [face [object!] event [event!] /local from][
+			if addr-list/data [
+				if addr-list/selected = -1 [addr-list/selected: 1]
+				network-to/text: net-name
+				from: pick addr-list/data addr-list/selected
+				addr-from/text: copy/part from find from space
+				fee/text: "229"
+				reset-sign-button
+				label-unit/text: token-name
+				clear addr-to/text
+				clear amount-field/text
+				view/flags send-dialog 'modal
+			]
+		]
+
+		check-data: func [/local addr amount balance from][
+			addr: trim any [addr-to/text ""]
+			unless all [
+				addr/1 = #"0"
+				addr/2 = #"x"
+				26 < length? addr
+				34 > length? addr
+			][
+				addr-to/text: copy "Invalid address"
+				return no
+			]
+			amount: attempt [to float! amount-field/text]
+			either all [amount amount > 0.0][
+				from: pick addr-list/data addr-list/selected
+				balance: to float! find/tail from space
+				if amount > balance [
+					amount-field/text: copy "Insufficient Balance"
+					return no
+				]
+			][
+				amount-field/text: copy "Invalid amount"
+				return no
+			]
+			yes
+		]
+
+		notify-user: does [
+			btn-sign/enabled?: no
+			process-events
+			btn-sign/offset/x: 133
+			btn-sign/size/x: 225
+			btn-sign/text: "Confirm the transaction on your device"
+			process-events
+		]
+
+		do-sign-tx: func [face [object!] event [event!] /local tx nonce price limit amount name][
+			unless check-data [exit]
+
+			notify-user
+
+			price: eth/gwei-to-wei gas-price/text			;-- gas price
+			limit: to-integer gas-limit/text				;-- gas limit
+			amount: eth/eth-to-wei amount-field/text		;-- send amount
+			nonce: eth/get-nonce network addr-from/text		;-- nonce
+			if nonce = -1 [
+				unview
+				view/flags nonce-error-dlg 'modal
+				reset-sign-button
+				exit
+			]
+
+			name: get-device-name
+			;-- Edge case: ledger key may locked in this moment
+			unless string? key/get-eth-address name bip32-path 0 [
+				reset-sign-button
+				view/flags unlock-dev-dlg 'modal
+				exit
+			]
+
+			either token-contract [
+				tx: reduce [
+					nonce
+					price
+					limit
+					debase/base token-contract 16			;-- to address
+					eth/eth-to-wei 0						;-- value
+					rejoin [								;-- data
+						#{a9059cbb}							;-- method ID
+						debase/base eth/pad64 copy skip addr-to/text 2 16
+						eth/pad64 i256-to-bin amount
+					]
+				]
+			][
+				tx: reduce [
+					nonce
+					price
+					limit
+					debase/base skip addr-to/text 2 16		;-- to address
+					amount
+					#{}										;-- data
+				]
+			]
+
+			signed-data: key/get-eth-signed-data name bip32-path address-index tx get-chain-id
+
+			either all [
+				signed-data
+				binary? signed-data
+			][
+				info-from/text:		addr-from/text
+				info-to/text:		copy addr-to/text
+				info-amount/text:	rejoin [amount-field/text " " token-name]
+				info-network/text:	net-name
+				info-price/text:	rejoin [gas-price/text " Gwei"]
+				info-limit/text:	gas-limit/text
+				info-fee/text:		rejoin [
+					mold (to float! gas-price/text) * (to float! gas-limit/text) / 1e9
+					" Ether"
+				]
+				info-nonce/text: mold tx/1
+				unview
+				view/flags confirm-sheet 'modal
+			][
+				if signed-data = 'token-error [
+					unview
+					view/flags contract-data-dlg 'modal
+				]
+				reset-sign-button
+			]
+		]
+
+		do-confirm: func [face [object!] event [event!] /local result][
+			result: eth/call-rpc network 'eth_sendRawTransaction reduce [
+				rejoin ["0x" enbase/base signed-data 16]
+			]
+			unview
+			either string? result [
+				browse rejoin [explorer result]
+			][							;-- error
+				tx-error/text: rejoin ["Error! Please try again^/^/" form result]
+				view/flags tx-error-dlg 'modal
+			]
+		]
+
+		send-dialog: layout [
+			title "Send Bitcoin"
+			style label: text  100 middle
+			style lbl:   text  360 middle font [name: font-fixed size: 10]
+			style field: field 360 font [name: font-fixed size: 10]
+			label "Network:"		network-to:	  lbl return
+			label "From Address:"	addr-from:	  lbl return
+			label "To Address:"		addr-to:	  field return
+			label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
+			label "Fee:"			fee:		  field 120 "229" return
+			pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
+		]
+
+		confirm-sheet: layout [
+			title "Confirm Transaction"
+			style label: text 120 right bold 
+			style info: text 330 middle font [name: font-fixed size: 10]
+			label "From Address:" 	info-from:    info return
+			label "To Address:" 	info-to: 	  info return
+			label "Amount to Send:" info-amount:  info return
+			label "Network:"		info-network: info return
+			label "Fee:" 			info-fee:	  info return
+			label "Nonce:"			info-nonce:	  info return
+			pad 164x10 button "Cancel" [signed-data: none unview] button "Send" :do-confirm
 		]
 	]
 
@@ -391,31 +719,6 @@ wallet: context [
 		ui/size: ui/size + delta + 8x10					;-- triggers a resizing event
 	]
 
-	check-data: func [/local addr amount balance][
-		addr: trim any [addr-to/text ""]
-		unless all [
-			addr/1 = #"0"
-			addr/2 = #"x"
-			42 = length? addr
-			debase/base skip addr 2 16
-		][
-			addr-to/text: copy "Invalid address"
-			return no
-		]
-		amount: attempt [to float! amount-field/text]
-		either all [amount amount > 0.0][
-			balance: to float! skip pick addr-list/data addr-list/selected 42
-			if amount > balance [
-				amount-field/text: copy "Insufficient Balance"
-				return no
-			]
-		][
-			amount-field/text: copy "Invalid amount"
-			return no
-		]
-		yes
-	]
-
 	update-ui: function [enabled? [logic!]][
 		btn-send/enabled?: to-logic all [enabled? addr-list/selected > 0]
 		if page > 0 [btn-prev/enabled?: enabled?]
@@ -423,104 +726,6 @@ wallet: context [
 			set in get f 'enabled? enabled?
 		]
 		process-events
-	]
-
-	notify-user: does [
-		btn-sign/enabled?: no
-		process-events
-		btn-sign/offset/x: 133
-		btn-sign/size/x: 225
-		btn-sign/text: "Confirm the transaction on your Ledger"
-		process-events
-	]
-
-	do-sign-tx: func [face [object!] event [event!] /local tx nonce price limit amount name][
-		unless check-data [exit]
-
-		notify-user
-
-		price: eth/gwei-to-wei gas-price/text			;-- gas price
-		limit: to-integer gas-limit/text				;-- gas limit
-		amount: eth/eth-to-wei amount-field/text		;-- send amount
-		nonce: eth/get-nonce network addr-from/text		;-- nonce
-		if nonce = -1 [
-			unview
-			view/flags nonce-error-dlg 'modal
-			reset-sign-button
-			exit
-		]
-
-		name: get-device-name
-		;-- Edge case: ledger key may locked in this moment
-		unless string? key/get-eth-address name bip32-path 0 [
-			reset-sign-button
-			view/flags unlock-dev-dlg 'modal
-			exit
-		]
-
-		either token-contract [
-			tx: reduce [
-				nonce
-				price
-				limit
-				debase/base token-contract 16			;-- to address
-				eth/eth-to-wei 0						;-- value
-				rejoin [								;-- data
-					#{a9059cbb}							;-- method ID
-					debase/base eth/pad64 copy skip addr-to/text 2 16
-					eth/pad64 i256-to-bin amount
-				]
-			]
-		][
-			tx: reduce [
-				nonce
-				price
-				limit
-				debase/base skip addr-to/text 2 16		;-- to address
-				amount
-				#{}										;-- data
-			]
-		]
-
-		signed-data: key/get-eth-signed-data name bip32-path address-index tx get-chain-id
-
-		either all [
-			signed-data
-			binary? signed-data
-		][
-			info-from/text:		addr-from/text
-			info-to/text:		copy addr-to/text
-			info-amount/text:	rejoin [amount-field/text " " token-name]
-			info-network/text:	net-name
-			info-price/text:	rejoin [gas-price/text " Gwei"]
-			info-limit/text:	gas-limit/text
-			info-fee/text:		rejoin [
-				mold (to float! gas-price/text) * (to float! gas-limit/text) / 1e9
-				" Ether"
-			]
-			info-nonce/text: mold tx/1
-			unview
-			view/flags confirm-sheet 'modal
-		][
-			if signed-data = 'token-error [
-				unview
-				view/flags contract-data-dlg 'modal
-			]
-			reset-sign-button
-		]
-	]
-
-	do-confirm: func [face [object!] event [event!] /local result][
-		result: eth/call-rpc network 'eth_sendRawTransaction reduce [
-			rejoin ["0x" enbase/base signed-data 16]
-		]
-		unview
-		either string? result [
-			browse rejoin [explorer result]
-		][							;-- error
-			tx-error/text: rejoin ["Error! Please try again^/^/" form result]
-			view/flags tx-error-dlg 'modal
-		]
 	]
 
 	copy-addr: func [/local addr][
@@ -553,39 +758,18 @@ wallet: context [
 		list-addresses
 	]
 
-	send-dialog: layout [
-		title "Send Ether & Tokens"
-		style label: text  100 middle
-		style lbl:   text  360 middle font [name: font-fixed size: 10]
-		style field: field 360 font [name: font-fixed size: 10]
-		label "Network:"		network-to:	  lbl return
-		label "From Address:"	addr-from:	  lbl return
-		label "To Address:"		addr-to:	  field return
-		label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
-		label "Gas Price:"		gas-price:	  field 120 "21" return
-		label "Gas Limit:"		gas-limit:	  field 120 "21000" return
-		pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
-	]
-
-	confirm-sheet: layout [
-		title "Confirm Transaction"
-		style label: text 120 right bold 
-		style info: text 330 middle font [name: font-fixed size: 10]
-		label "From Address:" 	info-from:    info return
-		label "To Address:" 	info-to: 	  info return
-		label "Amount to Send:" info-amount:  info return
-		label "Network:"		info-network: info return
-		label "Gas Price:" 		info-price:	  info return
-		label "Gas Limit:" 		info-limit:	  info return
-		label "Max TX Fee:" 	info-fee:	  info return
-		label "Nonce:"			info-nonce:	  info return
-		pad 164x10 button "Cancel" [signed-data: none unview] button "Send" :do-confirm
+	do-send: func [face [object!] event [event!]][
+		either any [token-name = "ETH" token-name = "RED"][
+			eth-ui/do-send face event
+		][
+			btc-ui/do-send face event
+		]
 	]
 
 	ui: layout compose [
 		title "RED Wallet"
 		text 50 "Device:"
-		dev-list: drop-list data key/get-valid-names key/valid-device-names 135 select 1 :do-select-dev
+		dev-list: drop-list data key/get-valid-names 135 select 1 :do-select-dev
 		btn-send: button "Send" :do-send disabled
 		token-list: drop-list data tokens 60 select 1 :do-select-token
 		net-list:   drop-list data net-names select 2 :do-select-network
