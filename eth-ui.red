@@ -77,7 +77,7 @@ eth-ui: context [
 			addr		[string!]
 			addr-list
 	][
-		addr: key/get-eth-address name bip32-path n
+		addr: key/get-eth-address name append copy bip32-path n
 		if not string? addr [
 			info-msg/text: case [
 				addr = 'browser-support-on [{Please set "Browser support" to "No"}]
@@ -202,7 +202,7 @@ eth-ui: context [
 
 		name: get-device-name
 		;-- Edge case: key may locked in this moment
-		unless string? key/get-eth-address name bip32-path 0 [
+		unless string? key/get-eth-address name append copy bip32-path 0 [
 			reset-sign-button
 			view/flags unlock-dev-dlg 'modal
 			exit

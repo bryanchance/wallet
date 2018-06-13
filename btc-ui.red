@@ -69,6 +69,103 @@ btc-ui: context [
 		get in ctx 'address-index
 	]
 
+	account-list: make map! []
+
+	get-account-balance: func [
+		name			[string!]
+		bip32-path		[block!]
+		account			[integer!]
+		return:			[map! word!]
+		/local
+			ids
+			c-list o-list len i addr txs balance total btc-res
+	][
+		clear account-list
+		ids: copy bip32-path
+		poke ids 3 (80000000h + account)
+		append ids 0
+
+		c-list: copy []
+		o-list: copy []
+
+		total: to-i256 0
+
+		;-- change address
+		ids/4: 1
+		i: 0
+		forever [
+			process-events
+			ids/5: i
+			addr: key/get-btc-address name ids
+			if block? addr [return reduce ['get-account-balance addr]]
+
+			btc-res: btc/balance-empty? network addr
+			process-events
+			if word? btc-res [return 'error]
+			if true = btc-res [
+				append c-list reduce [addr none]
+				put account-list 'change c-list
+				break
+			]
+
+			txs: btc/get-tx-hash network addr
+			process-events
+			if word? txs [return 'error]
+			if txs = [][
+				append c-list reduce [addr to-i256 0]
+				put account-list 'change c-list
+				i: i + 1
+				continue
+			]
+
+			balance: btc/get-last-balance
+			append c-list reduce [addr balance]
+			total: add256 total balance
+
+			i: i + 1
+		]
+
+		;-- origin address
+		ids/4: 0
+		i: 0
+		forever [
+			process-events
+			ids/5: i
+			addr: key/get-btc-address name ids
+			if block? addr [return reduce ['get-account-balance addr]]
+
+			btc-res: btc/balance-empty? network addr
+			process-events
+			if word? btc-res [return 'error]
+			if true = btc-res [
+				append o-list reduce [addr none]
+				put account-list 'origin o-list
+				break
+			]
+
+			txs: btc/get-tx-hash network addr
+			process-events
+			if word? txs [return 'error]
+			if txs = [][
+				append o-list reduce [addr to-i256 0]
+				put account-list 'origin o-list
+				i: i + 1
+				continue
+			]
+
+			balance: btc/get-last-balance
+			append o-list reduce [addr balance]
+			total: add256 total balance
+
+			i: i + 1
+		]
+
+		total: i256-to-float total
+		total: total / 1e8
+		put account-list 'balance total
+		account-list
+	]
+
 	show-address: func [
 		name			[string!]
 		n				[integer!]
@@ -76,8 +173,9 @@ btc-ui: context [
 		/local
 			addr		[string!]
 			addr-list
+			res
 	][
-		res: key/get-btc-address name bip32-path n 0 network
+		res: get-account-balance name bip32-path n
 		either map? res [
 			addr: pick back back tail select res 'origin 1
 		][
@@ -164,76 +262,7 @@ btc-ui: context [
 
 		notify-user
 
-		price: eth/gwei-to-wei gas-price/text			;-- gas price
-		limit: to-integer gas-limit/text				;-- gas limit
-		amount: eth/eth-to-wei amount-field/text		;-- send amount
-		nonce: eth/get-nonce network addr-from/text		;-- nonce
-		if nonce = -1 [
-			unview
-			view/flags nonce-error-dlg 'modal
-			reset-sign-button
-			exit
-		]
 
-		name: get-device-name
-		;-- Edge case: key may locked in this moment
-		unless string? key/get-eth-address name bip32-path 0 [
-			reset-sign-button
-			view/flags unlock-dev-dlg 'modal
-			exit
-		]
-
-		either token-contract [
-			tx: reduce [
-				nonce
-				price
-				limit
-				debase/base token-contract 16			;-- to address
-				eth/eth-to-wei 0						;-- value
-				rejoin [								;-- data
-					#{a9059cbb}							;-- method ID
-					debase/base eth/pad64 copy skip addr-to/text 2 16
-					eth/pad64 i256-to-bin amount
-				]
-			]
-		][
-			tx: reduce [
-				nonce
-				price
-				limit
-				debase/base skip addr-to/text 2 16		;-- to address
-				amount
-				#{}										;-- data
-			]
-		]
-
-		signed-data: key/get-eth-signed-data name bip32-path address-index tx get-chain-id
-
-		either all [
-			signed-data
-			binary? signed-data
-		][
-			dlg: confirm-sheet
-			info-from/text:		addr-from/text
-			info-to/text:		copy addr-to/text
-			info-amount/text:	rejoin [amount-field/text " " token-name]
-			info-network/text:	net-name
-			info-price/text:	rejoin [gas-price/text " Gwei"]
-			info-limit/text:	gas-limit/text
-			info-fee/text:		rejoin [
-				mold (to float! gas-price/text) * (to float! gas-limit/text) / 1e9
-				" Ether"
-			]
-			info-nonce/text: mold tx/1
-			unview
-			view/flags dlg 'modal
-		][
-			if signed-data = 'token-error [
-				unview
-				view/flags contract-data-dlg 'modal
-			]
-			reset-sign-button
-		]
 	]
 
 	do-confirm: func [face [object!] event [event!] /local result][

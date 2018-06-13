@@ -180,32 +180,19 @@ key: context [
 		]
 	]
 
-	get-eth-address: func [name [string! none!] bip32-path [block!] idx [integer!] /local bip32][
+	get-eth-address: func [name [string! none!] bip32-path [block!]][
 		if name = none [return 'NoDevice]
-		bip32: append copy bip32-path idx
 		case [
-			name = ledger/name [ledger/get-eth-address bip32]
-			name = trezor/name [trezor/get-eth-address bip32]
+			name = ledger/name [ledger/get-eth-address bip32-path]
+			name = trezor/name [trezor/get-eth-address bip32-path]
 			true ['NotSupport]
 		]
 	]
 
-	get-btc-address: func [
-		name					[string! none!]
-		bip32-path				[block!]
-		account					[integer!]
-		idx						[integer!]
-		network					[url!]
-		/local
-			bip32				[block!]
-			tmp					[block!]
-	][
+	get-btc-address: func [name [string! none!] bip32-path [block!]][
 		if name = none [return 'NoDevice]
-		tmp: copy bip32-path
-		poke tmp 3 (80000000h + account)
-		bip32: append tmp idx
 		case [
-			name = trezor/name [trezor/get-btc-addresses bip32 network]
+			name = trezor/name [trezor/get-btc-address bip32-path]
 			true ['NotSupport]
 		]
 	]
