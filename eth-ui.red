@@ -13,9 +13,15 @@ eth-ui: context [
 
 	addr-list: get in ctx 'addr-list
 
-	update-ui: get in ctx 'update-ui
+	update-ui: func [value /local f][
+		f: get in ctx 'update-ui
+		do [f value]
+	]
 
-	form-amount: get in ctx 'form-amount
+	form-amount: func [value /local f][
+		f: get in ctx 'form-amount
+		do [f value]
+	]
 
 	token-name: does [
 		get in ctx 'token-name
@@ -36,11 +42,24 @@ eth-ui: context [
 		get in ctx 'bip32-path
 	]
 
-	process-events: get in ctx 'process-events
+	process-events: has [f][
+		f: get in ctx 'process-events
+		do [f]
+	]
 
-	get-device-name: get in ctx 'get-device-name
+	get-device-name: has [f][
+		f: get in ctx 'get-device-name
+		do [f]
+	]
 
-	get-chain-id: get in ctx 'get-chain-id
+	get-chain-id: has [f][
+		f: get in ctx 'get-chain-id
+		do [f]
+	]
+
+	address-index: does [
+		get in ctx 'address-index
+	]
 
 	show-address: func [
 		name			[string!]
@@ -83,7 +102,7 @@ eth-ui: context [
 				][
 					eth/get-balance network addr
 				]
-				replace address "      <loading>" do [form-amount balance]
+				replace address "      <loading>" form-amount balance
 				process-events
 			]
 		][
