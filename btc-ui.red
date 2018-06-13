@@ -7,11 +7,19 @@ Red [
 ]
 
 btc-ui: context [
-	ctx: wallet
+	ctx: none
 
-	signed-data: get in ctx 'signed-data
+	init: func [new-ctx][
+		ctx: new-ctx
+	]
 
-	addr-list: get in ctx 'addr-list
+	get-signed-data: does [
+		get in ctx 'signed-data
+	]
+
+	get-addr-list: does [
+		get in ctx 'addr-list
+	]
 
 	update-ui: func [value /local f][
 		f: get in ctx 'update-ui
@@ -67,6 +75,7 @@ btc-ui: context [
 		addresses		[block!]
 		/local
 			addr		[string!]
+			addr-list
 	][
 		res: key/get-btc-address name bip32-path n 0 network
 		either map? res [
@@ -87,6 +96,7 @@ btc-ui: context [
 			return false
 		]
 		append addresses rejoin [addr "      " form-amount select res 'balance]
+		addr-list: get-addr-list
 		addr-list/data: addresses
 		return true
 	]
@@ -98,7 +108,8 @@ btc-ui: context [
 		btn-sign/text: "Sign"
 	]
 
-	do-send: func [face [object!] event [event!] /local from dlg][
+	do-send: func [face [object!] event [event!] /local from dlg addr-list][
+		addr-list: get-addr-list
 		if addr-list/data [
 			if addr-list/selected = -1 [addr-list/selected: 1]
 			dlg: send-dialog
@@ -114,7 +125,7 @@ btc-ui: context [
 		]
 	]
 
-	check-data: func [/local addr amount balance from][
+	check-data: func [/local addr amount balance from addr-list][
 		addr: trim any [addr-to/text ""]
 		unless all [
 			addr/1 = #"0"
@@ -127,6 +138,7 @@ btc-ui: context [
 		]
 		amount: attempt [to float! amount-field/text]
 		either all [amount amount > 0.0][
+			addr-list: get-addr-list
 			from: pick addr-list/data addr-list/selected
 			balance: to float! find/tail from space
 			if amount > balance [

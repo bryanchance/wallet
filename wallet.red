@@ -22,6 +22,9 @@ Red [
 #include %libs/HID/hidapi.red
 #include %keys/keys.red
 
+#include %eth-ui.red
+#include %btc-ui.red
+
 #system [
 	with gui [#include %libs/usb-monitor.reds]
 ]
@@ -487,6 +490,8 @@ wallet: context [
 	]
 
 	run: does [
+		eth-ui/init wallet
+		btc-ui/init wallet
 		min-size: ui/extra: ui/size
 		setup-actors
 		monitor-devices
@@ -494,8 +499,5 @@ wallet: context [
 		view/flags ui 'resize
 	]
 ]
-
-#include %eth-ui.red
-#include %btc-ui.red
 
 wallet/run

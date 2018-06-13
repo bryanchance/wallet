@@ -7,11 +7,19 @@ Red [
 ]
 
 eth-ui: context [
-	ctx: wallet
+	ctx: none
 
-	signed-data: get in ctx 'signed-data
+	init: func [new-ctx][
+		ctx: new-ctx
+	]
 
-	addr-list: get in ctx 'addr-list
+	get-signed-data: does [
+		get in ctx 'signed-data
+	]
+
+	get-addr-list: does [
+		get in ctx 'addr-list
+	]
 
 	update-ui: func [value /local f][
 		f: get in ctx 'update-ui
@@ -67,6 +75,7 @@ eth-ui: context [
 		addresses		[block!]
 		/local
 			addr		[string!]
+			addr-list
 	][
 		addr: key/get-eth-address name bip32-path n
 		if not string? addr [
@@ -82,6 +91,7 @@ eth-ui: context [
 			return false
 		]
 		append addresses rejoin [addr "      <loading>"]
+		addr-list: get-addr-list
 		addr-list/data: addresses
 		return true
 	]
@@ -90,11 +100,13 @@ eth-ui: context [
 		/local
 			address		[string!]
 			addr		[string!]
+			addr-list
 			balance
 	][
 		info-msg/text: "Please wait while loading balances..."
 		update-ui no
 		either error? try [
+			addr-list: get-addr-list
 			foreach address addr-list/data [
 				addr: copy/part address find address space
 				balance: either token-contract [
@@ -119,7 +131,8 @@ eth-ui: context [
 		btn-sign/text: "Sign"
 	]
 
-	do-send: func [face [object!] event [event!] /local from dlg][
+	do-send: func [face [object!] event [event!] /local from dlg addr-list][
+		addr-list: get-addr-list
 		if addr-list/data [
 			if addr-list/selected = -1 [addr-list/selected: 1]
 			dlg: send-dialog
@@ -135,7 +148,7 @@ eth-ui: context [
 		]
 	]
 
-	check-data: func [/local addr amount balance from][
+	check-data: func [/local addr amount balance from addr-list][
 		addr: trim any [addr-to/text ""]
 		unless all [
 			addr/1 = #"0"
@@ -148,6 +161,7 @@ eth-ui: context [
 		]
 		amount: attempt [to float! amount-field/text]
 		either all [amount amount > 0.0][
+			addr-list: get-addr-list
 			from: pick addr-list/data addr-list/selected
 			balance: to float! find/tail from space
 			if amount > balance [
