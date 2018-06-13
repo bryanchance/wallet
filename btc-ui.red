@@ -128,10 +128,8 @@ btc-ui: context [
 	check-data: func [/local addr amount balance from addr-list][
 		addr: trim any [addr-to/text ""]
 		unless all [
-			addr/1 = #"0"
-			addr/2 = #"x"
-			26 < length? addr
-			34 > length? addr
+			26 <= length? addr
+			34 >= length? addr
 		][
 			addr-to/text: copy "Invalid address"
 			return no
