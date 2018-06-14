@@ -200,6 +200,7 @@ wallet: context [
 			info-msg/text: "Please wait while loading addresses..."
 
 			addresses: clear []
+			clear btc-ui/addr-balances
 			if next [page: page + 1]
 			if prev [page: page - 1]
 			n: page * addr-per-page

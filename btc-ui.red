@@ -69,7 +69,8 @@ btc-ui: context [
 		get in ctx 'address-index
 	]
 
-	account-list: make map! []
+	account-info: make map! []
+	addr-balances: []
 
 	get-account-balance: func [
 		name			[string!]
@@ -80,7 +81,7 @@ btc-ui: context [
 			ids
 			c-list o-list len i addr txs balance total btc-res
 	][
-		clear account-list
+		clear account-info
 		ids: copy bip32-path
 		poke ids 3 (80000000h + account)
 		append ids 0
@@ -104,7 +105,7 @@ btc-ui: context [
 			if word? btc-res [return 'error]
 			if true = btc-res [
 				append c-list reduce [addr none]
-				put account-list 'change c-list
+				put account-info 'change c-list
 				break
 			]
 
@@ -113,7 +114,7 @@ btc-ui: context [
 			if word? txs [return 'error]
 			if txs = [][
 				append c-list reduce [addr to-i256 0]
-				put account-list 'change c-list
+				put account-info 'change c-list
 				i: i + 1
 				continue
 			]
@@ -139,7 +140,7 @@ btc-ui: context [
 			if word? btc-res [return 'error]
 			if true = btc-res [
 				append o-list reduce [addr none]
-				put account-list 'origin o-list
+				put account-info 'origin o-list
 				break
 			]
 
@@ -148,7 +149,7 @@ btc-ui: context [
 			if word? txs [return 'error]
 			if txs = [][
 				append o-list reduce [addr to-i256 0]
-				put account-list 'origin o-list
+				put account-info 'origin o-list
 				i: i + 1
 				continue
 			]
@@ -162,8 +163,8 @@ btc-ui: context [
 
 		total: i256-to-float total
 		total: total / 1e8
-		put account-list 'balance total
-		account-list
+		put account-info 'balance total
+		account-info
 	]
 
 	show-address: func [
@@ -193,6 +194,7 @@ btc-ui: context [
 			update-ui yes
 			return false
 		]
+		append addr-balances account-info
 		append addresses rejoin [addr "      " form-amount select res 'balance]
 		addr-list: get-addr-list
 		addr-list/data: addresses
