@@ -69,23 +69,22 @@ btc-ui: context [
 		get in ctx 'address-index
 	]
 
-	account-info: make map! []
 	addr-balances: []
 
 	get-account-balance: func [
 		name			[string!]
 		bip32-path		[block!]
 		account			[integer!]
-		return:			[map! word!]
+		return:			[map! string!]
 		/local
 			ids
-			c-list o-list len i addr txs balance total btc-res
+			list c-list o-list len i addr utxs balance total
 	][
-		clear account-info
 		ids: copy bip32-path
 		poke ids 3 (80000000h + account)
 		append ids 0
 
+		list: make map! []
 		c-list: copy []
 		o-list: copy []
 
@@ -98,29 +97,27 @@ btc-ui: context [
 			process-events
 			ids/5: i
 			addr: key/get-btc-address name ids
-			if block? addr [return reduce ['get-account-balance addr]]
+			if block? addr [return rejoin ["get-account-balance error: " form addr]]
 
-			btc-res: btc/balance-empty? network addr
+			balance: btc/get-balance network addr
 			process-events
-			if word? btc-res [return 'error]
-			if true = btc-res [
-				append c-list reduce [addr none]
-				put account-info 'change c-list
+			if string? balance [return balance]
+			if balance = none [
+				append c-list reduce [addr none none]
+				put list 'change c-list
 				break
 			]
 
-			txs: btc/get-tx-hash network addr
+			utxs: btc/get-utxs network addr
 			process-events
-			if word? txs [return 'error]
-			if txs = [][
-				append c-list reduce [addr to-i256 0]
-				put account-info 'change c-list
+			if string? utxs [return utxs]
+			if utxs = none [
+				append c-list reduce [addr none to-i256 0]
 				i: i + 1
 				continue
 			]
 
-			balance: btc/get-last-balance
-			append c-list reduce [addr balance]
+			append c-list reduce [addr utxs balance]
 			total: add256 total balance
 
 			i: i + 1
@@ -133,29 +130,27 @@ btc-ui: context [
 			process-events
 			ids/5: i
 			addr: key/get-btc-address name ids
-			if block? addr [return reduce ['get-account-balance addr]]
+			if block? addr [return rejoin ["get-account-balance error: " form addr]]
 
-			btc-res: btc/balance-empty? network addr
+			balance: btc/get-balance network addr
 			process-events
-			if word? btc-res [return 'error]
-			if true = btc-res [
-				append o-list reduce [addr none]
-				put account-info 'origin o-list
+			if string? balance [return balance]
+			if balance = none [
+				append o-list reduce [addr none none]
+				put list 'origin o-list
 				break
 			]
 
-			txs: btc/get-tx-hash network addr
+			utxs: btc/get-utxs network addr
 			process-events
-			if word? txs [return 'error]
-			if txs = [][
-				append o-list reduce [addr to-i256 0]
-				put account-info 'origin o-list
+			if string? utxs [return utxs]
+			if utxs = none [
+				append o-list reduce [addr none to-i256 0]
 				i: i + 1
 				continue
 			]
 
-			balance: btc/get-last-balance
-			append o-list reduce [addr balance]
+			append o-list reduce [addr utxs balance]
 			total: add256 total balance
 
 			i: i + 1
@@ -163,8 +158,8 @@ btc-ui: context [
 
 		total: i256-to-float total
 		total: total / 1e8
-		put account-info 'balance total
-		account-info
+		put list 'balance total
+		list
 	]
 
 	show-address: func [
@@ -178,9 +173,9 @@ btc-ui: context [
 	][
 		res: get-account-balance name bip32-path n
 		either map? res [
-			addr: pick back back tail select res 'origin 1
+			addr: pick at select res 'origin -3 1
 		][
-			addr: res
+			addr: 'error
 		]
 		if not string? addr [
 			info-msg/text: case [
@@ -189,12 +184,13 @@ btc-ui: context [
 					usb-device/rate: 0:0:3
 					"Please unlock your key"
 				]
-				true [{Get Address Failed!}]
+				addr = 'error [rejoin ["Get Address Failed: " res]]
+				true ["Get Address Failed!"]
 			]
 			update-ui yes
 			return false
 		]
-		append addr-balances account-info
+		append addr-balances res
 		append addresses rejoin [addr "      " form-amount select res 'balance]
 		addr-list: get-addr-list
 		addr-list/data: addresses
@@ -216,7 +212,6 @@ btc-ui: context [
 			network-to/text: net-name
 			from: pick addr-list/data addr-list/selected
 			addr-from/text: copy/part from find from space
-			fee/text: "229"
 			reset-sign-button
 			label-unit/text: "BTC"    ;token-name
 			clear addr-to/text
@@ -225,7 +220,7 @@ btc-ui: context [
 		]
 	]
 
-	check-data: func [/local addr amount balance from addr-list][
+	check-data: func [/local addr amount balance from addr-list fee utx][
 		addr: trim any [addr-to/text ""]
 		unless all [
 			26 <= length? addr
@@ -239,7 +234,9 @@ btc-ui: context [
 			addr-list: get-addr-list
 			from: pick addr-list/data addr-list/selected
 			balance: to float! find/tail from space
-			if amount > balance [
+			fee: attempt [to float! tx-fee/text]
+			fee: fee / 1e8
+			if (amount + fee) > balance [
 				amount-field/text: copy "Insufficient Balance"
 				return no
 			]
@@ -247,8 +244,116 @@ btc-ui: context [
 			amount-field/text: copy "Invalid amount"
 			return no
 		]
+		utx: calc-balance pick addr-balances addr-list/selected amount fee
+		if utx = none [
+			amount-field/text: copy "calculate balance failed"
+			return no
+		]
+
 		yes
 	]
+
+	calc-balance: func [
+		account				[map!]
+		amount				[float!]
+		fee					[float!]
+		/local new-amount new-fee utx
+	][
+		probe account
+		new-amount: to-i256 (amount * 1e8)
+		new-fee: to-i256 (fee * 1e8)
+		utx: calc-balance-by-one-addr account new-amount new-fee
+		if utx <> none [
+			print "found"
+		]
+		probe utx
+	]
+
+	calc-balance-by-one-addr: func [
+		account				[map!]
+		amount				[vector!]
+		fee					[vector!]
+		return:				[none! block!]
+		/local utx total len len2 i j addr txs balance txid tx-value
+	][
+		utx: copy []
+		total: add256 amount fee
+
+		len: length? account/change
+		i: 1
+		until [
+			addr: account/change/:i
+			i: i + 1
+			txs: account/change/:i
+			i: i + 1
+			balance: account/change/:i
+			if balance = none [break]
+
+			if txs = none [
+				i: i + 1
+				if i < len [continue]
+			]
+
+			len2: length? txs
+			j: 1
+			until [
+				txid: txs/:j
+				j: j + 1
+				tx-value: txs/:j
+				if lesser-or-equal256? total tx-value [
+					append utx reduce [addr txid tx-value]
+					return utx
+				]
+				j: j + 1
+				j >= len2
+			]
+
+			if j <= len2 [break]
+
+			i:  i + 1
+			i >= len
+		]
+
+		len: length? account/origin
+		print len
+		probe account/origin
+		i: 1
+		until [
+			addr: account/origin/:i
+			i: i + 1
+			txs: account/origin/:i
+			i: i + 1
+			balance: account/origin/:i
+			if balance = none [break]
+
+			if txs = none [
+				i: i + 1
+				if i < len [continue]
+			]
+
+			len2: length? txs
+			j: 1
+			until [
+				txid: txs/:j
+				j: j + 1
+				tx-value: txs/:j
+				if lesser-or-equal256? total tx-value [
+					append utx reduce [addr txid tx-value]
+					return utx
+				]
+				j: j + 1
+				j >= len2
+			]
+
+			if j <= len2 [break]
+
+			i:  i + 1
+			i >= len
+		]
+
+		none
+	]
+
 
 	notify-user: does [
 		btn-sign/enabled?: no
@@ -289,7 +394,7 @@ btc-ui: context [
 		label "From Address:"	addr-from:	  lbl return
 		label "To Address:"		addr-to:	  field return
 		label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
-		label "Fee:"			fee:		  field 120 "229" return
+		label "Fee:"			tx-fee:		  field 120 "229" return
 		pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
 	]]
 
