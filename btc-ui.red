@@ -104,6 +104,7 @@ btc-ui: context [
 			if string? balance [return balance]
 			if balance = none [
 				append c-list reduce [addr none none]
+				append/only c-list copy ids
 				put list 'change c-list
 				break
 			]
@@ -113,11 +114,13 @@ btc-ui: context [
 			if string? utxs [return utxs]
 			if utxs = none [
 				append c-list reduce [addr none to-i256 0]
+				append/only c-list copy ids
 				i: i + 1
 				continue
 			]
 
 			append c-list reduce [addr utxs balance]
+			append/only c-list copy ids
 			total: add256 total balance
 
 			i: i + 1
@@ -137,6 +140,7 @@ btc-ui: context [
 			if string? balance [return balance]
 			if balance = none [
 				append o-list reduce [addr none none]
+				append/only o-list copy ids
 				put list 'origin o-list
 				break
 			]
@@ -146,11 +150,13 @@ btc-ui: context [
 			if string? utxs [return utxs]
 			if utxs = none [
 				append o-list reduce [addr none to-i256 0]
+				append/only o-list copy ids
 				i: i + 1
 				continue
 			]
 
 			append o-list reduce [addr utxs balance]
+			append/only o-list copy ids
 			total: add256 total balance
 
 			i: i + 1
@@ -173,7 +179,7 @@ btc-ui: context [
 	][
 		res: get-account-balance name bip32-path n
 		either map? res [
-			addr: pick at select res 'origin -3 1
+			addr: pick at select res 'origin -4 1
 		][
 			addr: 'error
 		]
@@ -259,7 +265,6 @@ btc-ui: context [
 		fee					[float!]
 		/local new-amount new-fee utx
 	][
-		probe account
 		new-amount: to-i256 (amount * 1e8)
 		new-fee: to-i256 (fee * 1e8)
 		utx: calc-balance-by-one-addr account new-amount new-fee
@@ -267,6 +272,7 @@ btc-ui: context [
 			print "found"
 		]
 		probe utx
+		utx
 	]
 
 	calc-balance-by-one-addr: func [
@@ -274,7 +280,7 @@ btc-ui: context [
 		amount				[vector!]
 		fee					[vector!]
 		return:				[none! block!]
-		/local utx total len len2 i j addr txs balance txid tx-value
+		/local utx total len len2 i j addr txs balance ids txid tx-value
 	][
 		utx: copy []
 		total: add256 amount fee
@@ -287,6 +293,8 @@ btc-ui: context [
 			txs: account/change/:i
 			i: i + 1
 			balance: account/change/:i
+			i: i + 1
+			ids: account/change/:i
 			if balance = none [break]
 
 			if txs = none [
@@ -302,6 +310,7 @@ btc-ui: context [
 				tx-value: txs/:j
 				if lesser-or-equal256? total tx-value [
 					append utx reduce [addr txid tx-value]
+					append/only utx ids
 					return utx
 				]
 				j: j + 1
@@ -315,8 +324,6 @@ btc-ui: context [
 		]
 
 		len: length? account/origin
-		print len
-		probe account/origin
 		i: 1
 		until [
 			addr: account/origin/:i
@@ -324,6 +331,8 @@ btc-ui: context [
 			txs: account/origin/:i
 			i: i + 1
 			balance: account/origin/:i
+			i: i + 1
+			ids: account/origin/:i
 			if balance = none [break]
 
 			if txs = none [
@@ -339,6 +348,7 @@ btc-ui: context [
 				tx-value: txs/:j
 				if lesser-or-equal256? total tx-value [
 					append utx reduce [addr txid tx-value]
+					append/only utx ids
 					return utx
 				]
 				j: j + 1
