@@ -58,12 +58,12 @@ wallet: context [
 			"Rinkeby"		https://eth.red-lang.org/rinkeby				https://rinkeby.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				4					"43df37f66b8b9fececcc3031c9c1d2511db17c42"
 		]
 		"BTC" [
-			"mainnet"		https://api.blockcypher.com/v1/btc/main			https://live.blockcypher.com/btc/tx					[(segwit-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
-			"testnet"		https://api.blockcypher.com/v1/btc/test3		https://live.blockcypher.com/btc-testnet/tx			[(segwit-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
+			"BTC.COM"		https://chain.api.btc.com/v3					https://blockchain.info/tx/							[(segwit-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
+			"testnet"		https://tchain.api.btc.com/v3					https://testnet.blockchain.info/tx/					[(segwit-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
 		]
 		"BTC-Legacy" [
-			"mainnet"		https://api.blockcypher.com/v1/btc/main			https://live.blockcypher.com/btc/tx					[(default-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
-			"testnet"		https://api.blockcypher.com/v1/btc/test3		https://live.blockcypher.com/btc-testnet/tx			[(default-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
+			"BTC.COM"		https://chain.api.btc.com/v3					https://blockchain.info/tx/							[(default-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
+			"testnet"		https://tchain.api.btc.com/v3					https://testnet.blockchain.info/tx/					[(default-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
 		]
 	]
 

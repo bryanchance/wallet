@@ -10,51 +10,48 @@ Red [
 
 btc: context [
 
-	last-txs: copy []
-
 	get-url: func [network [url!] params [string!] /local res][
 		res: json/decode read append copy network params
 		res
 	]
 
-	get-tx-hash: func [network [url!] address [string!] /local data txs tx hash value][
-		data: get-url network append copy "/addrs/" reduce [address "?unspentOnly=true"]
-		if none <> select data 'error [return 'error]
-		txs: select data 'txrefs
-		clear last-txs
-		if any [txs = [] txs = none] [return last-txs]
-		foreach tx txs [
-			hash: select tx 'tx_hash
-			value: select tx 'value
-			append last-txs reduce [hash value]
+	get-balance: func [network [url!] address [string!] return: [none! vector! string!]
+		/local resp err-no err-msg data balance
+	][
+		resp: get-url network append copy "/address/" address
+		err-no: select resp 'err_no
+		if 0 <> err-no [
+			err-msg: select resp 'err_msg
+			return rejoin ["get-address error! id: " form err-no " msg: " err-msg]
 		]
-		last-txs
+		data: select resp 'data
+		if data = none [return none]
+		balance: select data 'balance
+		if balance = none [return none]
+		to-i256 balance
 	]
 
-	get-last-balance: func [/local values value ret][
-		ret: to-i256 0
-		values: extract/index last-txs 2 2
-		foreach value values [
-			ret: add256 ret to-i256 value
+	get-utxs: func [network [url!] address [string!] return: [none! block! string!]
+		/local resp err-no err-msg data list utxs item hash value
+	][
+		resp: get-url network append copy "/address/" reduce [address "/unspent"]
+		err-no: select resp 'err_no
+		if 0 <> err-no [
+			err-msg: select resp 'err_msg
+			return rejoin ["get-utx error! id: " form err-no " msg: " err-msg]
 		]
-		ret
-	]
-
-	get-balances: func [network [url!] addresses [block!] /local ret address][
-		ret: to-i256 0
-		foreach address addresses [
-			if word? get-tx-hash network address [return 'error]
-			ret: add256 ret get-last-balance
+		data: select resp 'data
+		if data = none [return none]
+		list: select data 'list
+		if list = none [return none]
+		if list = [] [return none]
+		utxs: copy []
+		foreach item list [
+			hash: select item 'tx_hash
+			value: select item 'value
+			append utxs reduce [hash to-i256 value]
 		]
-		ret
-	]
-
-	balance-empty?: func [network [url!] address [string!] /local data txs][
-		data: get-url network append copy "/addrs/" address
-		if none <> select data 'error [return 'error]
-		txs: select data 'txrefs
-		if any [txs = [] txs = none] [return true]
-		false
+		utxs
 	]
 
 ]
