@@ -488,12 +488,12 @@ proto-encode: context [
 				len: length? varint-buffer
 				if len > 8 [append/only error reduce ['decode-type 'Int64Error varint-buffer] return error]
 				either none = ovalue [
-					put value name varint-buffer
+					put value name copy varint-buffer
 				][
 					either block! = type? ovalue [
-						put value name append ovalue varint-buffer
+						put value name append ovalue copy varint-buffer
 					][
-						put value name reduce [ovalue varint-buffer]
+						put value name reduce [ovalue copy varint-buffer]
 					]
 				]
 				ret: ret + vlen
