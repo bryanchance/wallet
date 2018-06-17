@@ -80,6 +80,19 @@ Red []
 		len: proto-encode/encode trezor-message/messages 'Features #(bootloader_mode: #[false]) x
 		y: #{2800}
 		--assert y = x
+	--test-- "encode-13"
+		clear x
+		req: #(
+				tx: #(
+					bin_outputs: [#(
+						amount: #{00068E7780}
+						script_pubkey: #{76A9145AC472435BF2B7B0EB50D4B12B5FE6D830A0F0FC88AC}
+					)]
+				)
+			)
+		len: proto-encode/encode trezor-message/messages 'TxAck req x
+		y: #{0a 22  1a 20 08 80  ef b9 34 12  19 76 a9 14  5a c4 72 43  5b f2 b7 b0 eb 50 d4 b1  2b 5f e6 d8  30 a0 f0 fc  88 ac}
+		--assert y = x
 comment { ;-- latest proto don't support coins in Features
 	--test-- "encode-13"
 		clear x
@@ -186,6 +199,20 @@ comment { ;-- latest proto don't support coins in Features
 		append bin #{2800}
 		len: proto-encode/decode trezor-message/messages 'Features x bin
 		y: #(bootloader_mode: #[false])
+		--assert y = x
+	--test-- "decode-13"
+		clear bin
+		x: #()
+		append bin #{0a 22  1a 20 08 80  ef b9 34 12  19 76 a9 14  5a c4 72 43  5b f2 b7 b0 eb 50 d4 b1  2b 5f e6 d8  30 a0 f0 fc  88 ac}
+		len: proto-encode/decode trezor-message/messages 'TxAck x bin
+		y: #(
+				tx: #(
+					bin_outputs: #(
+						amount: #{00068E7780}
+						script_pubkey: #{76A9145AC472435BF2B7B0EB50D4B12B5FE6D830A0F0FC88AC}
+					)
+				)
+			)
 		--assert y = x
 comment { ;-- latest proto don't support coins in Features
 	--test-- "decode-13"

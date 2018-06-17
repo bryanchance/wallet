@@ -11,7 +11,7 @@ Red [
 proto-encode: context [
 	
 	msg-ctx: none
-	varint-buffer: make binary! 8
+	varint-buffer: make binary! 16
 	error: make block! 10
 
 	get-wire-type-id: func [
@@ -51,6 +51,65 @@ proto-encode: context [
 				little: little or 80h
 				append varint-buffer to integer! little
 				rest: rest >>> 7
+			]
+		]
+	]
+
+	encode-varint64: func [
+		bin				[binary!]
+		/local
+			rest		[integer!]
+			little		[integer!]
+			binl		[binary!]
+			binh		[binary!]
+			intl		[integer!]
+			inth		[integer!]
+			rest2		[integer!]
+			rest3		[integer!]
+			i			[integeR!]
+			last?		[logic!]
+	][
+		clear varint-buffer
+
+		binl: back back back back tail bin
+		binh: copy/part bin binl
+		intl: to integer! binl
+		inth: to integer! binh
+		rest2: (inth << 8) or (intl >>> 28)
+		rest3: inth >> 24
+
+		either all [rest2 = 0 rest3 = 0][last?: true][last?: false]
+
+		i: 0
+		rest: intl and 0FFFFFFFh
+		forever [
+			either all [
+				last?
+				(rest and FFFFFF80h) = 0 rest < 128] [
+				append varint-buffer to integer! rest
+				exit
+			][
+				little: rest and 7Fh
+				little: little or 80h
+				append varint-buffer to integer! little
+				rest: rest >>> 7
+			]
+			i: i + 1
+			if i = 4 [
+				either all [rest2 = 0 rest3 = 0][
+					rest: 0
+				][
+					rest: rest2
+				]
+				either rest3 = 0 [last?: true][last?: false]
+			]
+			if i = 8 [
+				either rest3 = 0 [
+					rest: 0
+				][
+					rest: rest3
+				]
+				last?: true
 			]
 		]
 	]
@@ -106,6 +165,36 @@ proto-encode: context [
 		ret
 	]
 
+	append-int64: func [
+		value
+		repeated-buf	[binary!]
+		data			[binary!]
+		return:			[integer!]
+		/local
+			ret			[integer!]
+			len			[integer!]
+			v-type
+	][
+		v-type: type? value
+		if binary! <> v-type [append/only error reduce ['append-int64 'NotBinary value] return error]
+
+		ret: 0
+
+		append data repeated-buf
+		ret: ret + length? repeated-buf
+
+		len: length? value
+		either len > 4 [
+			encode-varint64 value
+		][
+			encode-varint to integer! value
+		]
+
+		append data varint-buffer
+		ret: ret + length? varint-buffer
+		ret
+	]
+
 	append-logic: func [
 		value
 		repeated-buf	[binary!]
@@ -134,7 +223,7 @@ proto-encode: context [
 		value
 		repeated-buf	[binary!]
 		data			[binary!]
-		return:			[integer!]
+		return:			[integer! block!]
 		/local
 			ret			[integer!]
 			len			[integer! block!]
@@ -204,7 +293,21 @@ proto-encode: context [
 				]
 				return ret
 			]
-			int32 int64 uint32 uint64 enum [
+			int64 uint64 [
+				either block! = v-type [
+					foreach sub value [
+						len: append-int64 sub rep-buf data
+						if block! = type? len [append/only error reduce ['encode-type 'Integer64RepeatedError sub] return error]
+						ret: ret + len
+					]
+				][
+					len: append-int64 value rep-buf data
+					if block! = type? len [append/only error reduce ['encode-type 'Integer64Error value] return error]
+					ret: ret + len
+				]
+				return ret
+			]
+			int32 uint32 enum [
 				either block! = v-type [
 					foreach sub value [
 						len: append-integer sub rep-buf data
