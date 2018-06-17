@@ -207,10 +207,10 @@ comment { ;-- latest proto don't support coins in Features
 		len: proto-encode/decode trezor-message/messages 'TxAck x bin
 		y: #(
 				tx: #(
-					bin_outputs: #(
+					bin_outputs: [#(
 						amount: #{00068E7780}
 						script_pubkey: #{76A9145AC472435BF2B7B0EB50D4B12B5FE6D830A0F0FC88AC}
-					)
+					)]
 				)
 			)
 		--assert y = x

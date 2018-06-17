@@ -540,6 +540,7 @@ proto-encode: context [
 	]
 
 	decode-type: func [
+		repeated?			[logic!]
 		wire-type			[word!]
 		name				[word!]
 		value				[map!]
@@ -548,7 +549,7 @@ proto-encode: context [
 		/local
 			ret				[integer!]
 			len				[integer!]
-			varint			[integer!]
+			varint			[integer! logic!]
 			vlen			[integer!]
 			nres			[map!]
 			sub-ctx			[block!]
@@ -573,14 +574,14 @@ proto-encode: context [
 				if wire-type = 'string [
 					nvalue: to string! nvalue
 				]
-				either none = ovalue [
-					put value name nvalue
-				][
+				either repeated? [
 					either block! = type? ovalue [
 						put value name append ovalue nvalue
 					][
-						put value name reduce [ovalue nvalue]
+						put value name reduce [nvalue]
 					]
+				][
+					put value name nvalue
 				]
 				ret: ret + vlen + varint
 				return ret
@@ -590,14 +591,14 @@ proto-encode: context [
 				if block! = type? vlen [append/only error reduce ['decode-type 'Int64Error] return error]
 				len: length? varint-buffer
 				if len > 8 [append/only error reduce ['decode-type 'Int64Error varint-buffer] return error]
-				either none = ovalue [
-					put value name copy varint-buffer
-				][
+				either repeated? [
 					either block! = type? ovalue [
 						put value name append ovalue copy varint-buffer
 					][
-						put value name reduce [ovalue copy varint-buffer]
+						put value name reduce [copy varint-buffer]
 					]
+				][
+					put value name copy varint-buffer
 				]
 				ret: ret + vlen
 				return ret
@@ -607,14 +608,14 @@ proto-encode: context [
 				if block! = type? vlen [append/only error reduce ['decode-type 'Int32Error] return error]
 				len: length? varint-buffer
 				varint: to integer! back back back back tail varint-buffer
-				either none = ovalue [
-					put value name varint
-				][
+				either repeated? [
 					either block! = type? ovalue [
 						put value name append ovalue varint
 					][
-						put value name reduce [ovalue varint]
+						put value name reduce [varint]
 					]
+				][
+					put value name varint
 				]
 				ret: ret + vlen
 				return ret
@@ -629,14 +630,14 @@ proto-encode: context [
 				][
 					varint: true
 				]
-				either none = ovalue [
-					put value name varint
-				][
+				either repeated? [
 					either block! = type? ovalue [
 						put value name append ovalue varint
 					][
-						put value name reduce [ovalue varint]
+						put value name reduce [varint]
 					]
+				][
+					put value name varint
 				]
 				ret: ret + vlen
 				return ret
@@ -659,14 +660,14 @@ proto-encode: context [
 			len: decode true wire-type nres nvalue
 			if len < 0 [append/only error reduce ['decode-type 'EmbeddedError 'CascadeError len] return error]
 			if len <> varint [append/only error reduce ['decode-type 'EmbeddedError 'CascadeError len varint] return error]
-			either none = ovalue [
-				put value name nres
-			][
+			either repeated? [
 				either block! = type? ovalue [
 					put value name append ovalue nres
 				][
-					put value name reduce [ovalue nres]
+					put value name reduce [nres]
 				]
+			][
+				put value name nres
 			]
 			ret: ret + vlen + varint
 			return ret
@@ -684,14 +685,14 @@ proto-encode: context [
 					if varint = sub-msg/1 [nvalue: sub-msg/2 break]
 				]
 				if nvalue = none [append/only error reduce ['decode-type 'EnumError 'NotExist varint] return error]
-				either none = ovalue [
-					put value name nvalue
-				][
+				either repeated? [
 					either block! = type? ovalue [
 						put value name append ovalue nvalue
 					][
-						put value name reduce [ovalue nvalue]
+						put value name reduce [nvalue]
 					]
+				][
+					put value name nvalue
 				]
 				ret: ret + vlen
 				return ret
@@ -714,6 +715,7 @@ proto-encode: context [
 			ret				[integer!]
 			len				[integer! block!]
 			pos				[binary!]
+			repeated?		[logic!]
 	][
 		wire-type-id: varint and 7
 		field-number: varint >>> 3
@@ -722,7 +724,8 @@ proto-encode: context [
 		foreach sub msgs [
 			wire-type-id2: get-wire-type-id sub/3
 			if all [sub/1 = field-number wire-type-id = wire-type-id2][
-				len: decode-type sub/3 sub/4 value pos
+				repeated?: sub/2 = 'repeated
+				len: decode-type repeated? sub/3 sub/4 value pos
 				if block! = type? len [append/only error reduce ['decode-each 'Failure pos/1] return error]
 				pos: skip data len
 				ret: ret + len
