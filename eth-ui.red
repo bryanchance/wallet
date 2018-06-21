@@ -69,6 +69,22 @@ eth-ui: context [
 		get in ctx 'address-index
 	]
 
+	unlock-dev-dlg: does [
+		get in ctx 'unlock-dev-dlg
+	]
+
+	contract-data-dlg: does [
+		get in ctx 'contract-data-dlg
+	]
+
+	nonce-error-dlg: does [
+		get in ctx 'nonce-error-dlg
+	]
+
+	tx-error-dlg: does [
+		get in ctx 'tx-error-dlg
+	]
+
 	show-address: func [
 		name			[string!]
 		n				[integer!]

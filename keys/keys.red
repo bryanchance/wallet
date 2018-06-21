@@ -180,6 +180,15 @@ key: context [
 		]
 	]
 
+	set-init: func [name [string! none!]][
+		if name = none [return 'NoDevice]
+		case [
+			name = ledger/name [ledger/set-init]
+			name = trezor/name [trezor/set-init]
+			true ['NotSupport]
+		]
+	]
+
 	get-eth-address: func [name [string! none!] bip32-path [block!]][
 		if name = none [return 'NoDevice]
 		case [
@@ -193,15 +202,6 @@ key: context [
 		if name = none [return 'NoDevice]
 		case [
 			name = trezor/name [trezor/get-btc-address bip32-path]
-			true ['NotSupport]
-		]
-	]
-
-	set-init: func [name [string! none!]][
-		if name = none [return 'NoDevice]
-		case [
-			name = ledger/name [ledger/set-init]
-			name = trezor/name [trezor/set-init]
 			true ['NotSupport]
 		]
 	]
@@ -220,6 +220,19 @@ key: context [
 		case [
 			name = ledger/name [ledger/get-eth-signed-data bip32 tx]
 			name = trezor/name [trezor/get-eth-signed-data bip32 tx chain-id]
+			true ['NotSupport]
+		]
+	]
+
+	get-btc-signed-data: func [
+		name					[string! none!]
+		tx						[map!]
+		/local
+			bip32				[block!]
+	][
+		if name = none [return 'NoDevice]
+		case [
+			name = trezor/name [trezor/get-btc-signed-data tx]
 			true ['NotSupport]
 		]
 	]

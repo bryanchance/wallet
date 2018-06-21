@@ -26,6 +26,7 @@ trezor: context [
 	pin-req: none
 	pin-ret: -1
 	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/TrezorError
+	serialized_tx: make binary! 500
 
 	filter?: func [
 		_id				[integer!]
@@ -194,6 +195,12 @@ trezor: context [
 		rlp/encode tx
 	]
 
+		get-btc-signed-data: func [
+			tx			[map!]
+		][
+			SignTxSequence tx
+		]
+
 	;===================
 	;-- commands
 	;===================
@@ -267,6 +274,244 @@ trezor: context [
 		len
 	]
 
+	SignTxSequence: func [
+		tx				[map!]
+		return:			[block! binary!]
+		/local
+			inputs outputs ids
+			outputs_count inputs_count coin_name lock_time
+			len res-in req sub-req
+			request_type details request_index tx_hash serialized
+			addr address_n prev_hash prev_index sequence script_type
+			pre-data pre-inputs pre-outputs
+			script_sig
+			amount script_pubkey
+			addr-name
+	][
+		clear serialized_tx
+
+		inputs: select tx 'inputs
+		outputs: select tx 'outputs
+		print "inputs: "
+		probe inputs
+		print "outputs: "
+		probe outputs
+		inputs_count: (length? inputs) / 3
+		outputs_count: (length? outputs) / 2
+		ids: inputs/3
+		coin_name: "Bitcoin"
+		if ids/2 = (80000000h + 1) [
+			coin_name: "Testnet"
+		]
+		lock_time: 0
+		res-in: make map! []
+
+		;-- first step, send "SignTx" message
+		len: SignTx outputs_count inputs_count coin_name lock_time res-in
+		if block? len [return reduce ['SignTxSequence 'SignTxError len]]
+
+		forever [
+			probe res-in
+			request_type: select res-in 'request_type
+			if request_type = 'TXINPUT [
+				details: select res-in 'details
+				request_index: select details 'request_index
+				tx_hash: select details 'tx_hash
+				if all [tx_hash = none request_index <> none] [
+					index: request_index * 3 + 1
+					addr: inputs/(index)
+					pre-data: inputs/(index + 1)
+					address_n: inputs/(index + 2)
+					prev_hash: debase/base pre-data/1 16
+					pre-inputs: pick pre-data/2 3
+					pre-outputs: pick pre-data/2 4
+					prev_index: FindOutputIndexByAddr pre-outputs addr
+					sequence: -1
+					script_type: 'SPENDADDRESS
+					sub-req: make map! reduce ['address_n address_n 'prev_hash prev_hash 'prev_index prev_index 'sequence sequence 'script_type script_type]
+					req: make map! []
+					put req 'inputs reduce [sub-req]
+					req: make map! reduce ['tx req]
+					probe req
+					len: WriteAndRead 'TxAck 'TxRequest req res-in
+					if block? len [return reduce ['SignTxSequence 'TxAckError 1 len]]
+				]
+				if all [tx_hash <> none request_index <> none] [
+					index: FindInputIndexByTxid inputs tx_hash
+					;addr: inputs/(index)
+					pre-data: inputs/(index + 1)
+					;address_n: inputs/(index + 2)
+					;prev_hash: debase/base pre-data/1 16
+					pre-inputs: pick pre-data/2 3
+					pre-outputs: pick pre-data/2 4
+					index: request_index * 4 + 1
+					prev_hash: debase/base pre-inputs/(index + 2) 16
+					prev_index: pre-inputs/(index + 1)
+					script_sig: debase/base pre-inputs/(index + 3) 16
+					sequence: -1
+					sub-req: make map! reduce ['prev_hash prev_hash 'prev_index prev_index 'script_sig script_sig 'sequence sequence]
+					req: make map! []
+					put req 'inputs reduce [sub-req]
+					req: make map! reduce ['tx req]
+					probe req
+					len: WriteAndRead 'TxAck 'TxRequest req res-in
+					if block? len [return reduce ['SignTxSequence 'TxAckError 3 len]]
+				]
+			]
+			
+			if request_type = 'TXMETA [
+				details: select res-in 'details
+				request_index: select details 'request_index
+				tx_hash: select details 'tx_hash
+				if all [tx_hash <> none request_index = none][
+					index: FindInputIndexByTxid inputs tx_hash
+					;addr: inputs/(index)
+					pre-data: inputs/(index + 1)
+					;address_n: inputs/(index + 2)
+					;prev_hash: debase/base pre-data/1 16
+					pre-inputs: pick pre-data/2 3
+					pre-outputs: pick pre-data/2 4
+					version: pick pre-data/2 1
+					lock_time: pick pre-data/2 2
+					inputs_cnt: (length? pre-inputs) / 4
+					outputs_cnt: (length? pre-outputs) / 3
+					sub-req: make map! reduce ['version version 'lock_time lock_time 'inputs_cnt inputs_cnt 'outputs_cnt outputs_cnt]
+					req: make map! reduce ['tx sub-req]
+					probe req
+					len: WriteAndRead 'TxAck 'TxRequest req res-in
+					if block? len [return reduce ['SignTxSequence 'TxAckError 2 len]]
+				]
+			]
+
+			if request_type = 'TXOUTPUT [
+				details: select res-in 'details
+				serialized: select res-in 'serialized
+				request_index: select details 'request_index
+				tx_hash: select details 'tx_hash
+				if all [tx_hash <> none request_index <> none] [
+					index: FindInputIndexByTxid inputs tx_hash
+					;addr: inputs/(index)
+					pre-data: inputs/(index + 1)
+					;pre-inputs: pick pre-data/2 3
+					pre-outputs: pick pre-data/2 4
+					index: request_index * 3 + 1
+					amount: pre-outputs/(index + 1)
+					print amount
+					amount: trim/head i256-to-bin to-i256 amount
+					print amount
+					script_pubkey: debase/base pre-outputs/(index + 2) 16
+					sub-req: make map! reduce ['amount amount 'script_pubkey script_pubkey]
+					req: make map! []
+					put req 'bin_outputs reduce [sub-req]
+					req: make map! reduce ['tx req]
+					probe req
+					len: WriteAndRead 'TxAck 'TxRequest req res-in
+					if block? len [return reduce ['SignTxSequence 'TxAckError 4 len]]
+				]
+				if all [tx_hash = none request_index <> none] [
+					index: request_index * 2 + 1
+					addr: outputs/(index)
+					amount: trim/head i256-to-bin outputs/(index + 1)
+					print amount
+					either block? addr [addr-name: 'address_n][addr-name: 'address]
+					sub-req: make map! reduce [addr-name addr 'amount amount 'script_type 'PAYTOADDRESS]
+					req: make map! []
+					put req 'outputs reduce [sub-req]
+					req: make map! reduce ['tx req]
+					probe req
+					len: WriteAndRead 'TxAck 'TxRequest req res-in
+					if msg-id = trezor-message/get-id 'ButtonRequest [
+						res-in: make map! []
+						len: proto-encode/decode trezor-message/messages 'ButtonRequest res-in command-buffer
+						if block? len [return reduce ['SignTxSequence 'ButReqDecodeFailed len]]
+
+						len: encode-and-write 'ButtonAck make map! []
+						if block? len [return reduce ['SignTxSequence 'ButAckWrite len]]
+
+						res-in: make map! []
+						len: read-and-decode 'TxRequest res-in
+					]
+					if block? len [return reduce ['SignTxSequence 'TxAckError 4 len]]
+				]
+				if serialized [
+					append serialized_tx select serialized 'serialized_tx
+					probe serialized_tx
+				]
+			]
+			if request_type = 'TXFINISHED [
+				serialized: select res-in 'serialized
+				if serialized [
+					append serialized_tx select serialized 'serialized_tx
+					probe serialized_tx
+				]
+				break
+			]
+		]
+		serialized_tx
+	]
+
+	FindOutputIndexByAddr: func [
+		outputs			[block!]
+		addr			[string!]
+		return:			[integer!]
+		/local
+			len i j new-addr
+	][
+		len: length? outputs
+		i: 1
+		j: 0
+		until [
+			new-addr: outputs/:i
+			i: i + 2
+			if new-addr/1 = addr [
+				return j
+			]
+			j: j + 1
+			i: i + 1
+			i > len
+		]
+		-1
+	]
+
+	FindInputIndexByTxid: func [
+		inputs			[block!]
+		txid			[binary!]
+		return:			[integer!]
+		/local
+			len i pre-data prev_hash
+	][
+		len: length? inputs
+		i: 1
+		until [
+			i: i + 1
+			pre-data: inputs/:i
+			prev_hash: debase/base pre-data/1 16
+			if prev_hash = txid [
+				return i - 1
+			]
+			i: i + 1
+			i: i + 1
+			i > len
+		]
+		-1
+	]
+
+	SignTx: func [
+		outputs_count	[integer!]
+		inputs_count	[integer!]
+		coin_name		[string!]
+		lock_time		[integer!]
+		res				[map!]
+		return:			[integer! block!]
+		/local
+			req			[map!]
+			len			[integer! block!]
+	][
+		req: make map! reduce ['outputs_count outputs_count 'inputs_count inputs_count 'coin_name coin_name 'lock_time lock_time]
+		len: PinMatrixSequence 'SignTx 'TxRequest req res
+		len
+	]
+
 	GetPublicKey: func [
 		ids				[block!]
 		name			[string!]
@@ -337,7 +582,32 @@ trezor: context [
 			return len
 		]
 
-		[req-msg 'UnkownId]
+		reduce [req-msg 'UnkownId msg-id]
+	]
+
+	WriteAndRead: func [
+		req-msg			[word!]
+		res-msg			[word!]
+		req				[map!]
+		res				[map!]
+		return:			[integer! block!]
+		/local
+			len			[integer! block!]
+	][
+		len: encode-and-write req-msg req
+		if block? len [return reduce [req-msg 'SendFailed len]]
+
+		clear command-buffer
+		len: message-read command-buffer
+		if block? len [return reduce [req-msg 'ReadFailed len]]
+
+		if msg-id = trezor-message/get-id res-msg [
+			len: proto-encode/decode trezor-message/messages res-msg res command-buffer
+			if block? len [return reduce [res-msg 'DecodeFailed len]]
+			return len
+		]
+
+		reduce [req-msg 'UnkownId msg-id]
 	]
 
 	encode-and-write: func [

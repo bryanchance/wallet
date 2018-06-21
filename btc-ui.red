@@ -69,8 +69,25 @@ btc-ui: context [
 		get in ctx 'address-index
 	]
 
+	unlock-dev-dlg: does [
+		get in ctx 'unlock-dev-dlg
+	]
+
+	contract-data-dlg: does [
+		get in ctx 'contract-data-dlg
+	]
+
+	nonce-error-dlg: does [
+		get in ctx 'nonce-error-dlg
+	]
+
+	tx-error-dlg: does [
+		get in ctx 'tx-error-dlg
+	]
+
 	addr-balances: []
 
+	;-- change/orgin: [puk-hash utx balance bip32-path]
 	get-account-balance: func [
 		name			[string!]
 		bip32-path		[block!]
@@ -103,8 +120,7 @@ btc-ui: context [
 			process-events
 			if string? balance [return balance]
 			if balance = none [
-				append c-list reduce [addr none none]
-				append/only c-list copy ids
+				append c-list reduce [addr none none copy ids]
 				put list 'change c-list
 				break
 			]
@@ -113,14 +129,12 @@ btc-ui: context [
 			process-events
 			if string? utxs [return utxs]
 			if utxs = none [
-				append c-list reduce [addr none to-i256 0]
-				append/only c-list copy ids
+				append c-list reduce [addr none to-i256 0 copy ids]
 				i: i + 1
 				continue
 			]
 
-			append c-list reduce [addr utxs balance]
-			append/only c-list copy ids
+			append c-list reduce [addr utxs balance copy ids]
 			total: add256 total balance
 
 			i: i + 1
@@ -139,8 +153,7 @@ btc-ui: context [
 			process-events
 			if string? balance [return balance]
 			if balance = none [
-				append o-list reduce [addr none none]
-				append/only o-list copy ids
+				append o-list reduce [addr none none copy ids]
 				put list 'origin o-list
 				break
 			]
@@ -149,14 +162,12 @@ btc-ui: context [
 			process-events
 			if string? utxs [return utxs]
 			if utxs = none [
-				append o-list reduce [addr none to-i256 0]
-				append/only o-list copy ids
+				append o-list reduce [addr none to-i256 0 copy ids]
 				i: i + 1
 				continue
 			]
 
-			append o-list reduce [addr utxs balance]
-			append/only o-list copy ids
+			append o-list reduce [addr utxs balance copy ids]
 			total: add256 total balance
 
 			i: i + 1
@@ -178,8 +189,9 @@ btc-ui: context [
 			res
 	][
 		res: get-account-balance name bip32-path n
+		probe res
 		either map? res [
-			addr: pick at select res 'origin -4 1
+			addr: pick back back back back tail select res 'origin 1
 		][
 			addr: 'error
 		]
@@ -226,7 +238,7 @@ btc-ui: context [
 		]
 	]
 
-	check-data: func [/local addr amount balance from addr-list fee utx][
+	check-data: func [/local addr amount balance from addr-list fee][
 		addr: trim any [addr-to/text ""]
 		unless all [
 			26 <= length? addr
@@ -250,12 +262,6 @@ btc-ui: context [
 			amount-field/text: copy "Invalid amount"
 			return no
 		]
-		utx: calc-balance pick addr-balances addr-list/selected amount fee
-		if utx = none [
-			amount-field/text: copy "calculate balance failed"
-			return no
-		]
-
 		yes
 	]
 
@@ -263,26 +269,30 @@ btc-ui: context [
 		account				[map!]
 		amount				[float!]
 		fee					[float!]
+		addr-to				[string!]
 		/local new-amount new-fee utx
 	][
 		new-amount: to-i256 (amount * 1e8)
 		new-fee: to-i256 (fee * 1e8)
-		utx: calc-balance-by-one-addr account new-amount new-fee
-		if utx <> none [
-			print "found"
-		]
-		probe utx
+		utx: calc-balance-by-one-addr account new-amount new-fee addr-to
 		utx
 	]
 
+	;- inputs: [puk-hash txid bip32-path ...]
+	;- outputs: [puk-hash amount ...]
 	calc-balance-by-one-addr: func [
 		account				[map!]
 		amount				[vector!]
 		fee					[vector!]
-		return:				[none! block!]
-		/local utx total len len2 i j addr txs balance ids txid tx-value
+		addr-to				[string!]
+		return:				[none! map!]
+		/local change-addr utx inputs outputs total len len2 i j addr txs balance ids txid tx-value rest
 	][
-		utx: copy []
+		;change-addr: pick back back back back tail account/change 1
+		change-addr-ids: pick back tail account/change 1
+		utx: make map! []
+		inputs: copy []
+		outputs: copy []
 		total: add256 amount fee
 
 		len: length? account/change
@@ -309,8 +319,15 @@ btc-ui: context [
 				j: j + 1
 				tx-value: txs/:j
 				if lesser-or-equal256? total tx-value [
-					append utx reduce [addr txid tx-value]
-					append/only utx ids
+					append inputs reduce [addr txid ids]
+					append outputs reduce [addr-to amount]
+					rest: sub256 tx-value amount
+					rest: sub256 rest fee
+					if 0 <> i256-to-int rest [
+						append outputs reduce [change-addr-ids rest]
+					]
+					put utx 'inputs inputs
+					put utx 'outputs outputs
 					return utx
 				]
 				j: j + 1
@@ -347,8 +364,15 @@ btc-ui: context [
 				j: j + 1
 				tx-value: txs/:j
 				if lesser-or-equal256? total tx-value [
-					append utx reduce [addr txid tx-value]
-					append/only utx ids
+					append inputs reduce [addr txid ids]
+					append outputs reduce [addr-to amount]
+					rest: sub256 tx-value amount
+					rest: sub256 rest fee
+					if 0 <> i256-to-int rest [
+						append outputs reduce [change-addr-ids rest]
+					]
+					put utx 'inputs inputs
+					put utx 'outputs outputs
 					return utx
 				]
 				j: j + 1
@@ -364,6 +388,23 @@ btc-ui: context [
 		none
 	]
 
+	sign-prepare: func[
+		utx
+		/local inputs len i txid pre-data
+	][
+		inputs: select utx 'inputs
+		len: length? inputs
+		i: 1
+		until [
+			addr: inputs/:i
+			i: i + 1
+			txid: inputs/:i
+			pre-data: btc/get-tx-info network txid
+			poke inputs i reduce [txid pre-data]
+			i: i + 2
+			i > len
+		]
+	]
 
 	notify-user: does [
 		btn-sign/enabled?: no
@@ -374,12 +415,37 @@ btc-ui: context [
 		process-events
 	]
 
-	do-sign-tx: func [face [object!] event [event!] /local tx nonce price limit amount name dlg][
+	do-sign-tx: func [face [object!] event [event!] /local fee amount addr name addr-list utx datas][
 		unless check-data [exit]
 
 		notify-user
 
+		fee: to float! tx-fee/text						;-- fee
+		fee: fee / 1e8
+		amount: to float! amount-field/text				;-- send amount
+		addr: trim any [addr-to/text ""]
 
+		name: get-device-name
+		;-- Edge case: key may locked in this moment
+		unless string? key/get-btc-address name append copy bip32-path 0 [
+			reset-sign-button
+			view/flags unlock-dev-dlg 'modal
+			exit
+		]
+
+		addr-list: get-addr-list
+		utx: calc-balance pick addr-balances addr-list/selected amount fee addr
+		if utx = none [
+			amount-field/text: copy "calculate balance failed"
+			return no
+		]
+
+		sign-prepare utx
+
+		signed-data: key/get-btc-signed-data name utx
+		datas: lowercase enbase/base signed-data 16
+		probe btc/decode-tx network datas
+		probe btc/publish-tx network datas
 	]
 
 	do-confirm: func [face [object!] event [event!] /local result][
@@ -404,7 +470,7 @@ btc-ui: context [
 		label "From Address:"	addr-from:	  lbl return
 		label "To Address:"		addr-to:	  field return
 		label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
-		label "Fee:"			tx-fee:		  field 120 "229" return
+		label "Fee:"			tx-fee:		  field 120 "3000" label 50 "satoshi" return
 		pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
 	]]
 
