@@ -37,6 +37,9 @@ btc-ui: context [
 	net-name: does [
 		get in ctx 'net-name
 	]
+	coin-name: does [
+		get in ctx 'coin-name
+	]
 	network: does [
 		get in ctx 'network
 	]
@@ -231,7 +234,7 @@ btc-ui: context [
 			from: pick addr-list/data addr-list/selected
 			addr-from/text: copy/part from find from space
 			reset-sign-button
-			label-unit/text: "BTC"    ;token-name
+			label-unit/text: coin-name
 			clear addr-to/text
 			clear amount-field/text
 			view/flags dlg 'modal
@@ -415,10 +418,8 @@ btc-ui: context [
 		process-events
 	]
 
-	do-sign-tx: func [face [object!] event [event!] /local fee amount addr name addr-list utx datas][
+	do-sign-tx: func [face [object!] event [event!] /local fee amount addr name addr-list utx][
 		unless check-data [exit]
-
-		notify-user
 
 		fee: to float! tx-fee/text						;-- fee
 		fee: fee / 1e8
@@ -436,28 +437,51 @@ btc-ui: context [
 		addr-list: get-addr-list
 		utx: calc-balance pick addr-balances addr-list/selected amount fee addr
 		if utx = none [
-			amount-field/text: copy "calculate balance failed"
+			amount-field/text: copy "NYI.!"
 			return no
 		]
+
+		notify-user
 
 		sign-prepare utx
 
 		signed-data: key/get-btc-signed-data name utx
-		datas: lowercase enbase/base signed-data 16
-		probe btc/decode-tx network datas
-		probe btc/publish-tx network datas
+		either all [
+			signed-data
+			binary? signed-data
+		][
+			dlg: confirm-sheet
+			info-from/text:		addr-from/text
+			info-to/text:		copy addr-to/text
+			info-amount/text:	rejoin [amount-field/text " " coin-name]
+			info-network/text:	net-name
+			info-fee/text:		rejoin [tx-fee/text " satoshi"]
+			unview
+			view/flags dlg 'modal
+		][
+			if block? signed-data [
+				unview
+				view/flags contract-data-dlg 'modal
+			]
+			reset-sign-button
+		]
 	]
 
-	do-confirm: func [face [object!] event [event!] /local result][
-		result: eth/call-rpc network 'eth_sendRawTransaction reduce [
-			rejoin ["0x" enbase/base signed-data 16]
+	do-confirm: func [face [object!] event [event!] /local datas txid result][
+		datas: lowercase enbase/base signed-data 16
+		txid: btc/decode-tx network datas
+		if string? txid [
+			tx-error/text: rejoin ["Error! Please try again^/^/" form txid]
+			view/flags tx-error-dlg 'modal
+			exit
 		]
+		result: btc/publish-tx network datas
 		unview
 		either string? result [
-			browse rejoin [explorer result]
-		][							;-- error
 			tx-error/text: rejoin ["Error! Please try again^/^/" form result]
 			view/flags tx-error-dlg 'modal
+		][
+			browse rejoin [explorer txid/1]
 		]
 	]
 
@@ -483,7 +507,6 @@ btc-ui: context [
 		label "Amount to Send:" info-amount:  info return
 		label "Network:"		info-network: info return
 		label "Fee:" 			info-fee:	  info return
-		label "Nonce:"			info-nonce:	  info return
 		pad 164x10 button "Cancel" [signed-data: none unview] button "Send" :do-confirm
 	]]
 ]

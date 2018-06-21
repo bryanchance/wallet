@@ -46,44 +46,57 @@ wallet: context [
 	default-change: 0
 
 	coins: compose/deep [
+		;token name
 		"ETH" [
-			;net name		;net server										;explorer server									;BIP32 path																		;chain id			;contract address
-			"mainnet"		https://eth.red-lang.org/mainnet				https://etherscan.io/tx/							[(default-purpose) (eth-coin) (default-account) (default-change)]				1					#[none]
-			"Rinkeby"		https://eth.red-lang.org/rinkeby				https://rinkeby.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				4					#[none]
-			"Kovan"			https://eth.red-lang.org/kovan					https://kovan.etherscan.io/tx/						[(default-purpose) (eth-coin) (default-account) (default-change)]				42					#[none]
-			"Ropsten"		https://eth.red-lang.org/ropsten				https://ropsten.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				3					#[none]
+			;coin name		;net name		;net server										;explorer server									;BIP32 path																		;chain id			;contract address
+			"ETH"			"mainnet"		https://eth.red-lang.org/mainnet				https://etherscan.io/tx/							[(default-purpose) (eth-coin) (default-account) (default-change)]				1					#[none]
+			"ETH"			"Rinkeby"		https://eth.red-lang.org/rinkeby				https://rinkeby.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				4					#[none]
+			"ETH"			"Kovan"			https://eth.red-lang.org/kovan					https://kovan.etherscan.io/tx/						[(default-purpose) (eth-coin) (default-account) (default-change)]				42					#[none]
+			"ETH"			"Ropsten"		https://eth.red-lang.org/ropsten				https://ropsten.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				3					#[none]
 		]
 		"RED" [
-			"mainnet"		https://eth.red-lang.org/mainnet				https://etherscan.io/tx/							[(default-purpose) (eth-coin) (default-account) (default-change)]				1					"76960Dccd5a1fe799F7c29bE9F19ceB4627aEb2f"
-			"Rinkeby"		https://eth.red-lang.org/rinkeby				https://rinkeby.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				4					"43df37f66b8b9fececcc3031c9c1d2511db17c42"
+			"RED"			"mainnet"		https://eth.red-lang.org/mainnet				https://etherscan.io/tx/							[(default-purpose) (eth-coin) (default-account) (default-change)]				1					"76960Dccd5a1fe799F7c29bE9F19ceB4627aEb2f"
+			"RED"			"Rinkeby"		https://eth.red-lang.org/rinkeby				https://rinkeby.etherscan.io/tx/					[(default-purpose) (eth-coin) (default-account) (default-change)]				4					"43df37f66b8b9fececcc3031c9c1d2511db17c42"
 		]
 		"BTC" [
-			"BTC.COM"		https://chain.api.btc.com/v3					https://blockchain.info/tx/							[(segwit-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
-			"testnet"		https://tchain.api.btc.com/v3					https://testnet.blockchain.info/tx/					[(segwit-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
+			"BTC"			"BTC.COM"		https://chain.api.btc.com/v3					https://blockchain.info/tx/							[(segwit-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
+			"TEST"			"testnet"		https://tchain.api.btc.com/v3					https://testnet.blockchain.info/tx/					[(segwit-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
 		]
-		"BTC-Legacy" [
-			"BTC.COM"		https://chain.api.btc.com/v3					https://blockchain.info/tx/							[(default-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
-			"testnet"		https://tchain.api.btc.com/v3					https://testnet.blockchain.info/tx/					[(default-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
+		"BTC-old" [
+			"BTC"			"BTC.COM"		https://chain.api.btc.com/v3					https://blockchain.info/tx/							[(default-purpose) (btc-coin) (default-account) (default-change)]				#[none]				#[none]
+			"TEST"			"testnet"		https://tchain.api.btc.com/v3					https://testnet.blockchain.info/tx/					[(default-purpose) (btc-test-coin) (default-account) (default-change)]			#[none]				#[none]
 		]
 	]
-
-	get-network: does [pick find coins/:token-name net-name 2]
-	get-explorer: does [pick find coins/:token-name net-name 3]
-	get-bip32-path: does [pick find coins/:token-name net-name 4]
-	get-chain-id: does [pick find coins/:token-name net-name 5]
-	get-contract-addr: does [pick find coins/:token-name net-name 6]
 
 	tokens: extract coins 2
 
 	;-- current token name
 	token-name: tokens/1			;-- default "ETH"
 	
-	net-names: extract coins/:token-name 6
-	networks: extract/index coins/:token-name 6 2
-	explorers: extract/index coins/:token-name 6 3
+	net-names: extract/index coins/:token-name 7 2
+	networks: extract/index coins/:token-name 7 3
+	explorers: extract/index coins/:token-name 7 4
 
 	;-- current net name
 	net-name: net-names/2			;-- default "Rinkeby"
+
+	GetCoinItem: func [NetName index /local info len i item][
+		info: coins/:token-name
+		len: (length? info) / 7
+		repeat i len [
+			item: i - 1 * 7
+			if info/(item + 2) = NetName [return info/(item + index)]
+		]
+		none
+	]
+	get-coin-name: does [GetCoinItem net-name 1]
+	get-network: does [GetCoinItem net-name 3]
+	get-explorer: does [GetCoinItem net-name 4]
+	get-bip32-path: does [GetCoinItem net-name 5]
+	get-chain-id: does [GetCoinItem net-name 6]
+	get-contract-addr: does [GetCoinItem net-name 7]
+
+	coin-name: get-coin-name
 	network: get-network
 	explorer: get-explorer
 	token-contract: get-contract-addr
@@ -235,12 +248,14 @@ wallet: context [
 
 	do-select-network: func [face [object!] event [event!] /local idx][
 		idx: face/selected
-		
 		net-name: face/data/:idx
-		network:  networks/:idx
-		explorer: explorers/:idx
+
+		coin-name: get-coin-name
+		network: get-network
+		explorer: get-explorer
 		token-contract: get-contract-addr
 		bip32-path: get-bip32-path
+
 		do-reload
 	]
 
@@ -249,17 +264,20 @@ wallet: context [
 		net: net-list/selected
 		token-name: face/data/:idx
 
-		net-names: extract coins/:token-name 6
-		networks: extract/index coins/:token-name 6 2
-		explorers: extract/index coins/:token-name 6 3
+		net-names: extract/index coins/:token-name 7 2
+		networks: extract/index coins/:token-name 7 3
+		explorers: extract/index coins/:token-name 7 4
 
 		net-list/data: net-names
 		net: net-list/selected: either net > length? net-list/data [1][net]
 		net-name: net-list/data/:net
-		network:  networks/:net
-		explorer: explorers/:net
+
+		coin-name: get-coin-name
+		network: get-network
+		explorer: get-explorer
 		token-contract: get-contract-addr
 		bip32-path: get-bip32-path
+
 		do-reload
 	]
 	

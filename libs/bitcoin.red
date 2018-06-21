@@ -109,7 +109,7 @@ btc: context [
 		Accept: "application/json"
 	]
 
-	publish-tx: func [network [url!] tx [string!] return: [none! block! string!]
+	publish-tx: func [network [url!] tx [string!] return: [block! string!]
 		/local
 			body resp data err-no err-msg
 	][
@@ -120,16 +120,15 @@ btc: context [
 			(headers)
 			(data)
 		]
-		probe resp
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
 			return rejoin ["publish-tx error! id: " form err-no " msg: " err-msg]
 		]
-		none
+		[]
 	]
 
-	decode-tx: func [network [url!] tx [string!] return: [none! block! string!]
+	decode-tx: func [network [url!] tx [string!] return: [block! string!]
 		/local
 			body resp data err-no err-msg txid
 	][
@@ -146,7 +145,7 @@ btc: context [
 			return rejoin ["decode-tx error! id: " form err-no " msg: " err-msg]
 		]
 		data: select resp 'data
-		if data = none [return none]
+		if data = none [return "decode-tx error! no data."]
 		txid: select data 'txid
 		reduce [txid]
 	]

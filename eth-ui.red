@@ -37,6 +37,9 @@ eth-ui: context [
 	net-name: does [
 		get in ctx 'net-name
 	]
+	coin-name: does [
+		get in ctx 'coin-name
+	]
 	network: does [
 		get in ctx 'network
 	]
@@ -157,7 +160,7 @@ eth-ui: context [
 			addr-from/text: copy/part from find from space
 			gas-limit/text: either token-contract ["79510"]["21000"]
 			reset-sign-button
-			label-unit/text: token-name
+			label-unit/text: coin-name
 			clear addr-to/text
 			clear amount-field/text
 			view/flags dlg 'modal
@@ -257,7 +260,7 @@ eth-ui: context [
 			dlg: confirm-sheet
 			info-from/text:		addr-from/text
 			info-to/text:		copy addr-to/text
-			info-amount/text:	rejoin [amount-field/text " " token-name]
+			info-amount/text:	rejoin [amount-field/text " " coin-name]
 			info-network/text:	net-name
 			info-price/text:	rejoin [gas-price/text " Gwei"]
 			info-limit/text:	gas-limit/text
