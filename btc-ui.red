@@ -418,7 +418,7 @@ btc-ui: context [
 		process-events
 	]
 
-	do-sign-tx: func [face [object!] event [event!] /local fee amount addr name addr-list utx][
+	do-sign-tx: func [face [object!] event [event!] /local fee amount addr name addr-list utx rate][
 		unless check-data [exit]
 
 		fee: to float! tx-fee/text						;-- fee
@@ -456,6 +456,8 @@ btc-ui: context [
 			info-amount/text:	rejoin [amount-field/text " " coin-name]
 			info-network/text:	net-name
 			info-fee/text:		rejoin [tx-fee/text " satoshi"]
+			rate: to integer! ((to float! tx-fee/text)  * 10 / length? signed-data)
+			info-rate/text:		rejoin [form rate / 10.0 " sat/B"]
 			unview
 			view/flags dlg 'modal
 		][
@@ -507,6 +509,7 @@ btc-ui: context [
 		label "Amount to Send:" info-amount:  info return
 		label "Network:"		info-network: info return
 		label "Fee:" 			info-fee:	  info return
+		label "FeeRate:"		info-rate:	  info return
 		pad 164x10 button "Cancel" [signed-data: none unview] button "Send" :do-confirm
 	]]
 ]
