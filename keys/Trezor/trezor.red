@@ -431,7 +431,7 @@ trezor: context [
 						res-in: make map! []
 						len: read-and-decode 'TxRequest res-in
 					]
-					if block? len [return reduce ['SignTxSequence 'TxAckError 4 len]]
+					if block? len [return reduce ['SignTxSequence 'TxAckError 5 len]]
 				]
 				if serialized [
 					append serialized_tx select serialized 'serialized_tx
@@ -546,9 +546,6 @@ trezor: context [
 		len: PinMatrixSequence 'GetAddress 'Address req res
 		len
 	]
-
-	;-- A Sequence like this, SendInfo -> [PinMatrixRequest -> PinMatrixAck -> SendInfo] 
-	;--     -> ButtonRequest -> ButtonAck -> ButtonRequest -> ButtonAck -> Request
 
 	;-- A Sequence like this, GetAbcd -> [PinMatrixRequest -> PinMatrixAck -> GetAbcd] -> Abcd
 	PinMatrixSequence: func [

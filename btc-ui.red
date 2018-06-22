@@ -494,7 +494,7 @@ btc-ui: context [
 		label "From Address:"	addr-from:	  lbl return
 		label "To Address:"		addr-to:	  field return
 		label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
-		label "Fee:"			tx-fee:		  field 120 "3000" label 50 "satoshi" return
+		label "Fee:"			tx-fee:		  field 120 "10000" label 50 "satoshi" return
 		pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
 	]]
 
