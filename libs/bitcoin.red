@@ -10,8 +10,9 @@ Red [
 
 btc: context [
 
-	get-url: func [network [url!] params [string!] /local res][
-		res: json/decode read append copy network params
+	get-url: func [network [url!] params [string!] /local net-str res][
+		net-str: append copy network params
+		res: json/decode read net-str
 		res
 	]
 
@@ -20,10 +21,16 @@ btc: context [
 	][
 		resp: get-url network append copy "/address/" address
 		err-no: select resp 'err_no
+		if err-no = none [
+			wait 0.5
+			resp: get-url network append copy "/address/" address
+			err-no: select resp 'err_no
+		]
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return rejoin ["get-address error! id: " form err-no " msg: " err-msg]
+			return rejoin ["get-balance error! id: " form err-no " msg: " err-msg]
 		]
+
 		data: select resp 'data
 		if data = none [return none]
 		balance: select data 'balance

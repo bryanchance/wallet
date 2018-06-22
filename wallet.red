@@ -71,14 +71,16 @@ wallet: context [
 	tokens: extract coins 2
 
 	;-- current token name
-	token-name: tokens/1			;-- default "ETH"
+	token-default-index: 4
+	token-name: tokens/(token-default-index)
 	
 	net-names: extract/index coins/:token-name 7 2
 	networks: extract/index coins/:token-name 7 3
 	explorers: extract/index coins/:token-name 7 4
 
 	;-- current net name
-	net-name: net-names/2			;-- default "Rinkeby"
+	net-default-index: 1
+	net-name: net-names/(net-default-index)
 
 	GetCoinItem: func [NetName index /local info len i item][
 		info: coins/:token-name
@@ -255,6 +257,7 @@ wallet: context [
 		explorer: get-explorer
 		token-contract: get-contract-addr
 		bip32-path: get-bip32-path
+		probe bip32-path
 
 		do-reload
 	]
@@ -356,8 +359,8 @@ wallet: context [
 		text 50 "Device:"
 		dev-list: drop-list data key/get-valid-names 135 select 1 :do-select-dev
 		btn-send: button "Send" :do-send disabled
-		token-list: drop-list data tokens 60 select 1 :do-select-token
-		net-list:   drop-list data net-names select 2 :do-select-network
+		token-list: drop-list data tokens 60 select token-default-index :do-select-token
+		net-list:   drop-list data net-names select net-default-index :do-select-network
 		btn-reload: button "Reload" :do-reload disabled
 		return
 		

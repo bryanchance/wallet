@@ -143,6 +143,8 @@ btc-ui: context [
 			i: i + 1
 		]
 
+		process-events
+
 		;-- origin address
 		ids/4: 0
 		i: 0
