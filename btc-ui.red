@@ -452,8 +452,8 @@ btc-ui: context [
 			info-to/text:		copy addr-to/text
 			info-amount/text:	rejoin [amount-field/text " " coin-name]
 			info-network/text:	net-name
-			info-fee/text:		rejoin [tx-fee/text " satoshi"]
-			rate: to integer! ((to float! tx-fee/text)  * 10 / length? signed-data)
+			info-fee/text:		rejoin [tx-fee/text " " coin-name]
+			rate: to integer! ((to float! tx-fee/text)  * 1e9 / length? signed-data)
 			info-rate/text:		rejoin [form rate / 10.0 " sat/B"]
 			unview
 			view/flags dlg 'modal

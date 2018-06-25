@@ -411,7 +411,9 @@ trezor: context [
 				if all [tx_hash = none request_index <> none] [
 					index: request_index * 2 + 1
 					addr: outputs/(index)
-					amount: trim/head i256-to-bin outputs/(index + 1)
+					amount: outputs/(index + 1)
+					print amount
+					amount: trim/head i256-to-bin to-i256 amount
 					print amount
 					either block? addr [addr-name: 'address_n][addr-name: 'address]
 					sub-req: make map! reduce [addr-name addr 'amount amount 'script_type 'PAYTOADDRESS]
