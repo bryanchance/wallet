@@ -108,7 +108,7 @@ btc-ui: context [
 		c-list: copy []
 		o-list: copy []
 
-		total: 0.0
+		total: to-i256 0
 
 		;-- change address
 		ids/4: 1
@@ -132,13 +132,13 @@ btc-ui: context [
 			process-events
 			if string? utxs [return utxs]
 			if utxs = none [
-				append c-list reduce [addr none 0.0 copy ids]
+				append c-list reduce [addr none to-i256 0 copy ids]
 				i: i + 1
 				continue
 			]
 
 			append c-list reduce [addr utxs balance copy ids]
-			total: total + balance
+			total: add256 total balance
 
 			i: i + 1
 		]
@@ -167,13 +167,13 @@ btc-ui: context [
 			process-events
 			if string? utxs [return utxs]
 			if utxs = none [
-				append o-list reduce [addr none 0.0 copy ids]
+				append o-list reduce [addr none to-i256 0 copy ids]
 				i: i + 1
 				continue
 			]
 
 			append o-list reduce [addr utxs balance copy ids]
-			total: total + balance
+			total: add256 total balance
 
 			i: i + 1
 		]
@@ -188,6 +188,7 @@ btc-ui: context [
 		addresses		[block!]
 		/local
 			addr		[string!]
+			balance
 			addr-list
 			res
 	][
@@ -211,8 +212,10 @@ btc-ui: context [
 			update-ui yes
 			return false
 		]
+		balance: i256-to-float select res 'balance
+		balance: balance / 1e8
 		append addr-balances res
-		append addresses rejoin [addr "      " form-amount ((select res 'balance) / 1e8)]
+		append addresses rejoin [addr "      " form-amount balance]
 		addr-list: get-addr-list
 		addr-list/data: addresses
 		return true
@@ -242,7 +245,7 @@ btc-ui: context [
 		]
 	]
 
-	check-data: func [/local addr amount balance from addr-list fee][
+	check-data: func [/local addr amount balance from addr-list fee new-amount new-balance new-fee][
 		addr: trim any [addr-to/text ""]
 		unless all [
 			26 <= length? addr
@@ -255,9 +258,12 @@ btc-ui: context [
 		either all [amount amount > 0.0][
 			addr-list: get-addr-list
 			from: pick addr-list/data addr-list/selected
-			balance: to float! find/tail from space
+			balance: attempt [to float! find/tail from space]
 			fee: attempt [to float! tx-fee/text]
-			if (amount + fee) > balance [
+			new-amount: to-i256 (amount * 1e8)
+			new-balance: to-i256 (balance * 1e8)
+			new-fee: to-i256 (fee * 1e8)
+			if not lesser-or-equal256? (add256 new-amount new-fee) new-balance [
 				amount-field/text: copy "Insufficient Balance"
 				return no
 			]
@@ -275,8 +281,8 @@ btc-ui: context [
 		addr-to				[string!]
 		/local new-amount new-fee utx
 	][
-		new-amount: amount * 1e8
-		new-fee: fee * 1e8
+		new-amount: to-i256 (amount * 1e8)
+		new-fee: to-i256 (fee * 1e8)
 		utx: calc-balance-by-one-addr account new-amount new-fee addr-to
 		if utx = none [
 			utx: calc-balance-by-order account new-amount new-fee addr-to
@@ -288,8 +294,8 @@ btc-ui: context [
 	;- outputs: [puk-hash amount ...]
 	calc-balance-by-one-addr: func [
 		account				[map!]
-		amount				[float!]
-		fee					[float!]
+		amount				[vector!]
+		fee					[vector!]
 		addr-to				[string!]
 		return:				[none! map!]
 		/local change-addr utx inputs outputs total len len2 i j addr txs balance ids txid tx-value rest
@@ -299,7 +305,7 @@ btc-ui: context [
 		utx: make map! []
 		inputs: copy []
 		outputs: copy []
-		total: amount + fee
+		total: add256 amount fee
 
 		len: length? account/change
 		i: 1
@@ -324,11 +330,12 @@ btc-ui: context [
 				txid: txs/:j
 				j: j + 1
 				tx-value: txs/:j
-				if total <= tx-value [
+				if lesser-or-equal256? total tx-value [
 					append inputs reduce [addr txid ids]
 					append outputs reduce [addr-to amount]
-					rest: tx-value - total
-					if rest <> 0.0 [
+					rest: sub256 tx-value amount
+					rest: sub256 rest fee
+					if 0 <> i256-to-int rest [
 						append outputs reduce [change-addr-ids rest]
 					]
 					put utx 'inputs inputs
@@ -368,11 +375,12 @@ btc-ui: context [
 				txid: txs/:j
 				j: j + 1
 				tx-value: txs/:j
-				if total <= tx-value [
+				if lesser-or-equal256? total tx-value [
 					append inputs reduce [addr txid ids]
 					append outputs reduce [addr-to amount]
-					rest: tx-value - total
-					if rest <> 0.0 [
+					rest: sub256 tx-value amount
+					rest: sub256 rest fee
+					if 0 <> i256-to-int rest [
 						append outputs reduce [change-addr-ids rest]
 					]
 					put utx 'inputs inputs
@@ -396,8 +404,8 @@ btc-ui: context [
 	;- outputs: [puk-hash amount ...]
 	calc-balance-by-order: func [
 		account				[map!]
-		amount				[float!]
-		fee					[float!]
+		amount				[vector!]
+		fee					[vector!]
 		addr-to				[string!]
 		return:				[none! map!]
 		/local change-addr utx inputs outputs total sum len len2 i j addr txs balance ids txid tx-value rest temp
@@ -407,8 +415,8 @@ btc-ui: context [
 		utx: make map! []
 		inputs: copy []
 		outputs: copy []
-		total: amount + fee
-		sum: 0.0
+		total: add256 amount fee
+		sum: to-i256 0
 
 		len: length? account/change
 		i: 1
@@ -435,21 +443,20 @@ btc-ui: context [
 				tx-value: txs/:j
 				print txid
 				print [tx-value sum total]
-				sum: sum + tx-value
+				sum: add256 sum tx-value
 				print [tx-value sum total]
-				either sum < total [
-					append inputs reduce [addr txid ids]
-					
-				][
+				either lesser-or-equal256? total sum [
 					append inputs reduce [addr txid ids]
 					append outputs reduce [addr-to amount]
 					rest: sum - total
-					if rest <> 0.0 [
+					if 0 <> i256-to-int rest [
 						append outputs reduce [change-addr-ids rest]
 					]
 					put utx 'inputs inputs
 					put utx 'outputs outputs
 					return utx
+				][
+					append inputs reduce [addr txid ids]
 				]
 				j: j + 1
 				j >= len2
@@ -486,22 +493,20 @@ btc-ui: context [
 				tx-value: txs/:j
 				print txid
 				print [tx-value sum total]
-				sum: sum + tx-value
+				sum: add256 sum tx-value
 				print [tx-value sum total]
-				either sum >= total [
+				either lesser-or-equal256? total sum [
 					append inputs reduce [addr txid ids]
 					append outputs reduce [addr-to amount]
 					rest: sum - total
-					if rest <> 0.0 [
+					if 0 <> i256-to-int rest [
 						append outputs reduce [change-addr-ids rest]
 					]
 					put utx 'inputs inputs
 					put utx 'outputs outputs
-					print "ddd"
 					return utx
 				][
 					append inputs reduce [addr txid ids]
-					print "asdfa"
 				]
 				j: j + 1
 				j >= len2
@@ -620,7 +625,7 @@ btc-ui: context [
 		label "From Address:"	addr-from:	  lbl return
 		label "To Address:"		addr-to:	  field return
 		label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
-		label "Fee:"			tx-fee:		  field 120 "0.0001" label 50 fee-unit: label 50 return
+		label "Fee:"			tx-fee:		  field 120 "0.0001" fee-unit: label 50 return
 		pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
 	]]
 
