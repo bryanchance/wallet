@@ -16,7 +16,7 @@ btc: context [
 		res
 	]
 
-	get-balance: func [network [url!] address [string!] return: [none! vector! string!]
+	get-balance: func [network [url!] address [string!] return: [none! float! string!]
 		/local resp err-no err-msg data balance
 	][
 		resp: get-url network append copy "/address/" address
@@ -35,7 +35,7 @@ btc: context [
 		if data = none [return none]
 		balance: select data 'balance
 		if balance = none [return none]
-		to-i256 balance
+		balance
 	]
 
 	;- return: [tx-hash amount]
@@ -57,7 +57,7 @@ btc: context [
 		foreach item list [
 			hash: select item 'tx_hash
 			value: select item 'value
-			append utxs reduce [hash to-i256 value]
+			append utxs reduce [hash value]
 		]
 		utxs
 	]

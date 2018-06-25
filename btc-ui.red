@@ -108,7 +108,7 @@ btc-ui: context [
 		c-list: copy []
 		o-list: copy []
 
-		total: to-i256 0
+		total: 0.0
 
 		;-- change address
 		ids/4: 1
@@ -132,13 +132,13 @@ btc-ui: context [
 			process-events
 			if string? utxs [return utxs]
 			if utxs = none [
-				append c-list reduce [addr none to-i256 0 copy ids]
+				append c-list reduce [addr none 0.0 copy ids]
 				i: i + 1
 				continue
 			]
 
 			append c-list reduce [addr utxs balance copy ids]
-			total: add256 total balance
+			total: total + balance
 
 			i: i + 1
 		]
@@ -167,19 +167,17 @@ btc-ui: context [
 			process-events
 			if string? utxs [return utxs]
 			if utxs = none [
-				append o-list reduce [addr none to-i256 0 copy ids]
+				append o-list reduce [addr none 0.0 copy ids]
 				i: i + 1
 				continue
 			]
 
 			append o-list reduce [addr utxs balance copy ids]
-			total: add256 total balance
+			total: total + balance
 
 			i: i + 1
 		]
 
-		total: i256-to-float total
-		total: total / 1e8
 		put list 'balance total
 		list
 	]
@@ -214,7 +212,7 @@ btc-ui: context [
 			return false
 		]
 		append addr-balances res
-		append addresses rejoin [addr "      " form-amount select res 'balance]
+		append addresses rejoin [addr "      " form-amount ((select res 'balance) / 1e8)]
 		addr-list: get-addr-list
 		addr-list/data: addresses
 		return true
@@ -237,6 +235,7 @@ btc-ui: context [
 			addr-from/text: copy/part from find from space
 			reset-sign-button
 			label-unit/text: coin-name
+			fee-unit/text: coin-name
 			clear addr-to/text
 			clear amount-field/text
 			view/flags dlg 'modal
@@ -258,7 +257,6 @@ btc-ui: context [
 			from: pick addr-list/data addr-list/selected
 			balance: to float! find/tail from space
 			fee: attempt [to float! tx-fee/text]
-			fee: fee / 1e8
 			if (amount + fee) > balance [
 				amount-field/text: copy "Insufficient Balance"
 				return no
@@ -277,8 +275,8 @@ btc-ui: context [
 		addr-to				[string!]
 		/local new-amount new-fee utx
 	][
-		new-amount: to-i256 (amount * 1e8)
-		new-fee: to-i256 (fee * 1e8)
+		new-amount: amount * 1e8
+		new-fee: fee * 1e8
 		utx: calc-balance-by-one-addr account new-amount new-fee addr-to
 		utx
 	]
@@ -287,8 +285,8 @@ btc-ui: context [
 	;- outputs: [puk-hash amount ...]
 	calc-balance-by-one-addr: func [
 		account				[map!]
-		amount				[vector!]
-		fee					[vector!]
+		amount				[float!]
+		fee					[float!]
 		addr-to				[string!]
 		return:				[none! map!]
 		/local change-addr utx inputs outputs total len len2 i j addr txs balance ids txid tx-value rest
@@ -298,7 +296,7 @@ btc-ui: context [
 		utx: make map! []
 		inputs: copy []
 		outputs: copy []
-		total: add256 amount fee
+		total: amount + fee
 
 		len: length? account/change
 		i: 1
@@ -323,12 +321,11 @@ btc-ui: context [
 				txid: txs/:j
 				j: j + 1
 				tx-value: txs/:j
-				if lesser-or-equal256? total tx-value [
+				if total <= tx-value [
 					append inputs reduce [addr txid ids]
 					append outputs reduce [addr-to amount]
-					rest: sub256 tx-value amount
-					rest: sub256 rest fee
-					if 0 <> i256-to-int rest [
+					rest: tx-value - total
+					if rest <> 0.0 [
 						append outputs reduce [change-addr-ids rest]
 					]
 					put utx 'inputs inputs
@@ -368,12 +365,11 @@ btc-ui: context [
 				txid: txs/:j
 				j: j + 1
 				tx-value: txs/:j
-				if lesser-or-equal256? total tx-value [
+				if total <= tx-value [
 					append inputs reduce [addr txid ids]
 					append outputs reduce [addr-to amount]
-					rest: sub256 tx-value amount
-					rest: sub256 rest fee
-					if 0 <> i256-to-int rest [
+					rest: tx-value - total
+					if rest <> 0.0 [
 						append outputs reduce [change-addr-ids rest]
 					]
 					put utx 'inputs inputs
@@ -424,7 +420,6 @@ btc-ui: context [
 		unless check-data [exit]
 
 		fee: to float! tx-fee/text						;-- fee
-		fee: fee / 1e8
 		amount: to float! amount-field/text				;-- send amount
 		addr: trim any [addr-to/text ""]
 
@@ -498,7 +493,7 @@ btc-ui: context [
 		label "From Address:"	addr-from:	  lbl return
 		label "To Address:"		addr-to:	  field return
 		label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
-		label "Fee:"			tx-fee:		  field 120 "10000" label 50 "satoshi" return
+		label "Fee:"			tx-fee:		  field 120 "0.0001" label 50 fee-unit: label 50 return
 		pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
 	]]
 
