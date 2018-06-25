@@ -278,6 +278,9 @@ btc-ui: context [
 		new-amount: amount * 1e8
 		new-fee: fee * 1e8
 		utx: calc-balance-by-one-addr account new-amount new-fee addr-to
+		if utx = none [
+			utx: calc-balance-by-order account new-amount new-fee addr-to
+		]
 		utx
 	]
 
@@ -375,6 +378,130 @@ btc-ui: context [
 					put utx 'inputs inputs
 					put utx 'outputs outputs
 					return utx
+				]
+				j: j + 1
+				j >= len2
+			]
+
+			if j <= len2 [break]
+
+			i:  i + 1
+			i >= len
+		]
+
+		none
+	]
+
+	;- inputs: [puk-hash txid bip32-path ...]
+	;- outputs: [puk-hash amount ...]
+	calc-balance-by-order: func [
+		account				[map!]
+		amount				[float!]
+		fee					[float!]
+		addr-to				[string!]
+		return:				[none! map!]
+		/local change-addr utx inputs outputs total sum len len2 i j addr txs balance ids txid tx-value rest temp
+	][
+		;change-addr: pick back back back back tail account/change 1
+		change-addr-ids: pick back tail account/change 1
+		utx: make map! []
+		inputs: copy []
+		outputs: copy []
+		total: amount + fee
+		sum: 0.0
+
+		len: length? account/change
+		i: 1
+		until [
+			addr: account/change/:i
+			i: i + 1
+			txs: account/change/:i
+			i: i + 1
+			balance: account/change/:i
+			i: i + 1
+			ids: account/change/:i
+			if balance = none [break]
+
+			if txs = none [
+				i: i + 1
+				if i < len [continue]
+			]
+
+			len2: length? txs
+			j: 1
+			until [
+				txid: txs/:j
+				j: j + 1
+				tx-value: txs/:j
+				print txid
+				print [tx-value sum total]
+				sum: sum + tx-value
+				print [tx-value sum total]
+				either sum < total [
+					append inputs reduce [addr txid ids]
+					
+				][
+					append inputs reduce [addr txid ids]
+					append outputs reduce [addr-to amount]
+					rest: sum - total
+					if rest <> 0.0 [
+						append outputs reduce [change-addr-ids rest]
+					]
+					put utx 'inputs inputs
+					put utx 'outputs outputs
+					return utx
+				]
+				j: j + 1
+				j >= len2
+			]
+
+			if j <= len2 [break]
+
+			i:  i + 1
+			i >= len
+		]
+
+		len: length? account/origin
+		i: 1
+		until [
+			addr: account/origin/:i
+			i: i + 1
+			txs: account/origin/:i
+			i: i + 1
+			balance: account/origin/:i
+			i: i + 1
+			ids: account/origin/:i
+			if balance = none [break]
+
+			if txs = none [
+				i: i + 1
+				if i < len [continue]
+			]
+
+			len2: length? txs
+			j: 1
+			until [
+				txid: txs/:j
+				j: j + 1
+				tx-value: txs/:j
+				print txid
+				print [tx-value sum total]
+				sum: sum + tx-value
+				print [tx-value sum total]
+				either sum >= total [
+					append inputs reduce [addr txid ids]
+					append outputs reduce [addr-to amount]
+					rest: sum - total
+					if rest <> 0.0 [
+						append outputs reduce [change-addr-ids rest]
+					]
+					put utx 'inputs inputs
+					put utx 'outputs outputs
+					print "ddd"
+					return utx
+				][
+					append inputs reduce [addr txid ids]
+					print "asdfa"
 				]
 				j: j + 1
 				j >= len2

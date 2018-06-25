@@ -35,7 +35,7 @@ btc: context [
 		if data = none [return none]
 		balance: select data 'balance
 		if balance = none [return none]
-		balance
+		to float! balance
 	]
 
 	;- return: [tx-hash amount]
@@ -57,7 +57,7 @@ btc: context [
 		foreach item list [
 			hash: select item 'tx_hash
 			value: select item 'value
-			append utxs reduce [hash value]
+			append utxs reduce [hash to float! value]
 		]
 		utxs
 	]

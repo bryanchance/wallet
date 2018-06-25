@@ -432,6 +432,17 @@ trezor: context [
 
 						res-in: make map! []
 						len: read-and-decode 'TxRequest res-in
+						if msg-id = trezor-message/get-id 'ButtonRequest [
+							res-in: make map! []
+							len: proto-encode/decode trezor-message/messages 'ButtonRequest res-in command-buffer
+							if block? len [return reduce ['SignTxSequence 'ButReqDecodeFailed len]]
+
+							len: encode-and-write 'ButtonAck make map! []
+							if block? len [return reduce ['SignTxSequence 'ButAckWrite len]]
+
+							res-in: make map! []
+							len: read-and-decode 'TxRequest res-in
+						]
 					]
 					if block? len [return reduce ['SignTxSequence 'TxAckError 5 len]]
 				]
