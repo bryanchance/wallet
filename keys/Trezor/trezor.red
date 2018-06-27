@@ -303,8 +303,6 @@ trezor: context [
 				tx_hash: select details 'tx_hash
 				if all [tx_hash = none request_index <> none] [
 					tx-input: tx/inputs/(request_index + 1)
-					probe tx-input/info/outputs
-					probe tx-input
 					pre-output: FindOutputByAddr tx-input/info/outputs tx-input/addr
 					if integer? pre-output [return reduce ['SignTxSequence 'FindOutputByAddr]]
 					script_type: either pre-output/2 = "P2SH" ['SPENDP2SHWITNESS]['SPENDADDRESS]
@@ -314,6 +312,9 @@ trezor: context [
 								'prev_index pre-output/1
 								'sequence -1
 								'script_type script_type]
+					if pre-output/2 = "P2SH" [
+						put sub-req 'amount trim/head i256-to-bin to-i256 pre-output/3
+					]
 					req: make map! []
 					put req 'inputs reduce [sub-req]
 					req: make map! reduce ['tx req]
@@ -461,7 +462,7 @@ trezor: context [
 		i: 0
 		foreach item outputs [
 			if item/addresses/1 = addr [
-				return reduce [i item/prev-type]
+				return reduce [i item/type item/value]
 			]
 			i: i + 1
 		]
