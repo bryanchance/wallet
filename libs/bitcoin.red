@@ -38,7 +38,7 @@ btc: context [
 		to-i256 balance
 	]
 
-	;- return: [tx-hash amount]
+	;- return: [tx-hash value]
 	get-utxs: func [network [url!] address [string!] return: [none! block! string!]
 		/local resp err-no err-msg data list utxs item hash value
 	][
@@ -57,15 +57,13 @@ btc: context [
 		foreach item list [
 			hash: select item 'tx_hash
 			value: select item 'value
-			append utxs reduce [hash to-i256 value]
+			append/only utxs reduce ['tx-hash hash 'value to-i256 value]
 		]
 		utxs
 	]
 
 	get-tx-info: func [network [url!] txid [string!] return: [none! block! string!]
 		/local resp err-no err-msg data ret version lock_time inputs outputs item info
-			prev_addresses prev_position prev_tx_hash script_hex
-			addresses value
 	][
 		resp: get-url network append copy "/tx/" reduce [txid "?verbose=3"]
 		err-no: select resp 'err_no
@@ -80,8 +78,8 @@ btc: context [
 		if version = none [return none]
 		lock_time: select data 'lock_time
 		if lock_time = none [return none]
-		append ret version
-		append ret lock_time
+		append ret reduce ['version version]
+		append ret reduce ['lock_time lock_time]
 
 		inputs: select data 'inputs
 		if inputs = none [return none]
@@ -92,22 +90,26 @@ btc: context [
 
 		info: copy []
 		foreach item inputs [
-			prev_addresses: select item 'prev_addresses
-			prev_position: select item 'prev_position
-			prev_tx_hash: select item 'prev_tx_hash
-			script_hex: select item 'script_hex
-			append info reduce [prev_addresses prev_position prev_tx_hash script_hex]
+			append/only info reduce [
+				'prev-addresses select item 'prev_addresses
+				'prev-position select item 'prev_position
+				'prev-tx-hash select item 'prev_tx_hash
+				'script-hex select item 'script_hex
+				'prev-type select item 'prev_type
+			]
 		]
-		append/only ret info
+		append ret reduce ['inputs info]
 
 		info: copy []
 		foreach item outputs [
-			addresses: select item 'addresses
-			value: select item 'value
-			script_hex: select item 'script_hex
-			append info reduce [addresses value script_hex]
+			append/only info reduce [
+				'addresses select item 'addresses
+				'value select item 'value
+				'script-hex select item 'script_hex
+				'type select item 'type
+			]
 		]
-		append/only ret info
+		append ret reduce ['outputs info]
 		ret
 	]
 

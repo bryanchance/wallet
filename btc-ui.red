@@ -95,7 +95,7 @@ btc-ui: context [
 		name			[string!]
 		bip32-path		[block!]
 		account			[integer!]
-		return:			[map! string!]
+		return:			[block! string!]
 		/local
 			ids
 			list c-list o-list len i addr utxs balance total
@@ -104,7 +104,7 @@ btc-ui: context [
 		poke ids 3 (80000000h + account)
 		append ids 0
 
-		list: make map! []
+		list: copy []
 		c-list: copy []
 		o-list: copy []
 
@@ -123,8 +123,8 @@ btc-ui: context [
 			process-events
 			if string? balance [return balance]
 			if balance = none [
-				append c-list reduce [addr none none copy ids]
-				put list 'change c-list
+				append/only c-list reduce ['addr addr 'path copy ids]
+				append list reduce ['change c-list]
 				break
 			]
 
@@ -132,12 +132,12 @@ btc-ui: context [
 			process-events
 			if string? utxs [return utxs]
 			if utxs = none [
-				append c-list reduce [addr none to-i256 0 copy ids]
+				append/only c-list reduce ['addr addr 'balance to-i256 0 'path copy ids]
 				i: i + 1
 				continue
 			]
 
-			append c-list reduce [addr utxs balance copy ids]
+			append/only c-list reduce ['addr addr 'utxs utxs 'balance balance 'path copy ids]
 			total: add256 total balance
 
 			i: i + 1
@@ -158,8 +158,8 @@ btc-ui: context [
 			process-events
 			if string? balance [return balance]
 			if balance = none [
-				append o-list reduce [addr none none copy ids]
-				put list 'origin o-list
+				append/only o-list reduce ['addr addr 'path copy ids]
+				append list reduce ['origin o-list]
 				break
 			]
 
@@ -167,18 +167,18 @@ btc-ui: context [
 			process-events
 			if string? utxs [return utxs]
 			if utxs = none [
-				append o-list reduce [addr none to-i256 0 copy ids]
+				append/only o-list reduce ['addr addr 'balance to-i256 0 'path copy ids]
 				i: i + 1
 				continue
 			]
 
-			append o-list reduce [addr utxs balance copy ids]
+			append/only o-list reduce ['addr addr 'utxs utxs 'balance balance 'path copy ids]
 			total: add256 total balance
 
 			i: i + 1
 		]
 
-		put list 'balance total
+		append list reduce ['balance total]
 		list
 	]
 
@@ -194,10 +194,10 @@ btc-ui: context [
 	][
 		res: get-account-balance name bip32-path n
 		probe res
-		either map? res [
-			addr: pick back back back back tail select res 'origin 1
-		][
+		either string? res [
 			addr: 'error
+		][
+			addr: select last res/origin 'addr
 		]
 		if not string? addr [
 			info-msg/text: case [
@@ -212,9 +212,9 @@ btc-ui: context [
 			update-ui yes
 			return false
 		]
-		balance: i256-to-float select res 'balance
+		balance: i256-to-float res/balance
 		balance: balance / 1e8
-		append addr-balances res
+		append/only addr-balances res
 		append addresses rejoin [addr "      " form-amount balance]
 		addr-list: get-addr-list
 		addr-list/data: addresses
@@ -275,7 +275,7 @@ btc-ui: context [
 	]
 
 	calc-balance: func [
-		account				[map!]
+		account				[block!]
 		amount				[float!]
 		fee					[float!]
 		addr-to				[string!]
@@ -283,260 +283,126 @@ btc-ui: context [
 	][
 		new-amount: to-i256 (amount * 1e8)
 		new-fee: to-i256 (fee * 1e8)
-		utx: calc-balance-by-one-addr account new-amount new-fee addr-to
+		utx: calc-balance-by-largest account new-amount new-fee addr-to
 		if utx = none [
 			utx: calc-balance-by-order account new-amount new-fee addr-to
 		]
 		utx
 	]
 
-	;- inputs: [puk-hash txid bip32-path ...]
-	;- outputs: [puk-hash amount ...]
-	calc-balance-by-one-addr: func [
-		account				[map!]
+	calc-balance-by-largest: func [
+		account				[block!]
 		amount				[vector!]
 		fee					[vector!]
 		addr-to				[string!]
-		return:				[none! map!]
-		/local change-addr utx inputs outputs total len len2 i j addr txs balance ids txid tx-value rest
+		return:				[none! block!]
+		/local change-addr-path ret inputs outputs total item utx info rest
 	][
-		;change-addr: pick back back back back tail account/change 1
-		change-addr-ids: pick back tail account/change 1
-		utx: make map! []
+		change-addr-path: select last account/change 'path
+		ret: copy []
 		inputs: copy []
 		outputs: copy []
 		total: add256 amount fee
 
-		len: length? account/change
-		i: 1
-		until [
-			addr: account/change/:i
-			i: i + 1
-			txs: account/change/:i
-			i: i + 1
-			balance: account/change/:i
-			i: i + 1
-			ids: account/change/:i
-			if balance = none [break]
+		foreach item account/change [
+			if item/balance = none [break]
+			if item/utxs = none [continue]
 
-			if txs = none [
-				i: i + 1
-				if i < len [continue]
-			]
-
-			len2: length? txs
-			j: 1
-			until [
-				txid: txs/:j
-				j: j + 1
-				tx-value: txs/:j
-				if lesser-or-equal256? total tx-value [
-					append inputs reduce [addr txid ids]
-					append outputs reduce [addr-to amount]
-					rest: sub256 tx-value amount
-					rest: sub256 rest fee
-					if 0 <> i256-to-int rest [
-						append outputs reduce [change-addr-ids rest]
+			foreach utx item/utxs [
+				if lesser-or-equal256? total utx/value [
+					info: btc/get-tx-info network utx/tx-hash
+					append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
+					append/only outputs reduce ['addr addr-to 'value amount]
+					rest: sub256 utx/value total
+					if #{} <> trim/head i256-to-bin rest [
+						append/only outputs reduce ['path change-addr-path 'value rest]
 					]
-					put utx 'inputs inputs
-					put utx 'outputs outputs
-					return utx
+					append ret reduce ['inputs inputs]
+					append ret reduce ['outputs outputs]
+					return ret
 				]
-				j: j + 1
-				j >= len2
 			]
-
-			if j <= len2 [break]
-
-			i:  i + 1
-			i >= len
 		]
 
-		len: length? account/origin
-		i: 1
-		until [
-			addr: account/origin/:i
-			i: i + 1
-			txs: account/origin/:i
-			i: i + 1
-			balance: account/origin/:i
-			i: i + 1
-			ids: account/origin/:i
-			if balance = none [break]
+		foreach item account/origin [
+			if item/balance = none [break]
+			if item/utxs = none [continue]
 
-			if txs = none [
-				i: i + 1
-				if i < len [continue]
-			]
-
-			len2: length? txs
-			j: 1
-			until [
-				txid: txs/:j
-				j: j + 1
-				tx-value: txs/:j
-				if lesser-or-equal256? total tx-value [
-					append inputs reduce [addr txid ids]
-					append outputs reduce [addr-to amount]
-					rest: sub256 tx-value amount
-					rest: sub256 rest fee
-					if 0 <> i256-to-int rest [
-						append outputs reduce [change-addr-ids rest]
+			foreach utx item/utxs [
+				if lesser-or-equal256? total utx/value [
+					info: btc/get-tx-info network utx/tx-hash
+					append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
+					append/only outputs reduce ['addr addr-to 'value amount]
+					rest: sub256 utx/value total
+					if #{} <> trim/head i256-to-bin rest [
+						append/only outputs reduce ['path change-addr-path 'value rest]
 					]
-					put utx 'inputs inputs
-					put utx 'outputs outputs
-					return utx
+					append ret reduce ['inputs inputs]
+					append ret reduce ['outputs outputs]
+					return ret
 				]
-				j: j + 1
-				j >= len2
 			]
-
-			if j <= len2 [break]
-
-			i:  i + 1
-			i >= len
 		]
-
 		none
 	]
 
-	;- inputs: [puk-hash txid bip32-path ...]
-	;- outputs: [puk-hash amount ...]
 	calc-balance-by-order: func [
-		account				[map!]
+		account				[block!]
 		amount				[vector!]
 		fee					[vector!]
 		addr-to				[string!]
-		return:				[none! map!]
-		/local change-addr utx inputs outputs total sum len len2 i j addr txs balance ids txid tx-value rest temp
+		return:				[none! block!]
+		/local change-addr-path ret inputs outputs total sum item utx info rest
 	][
-		;change-addr: pick back back back back tail account/change 1
-		change-addr-ids: pick back tail account/change 1
-		utx: make map! []
+		change-addr-path: select last account/change 'path
+		ret: copy []
 		inputs: copy []
 		outputs: copy []
 		total: add256 amount fee
 		sum: to-i256 0
 
-		len: length? account/change
-		i: 1
-		until [
-			addr: account/change/:i
-			i: i + 1
-			txs: account/change/:i
-			i: i + 1
-			balance: account/change/:i
-			i: i + 1
-			ids: account/change/:i
-			if balance = none [break]
+		foreach item account/change [
+			if item/balance = none [break]
+			if item/utxs = none [continue]
 
-			if txs = none [
-				i: i + 1
-				if i < len [continue]
-			]
-
-			len2: length? txs
-			j: 1
-			until [
-				txid: txs/:j
-				j: j + 1
-				tx-value: txs/:j
-				print txid
-				print [tx-value sum total]
-				sum: add256 sum tx-value
-				print [tx-value sum total]
-				either lesser-or-equal256? total sum [
-					append inputs reduce [addr txid ids]
-					append outputs reduce [addr-to amount]
-					rest: sum - total
-					if 0 <> i256-to-int rest [
-						append outputs reduce [change-addr-ids rest]
+			foreach utx item/utxs [
+				info: btc/get-tx-info network utx/tx-hash
+				append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
+				sum: add256 sum utx/value
+				if lesser-or-equal256? total sum [
+					append/only outputs reduce ['addr addr-to 'value amount]
+					rest: sub256 sum total
+					if #{} <> trim/head i256-to-bin rest [
+						append/only outputs reduce ['path change-addr-path 'value rest]
 					]
-					put utx 'inputs inputs
-					put utx 'outputs outputs
-					return utx
-				][
-					append inputs reduce [addr txid ids]
+					append ret reduce ['inputs inputs]
+					append ret reduce ['outputs outputs]
+					return ret
 				]
-				j: j + 1
-				j >= len2
 			]
-
-			if j <= len2 [break]
-
-			i:  i + 1
-			i >= len
 		]
 
-		len: length? account/origin
-		i: 1
-		until [
-			addr: account/origin/:i
-			i: i + 1
-			txs: account/origin/:i
-			i: i + 1
-			balance: account/origin/:i
-			i: i + 1
-			ids: account/origin/:i
-			if balance = none [break]
+		foreach item account/origin [
+			if item/balance = none [break]
+			if item/utxs = none [continue]
 
-			if txs = none [
-				i: i + 1
-				if i < len [continue]
-			]
-
-			len2: length? txs
-			j: 1
-			until [
-				txid: txs/:j
-				j: j + 1
-				tx-value: txs/:j
-				print txid
-				print [tx-value sum total]
-				sum: add256 sum tx-value
-				print [tx-value sum total]
-				either lesser-or-equal256? total sum [
-					append inputs reduce [addr txid ids]
-					append outputs reduce [addr-to amount]
-					rest: sum - total
-					if 0 <> i256-to-int rest [
-						append outputs reduce [change-addr-ids rest]
+			foreach utx item/utxs [
+				info: btc/get-tx-info network utx/tx-hash
+				append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
+				sum: add256 sum utx/value
+				if lesser-or-equal256? total sum [
+					append/only outputs reduce ['addr addr-to 'value amount]
+					rest: sub256 sum total
+					if #{} <> trim/head i256-to-bin rest [
+						append/only outputs reduce ['path change-addr-path 'value rest]
 					]
-					put utx 'inputs inputs
-					put utx 'outputs outputs
-					return utx
-				][
-					append inputs reduce [addr txid ids]
+					append ret reduce ['inputs inputs]
+					append ret reduce ['outputs outputs]
+					return ret
 				]
-				j: j + 1
-				j >= len2
 			]
-
-			if j <= len2 [break]
-
-			i:  i + 1
-			i >= len
 		]
-
 		none
-	]
-
-	sign-prepare: func[
-		utx
-		/local inputs len i txid pre-data
-	][
-		inputs: select utx 'inputs
-		len: length? inputs
-		i: 1
-		until [
-			addr: inputs/:i
-			i: i + 1
-			txid: inputs/:i
-			pre-data: btc/get-tx-info network txid
-			poke inputs i reduce [txid pre-data]
-			i: i + 2
-			i > len
-		]
 	]
 
 	notify-user: does [
@@ -570,9 +436,9 @@ btc-ui: context [
 			return no
 		]
 
-		notify-user
+		probe utx
 
-		sign-prepare utx
+		notify-user
 
 		signed-data: key/get-btc-signed-data name utx
 		either all [

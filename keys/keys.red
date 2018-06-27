@@ -226,9 +226,7 @@ key: context [
 
 	get-btc-signed-data: func [
 		name					[string! none!]
-		tx						[map!]
-		/local
-			bip32				[block!]
+		tx						[block!]
 	][
 		if name = none [return 'NoDevice]
 		case [
