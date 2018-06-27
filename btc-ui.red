@@ -249,7 +249,7 @@ btc-ui: context [
 		addr: trim any [addr-to/text ""]
 		unless all [
 			26 <= length? addr
-			34 >= length? addr
+			36 >= length? addr
 		][
 			addr-to/text: copy "Invalid address"
 			return no
