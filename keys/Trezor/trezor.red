@@ -281,8 +281,13 @@ trezor: context [
 			coin_name res-in len req sub-req
 			request_type details request_index tx_hash serialized
 			tx-input tx-output pre-input pre-output script_type addr-name addr
+			last-request_type
+			last-output-remove
+			bin
 	][
 		clear serialized_tx
+		last-request_type: none
+		last-output-remove: false
 
 		coin_name: "Bitcoin"
 		if tx/inputs/1/path/2 = (80000000h + 1) [
@@ -299,6 +304,7 @@ trezor: context [
 			request_type: select res-in 'request_type
 			if request_type = 'TXINPUT [
 				details: select res-in 'details
+				serialized: select res-in 'serialized
 				request_index: select details 'request_index
 				tx_hash: select details 'tx_hash
 				if all [tx_hash = none request_index <> none] [
@@ -336,6 +342,12 @@ trezor: context [
 					probe req
 					len: WriteAndRead 'TxAck 'TxRequest req res-in
 					if block? len [return reduce ['SignTxSequence 'TxAckError 3 len]]
+				]
+				if serialized [
+					if all [last-request_type = 'TXOUTPUT last-output-remove] [remove back tail serialized_tx]
+					last-output-remove: false
+					append serialized_tx select serialized 'serialized_tx
+					probe serialized_tx
 				]
 			]
 			
@@ -436,18 +448,28 @@ trezor: context [
 					if block? len [return reduce ['SignTxSequence 'TxAckError 5 len]]
 				]
 				if serialized [
-					append serialized_tx select serialized 'serialized_tx
+					bin: select serialized 'serialized_tx
+					if all [last-request_type = 'TXOUTPUT last-output-remove] [remove back tail serialized_tx]
+					either all [bin/1 = #{02} 33 = length? bin][
+						last-output-remove: true
+					][
+						last-output-remove: false
+					]
+					append serialized_tx bin
 					probe serialized_tx
 				]
 			]
 			if request_type = 'TXFINISHED [
 				serialized: select res-in 'serialized
 				if serialized [
+					;if all [last-request_type = 'TXOUTPUT last-output-remove] [remove back tail serialized_tx]
+					;last-output-remove: false
 					append serialized_tx select serialized 'serialized_tx
 					probe serialized_tx
 				]
 				break
 			]
+			last-request_type: request_type
 		]
 		serialized_tx
 	]
