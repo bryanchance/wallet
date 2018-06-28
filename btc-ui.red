@@ -193,7 +193,7 @@ btc-ui: context [
 			res
 	][
 		res: get-account-balance name bip32-path n
-		probe res
+		;probe res
 		either string? res [
 			addr: 'error
 		][
@@ -435,8 +435,6 @@ btc-ui: context [
 			amount-field/text: copy "NYI.!"
 			return no
 		]
-
-		probe utx
 
 		notify-user
 
