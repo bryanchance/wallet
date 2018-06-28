@@ -6,7 +6,6 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
-#include %../libs/int-encode.red
 #include %Ledger/ledger.red
 #include %Trezor/trezor.red
 

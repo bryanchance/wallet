@@ -25,3 +25,19 @@ to-int16: func [b [binary!]][
 to-int32: func [b [binary!]][
 	to-integer copy/part b 4
 ]
+
+string-to-i256: func [s [string!] scalar [integer!] return: [vector!]
+	/local dot left right
+][
+	either dot: find s #"." [
+		left: copy/part s dot
+		right: copy next dot
+	][
+		left: copy s
+		right: copy ""
+	]
+
+	append/dup right #"0" (scalar - length? right)
+	append left right
+	to-i256 left
+]

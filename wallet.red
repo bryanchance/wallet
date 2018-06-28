@@ -14,6 +14,7 @@ Red [
 ]
 
 #include %libs/int256.red
+#include %libs/int-encode.red
 #include %libs/JSON.red
 #include %libs/rlp.red
 #include %libs/proto-encode.red
@@ -71,7 +72,7 @@ wallet: context [
 	tokens: extract coins 2
 
 	;-- current token name
-	token-default-index: 4
+	token-default-index: 3
 	token-name: tokens/(token-default-index)
 	
 	net-names: extract/index coins/:token-name 7 2
@@ -79,7 +80,7 @@ wallet: context [
 	explorers: extract/index coins/:token-name 7 4
 
 	;-- current net name
-	net-default-index: 1
+	net-default-index: 2
 	net-name: net-names/(net-default-index)
 
 	GetCoinItem: func [NetName index /local info len i item][

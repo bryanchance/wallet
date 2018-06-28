@@ -305,7 +305,7 @@ trezor: context [
 		if block? len [return reduce ['SignTxSequence 'SignTxError len]]
 
 		forever [
-			;probe res-in
+			probe res-in
 			request_type: select res-in 'request_type
 			if request_type = 'TXINPUT [
 				details: select res-in 'details
@@ -329,7 +329,8 @@ trezor: context [
 					req: make map! []
 					put req 'inputs reduce [sub-req]
 					req: make map! reduce ['tx req]
-					;probe req
+					probe req
+					clear res-in
 					len: WriteAndRead 'TxAck 'TxRequest req res-in
 					if block? len [return reduce ['SignTxSequence 'TxAckError 1 len]]
 				]
@@ -344,7 +345,8 @@ trezor: context [
 					req: make map! []
 					put req 'inputs reduce [sub-req]
 					req: make map! reduce ['tx req]
-					;probe req
+					probe req
+					clear res-in
 					len: WriteAndRead 'TxAck 'TxRequest req res-in
 					if block? len [return reduce ['SignTxSequence 'TxAckError 3 len]]
 				]
@@ -352,7 +354,7 @@ trezor: context [
 					if all [last-request_type = 'TXOUTPUT last-output-remove] [remove back tail serialized_tx]
 					last-output-remove: false
 					append serialized_tx select serialized 'serialized_tx
-					;probe serialized_tx
+					probe serialized_tx
 				]
 			]
 			
@@ -368,7 +370,8 @@ trezor: context [
 								'inputs_cnt length? tx-input/info/inputs
 								'outputs_cnt length? tx-input/info/outputs]
 					req: make map! reduce ['tx sub-req]
-					;probe req
+					probe req
+					clear res-in
 					len: WriteAndRead 'TxAck 'TxRequest req res-in
 					if block? len [return reduce ['SignTxSequence 'TxAckError 2 len]]
 				]
@@ -388,7 +391,8 @@ trezor: context [
 					req: make map! []
 					put req 'bin_outputs reduce [sub-req]
 					req: make map! reduce ['tx req]
-					;probe req
+					probe req
+					clear res-in
 					len: WriteAndRead 'TxAck 'TxRequest req res-in
 					if block? len [return reduce ['SignTxSequence 'TxAckError 4 len]]
 				]
@@ -429,27 +433,28 @@ trezor: context [
 					req: make map! []
 					put req 'outputs reduce [sub-req]
 					req: make map! reduce ['tx req]
-					;probe req
+					probe req
+					clear res-in
 					len: WriteAndRead 'TxAck 'TxRequest req res-in
 					if msg-id = trezor-message/get-id 'ButtonRequest [
-						res-in: make map! []
+						clear res-in
 						len: proto-encode/decode trezor-message/messages 'ButtonRequest res-in command-buffer
 						if block? len [return reduce ['SignTxSequence 'ButReqDecodeFailed len]]
 
 						len: encode-and-write 'ButtonAck make map! []
 						if block? len [return reduce ['SignTxSequence 'ButAckWrite len]]
 
-						res-in: make map! []
+						clear res-in
 						len: read-and-decode 'TxRequest res-in
 						if msg-id = trezor-message/get-id 'ButtonRequest [
-							res-in: make map! []
+							clear res-in
 							len: proto-encode/decode trezor-message/messages 'ButtonRequest res-in command-buffer
 							if block? len [return reduce ['SignTxSequence 'ButReqDecodeFailed len]]
 
 							len: encode-and-write 'ButtonAck make map! []
 							if block? len [return reduce ['SignTxSequence 'ButAckWrite len]]
 
-							res-in: make map! []
+							clear res-in
 							len: read-and-decode 'TxRequest res-in
 						]
 					]
@@ -464,7 +469,7 @@ trezor: context [
 						last-output-remove: false
 					]
 					append serialized_tx bin
-					;probe serialized_tx
+					probe serialized_tx
 				]
 			]
 			if request_type = 'TXFINISHED [
@@ -473,7 +478,7 @@ trezor: context [
 					;if all [last-request_type = 'TXOUTPUT last-output-remove] [remove back tail serialized_tx]
 					;last-output-remove: false
 					append serialized_tx select serialized 'serialized_tx
-					;probe serialized_tx
+					probe serialized_tx
 				]
 				break
 			]
@@ -825,7 +830,7 @@ trezor: context [
 	][
 		until [
 			data-frame: clear head data-frame
-			ret: hid/read dongle data-frame 50
+			ret: hid/read dongle data-frame (10 * 1000)
 			ret <> 0
 		]
 		if ret < 0 [append/only error ['buffer-report 'Failure] return error]

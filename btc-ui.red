@@ -90,6 +90,10 @@ btc-ui: context [
 
 	addr-balances: []
 
+	input-amount: none
+	input-fee: none
+	input-addr: none
+
 	;-- change/orgin: [puk-hash utx balance bip32-path]
 	get-account-balance: func [
 		name			[string!]
@@ -193,7 +197,7 @@ btc-ui: context [
 			res
 	][
 		res: get-account-balance name bip32-path n
-		;probe res
+		probe res
 		either string? res [
 			addr: 'error
 		][
@@ -245,48 +249,51 @@ btc-ui: context [
 		]
 	]
 
-	check-data: func [/local addr amount balance from addr-list fee new-amount new-balance new-fee][
-		addr: trim any [addr-to/text ""]
+	check-data: func [/local addr-list balance][
+		input-addr: trim any [addr-to/text ""]
 		unless all [
-			26 <= length? addr
-			36 >= length? addr
+			26 <= length? input-addr
+			36 >= length? input-addr
 		][
 			addr-to/text: copy "Invalid address"
 			return no
 		]
-		amount: attempt [to float! amount-field/text]
-		either all [amount amount > 0.0][
-			addr-list: get-addr-list
-			from: pick addr-list/data addr-list/selected
-			balance: attempt [to float! find/tail from space]
-			fee: attempt [to float! tx-fee/text]
-			new-amount: to-i256 (amount * 1e8)
-			new-balance: to-i256 (balance * 1e8)
-			new-fee: to-i256 (fee * 1e8)
-			if not lesser-or-equal256? (add256 new-amount new-fee) new-balance [
-				amount-field/text: copy "Insufficient Balance"
-				return no
-			]
-		][
+
+		input-amount: string-to-i256 amount-field/text 8
+		input-fee: string-to-i256 tx-fee/text 8
+
+		if string? input-amount [
 			amount-field/text: copy "Invalid amount"
 			return no
 		]
+
+		if string? input-fee [
+			tx-fee/text: copy "Invalid fee"
+			return no
+		]
+
+		addr-list: get-addr-list
+		balance: select pick addr-balances addr-list/selected 'balance
+		if not lesser-or-equal256? (add256 input-amount input-fee) balance [
+			amount-field/text: copy "Insufficient Balance"
+			return no
+		]
+
 		yes
 	]
 
 	calc-balance: func [
 		account				[block!]
-		amount				[float!]
-		fee					[float!]
+		amount				[vector!]
+		fee					[vector!]
 		addr-to				[string!]
-		/local new-amount new-fee utx
+		/local utx
 	][
-		new-amount: to-i256 (amount * 1e8)
-		new-fee: to-i256 (fee * 1e8)
-		utx: calc-balance-by-largest account new-amount new-fee addr-to
+		utx: calc-balance-by-largest account amount fee addr-to
 		if utx = none [
-			utx: calc-balance-by-order account new-amount new-fee addr-to
+			utx: calc-balance-by-order account amount fee addr-to
 		]
+		probe utx
 		utx
 	]
 
@@ -414,12 +421,8 @@ btc-ui: context [
 		process-events
 	]
 
-	do-sign-tx: func [face [object!] event [event!] /local fee amount addr name addr-list utx rate][
+	do-sign-tx: func [face [object!] event [event!] /local name addr-list utx rate][
 		unless check-data [exit]
-
-		fee: to float! tx-fee/text						;-- fee
-		amount: to float! amount-field/text				;-- send amount
-		addr: trim any [addr-to/text ""]
 
 		name: get-device-name
 		;-- Edge case: key may locked in this moment
@@ -430,7 +433,7 @@ btc-ui: context [
 		]
 
 		addr-list: get-addr-list
-		utx: calc-balance pick addr-balances addr-list/selected amount fee addr
+		utx: calc-balance pick addr-balances addr-list/selected input-amount input-fee input-addr
 		if utx = none [
 			amount-field/text: copy "NYI.!"
 			return no
