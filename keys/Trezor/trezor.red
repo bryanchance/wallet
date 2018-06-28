@@ -278,6 +278,7 @@ trezor: context [
 		tx				[block!]
 		return:			[block! binary!]
 		/local
+			input-segwit?
 			coin_name res-in len req sub-req
 			request_type details request_index tx_hash serialized
 			tx-input tx-output pre-input pre-output script_type addr-name addr
@@ -292,6 +293,10 @@ trezor: context [
 		coin_name: "Bitcoin"
 		if tx/inputs/1/path/2 = (80000000h + 1) [
 			coin_name: "Testnet"
+		]
+		input-segwit?: false
+		if tx/inputs/1/path/1 = (80000000h + 49) [
+			input-segwit?: true
 		]
 		res-in: make map! []
 
@@ -413,6 +418,9 @@ trezor: context [
 								script_type: 'PAYTOADDRESS
 							]
 						]
+					]
+					if not input-segwit? [
+						script_type: 'PAYTOADDRESS
 					]
 					sub-req: make map! reduce [
 								addr-name addr
