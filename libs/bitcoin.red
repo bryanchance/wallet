@@ -16,7 +16,7 @@ btc: context [
 		res
 	]
 
-	get-balance: func [network [url!] address [string!] return: [none! vector! string!]
+	get-balance: func [network [url!] address [string!] return: [none! vector! map!]
 		/local resp err-no err-msg data balance
 	][
 		resp: get-url network append copy "/address/" address
@@ -28,7 +28,7 @@ btc: context [
 		]
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return rejoin ["get-balance error! id: " form err-no " msg: " err-msg]
+			return chain-error/create 'get-balance err-no err-msg none
 		]
 
 		data: select resp 'data
@@ -39,14 +39,14 @@ btc: context [
 	]
 
 	;- return: [tx-hash value]
-	get-utxs: func [network [url!] address [string!] return: [none! block! string!]
+	get-utxs: func [network [url!] address [string!] return: [none! block! map!]
 		/local resp err-no err-msg data list utxs item hash value
 	][
 		resp: get-url network append copy "/address/" reduce [address "/unspent"]
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return rejoin ["get-utxs error! id: " form err-no " msg: " err-msg]
+			return chain-error/create 'get-utxs err-no err-msg none
 		]
 		data: select resp 'data
 		if data = none [return none]
@@ -62,14 +62,14 @@ btc: context [
 		utxs
 	]
 
-	get-tx-info: func [network [url!] txid [string!] return: [none! block! string!]
+	get-tx-info: func [network [url!] txid [string!] return: [none! block! map!]
 		/local resp err-no err-msg data ret version lock_time inputs outputs item info
 	][
 		resp: get-url network append copy "/tx/" reduce [txid "?verbose=3"]
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return rejoin ["get-tx error! id: " form err-no " msg: " err-msg]
+			return chain-error/create 'get-tx-info err-no err-msg none
 		]
 		data: select resp 'data
 		if data = none [return none]
@@ -118,7 +118,7 @@ btc: context [
 		Accept: "application/json"
 	]
 
-	publish-tx: func [network [url!] tx [string!] return: [block! string!]
+	publish-tx: func [network [url!] tx [string!] return: [block! map!]
 		/local
 			body resp data err-no err-msg
 	][
@@ -132,7 +132,7 @@ btc: context [
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return rejoin ["publish-tx error! id: " form err-no " msg: " err-msg]
+			return chain-error/create 'publish-tx err-no err-msg none
 		]
 		[]
 	]
@@ -151,10 +151,10 @@ btc: context [
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return rejoin ["decode-tx error! id: " form err-no " msg: " err-msg]
+			return chain-error/create 'decode-tx err-no err-msg none
 		]
 		data: select resp 'data
-		if data = none [return "decode-tx error! no data."]
+		if data = none [return chain-error/create 'decode-tx none "no data" none]
 		txid: select data 'txid
 		reduce [txid]
 	]
