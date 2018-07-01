@@ -9,27 +9,8 @@ Red [
 
 eth-api: context [
 
-	eth-to-wei: func [eth /local cnt n d scale][
-		cnt: 0
-		scale: to-i256 #{0DE0B6B3A7640000}			;-- 1e18
-		if string? eth [
-			if d: find/tail eth #"." [
-				cnt: length? d
-			]
-			eth: to float! eth
-		]
-		if cnt > 0 [
-			n: power 10 cnt
-			eth: eth * n
-			scale: div256 scale to-i256 n
-		]
-		eth: to-i256 any [attempt [to-integer eth] eth]
-		mul256 eth scale
-	]
-
-	gwei-to-wei: func [gwei][
-		if string? gwei [gwei: to float! gwei]
-		to-i256 gwei * 1e9
+	timeout-error: func [name][
+		chain-error/new name none 'network-timeout none
 	]
 
 	pad64: function [data [string! binary!]][
@@ -65,18 +46,29 @@ eth-api: context [
 		lowercase take/part enbase/base checksum str 'sha256 16 16
 	]
 
-	call-rpc: func [network [url!] method [word!] params [none! block!] /local data res][
+	call-rpc: func [network [url!] method [word!] params [none! block!] /local data blk res err-msg error][
 		body/method: method
 		body/params: params
 		data: json/encode body
 		headers/cookie: cookie data
-		res: json/decode write network compose/only [
-			POST
-			(headers)
-			(to-binary data)
+		blk: [
+			compose/only [
+				POST
+				(headers)
+				(to-binary data)
+			]
 		]
+		res: attempt [write network blk]
+		unless res [
+			wait 0.3
+			res: attempt [write network blk]
+			unless res [return chain-error/new 'call-rpc network blk timeout-error 'call-rpc]
+		]
+		res: json/decode res
 		unless data: select res 'result [			;-- error
-			data: select res 'error
+			err-msg: select res 'error
+			error: chain-error/new 'call-rpc network err-msg none
+			return chain-error/new 'call-rpc network blk error
 		]
 		data
 	]
@@ -91,29 +83,30 @@ eth-api: context [
 		n / 1e18
 	]
 
-	get-balance-token: func [network [url!] contract [string!] address [string!] /local token-url params][
+	get-balance-token: func [network [url!] contract [string!] address [string!] /local token-url params res][
 		token-url: rejoin ["0x" contract]
 		params: make map! 4
 		params/to: token-url
 		params/data: rejoin ["0x70a08231" pad64 copy skip address 2]
-		parse-balance call-rpc network 'eth_call reduce [params 'latest]
+		res: call-rpc network 'eth_call reduce [params 'latest]
+		if chain-error/error? res [return chain-error/new 'get-balance-token network reduce [address contract] res]
+		parse-balance res
 	]
 
-	get-balance: func [network [url!] address [string!]][
-		parse-balance call-rpc network 'eth_getBalance reduce [address 'latest]
+	get-balance: func [network [url!] address [string!] /local res][
+		res: call-rpc network 'eth_getBalance reduce [address 'latest]
+		if chain-error/error? res [return chain-error/new 'get-balance network address res]
+		parse-balance res
 	]
 
-	get-nonce: func [network [url!] address [string!] /local n result][
-		result: attempt [call-rpc network 'eth_getTransactionCount reduce [address 'pending]]
-		unless result [				;-- timeout, try again
-			result: attempt [call-rpc network 'eth_getTransactionCount reduce [address 'pending]]
-		]
-		unless result [return -1]
+	get-nonce: func [network [url!] address [string!] /local n res][
+		res: call-rpc network 'eth_getTransactionCount reduce [address 'pending]
+		if chain-error/error? res [return chain-error/new 'get-nonce network address res]
 
-		either (length? result) % 2 <> 0 [
-			poke result 2 #"0"
+		either (length? res) % 2 <> 0 [
+			poke res 2 #"0"
 			n: 1
 		][n: 2]
-		to integer! debase/base skip result n 16
+		to integer! debase/base skip res n 16
 	]
 ]

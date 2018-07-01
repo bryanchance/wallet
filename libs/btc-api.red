@@ -22,7 +22,7 @@ btc-api: context [
 		unless resp [
 			wait 0.5
 			resp: attempt [read net-str]
-			unless resp [return chain-error/new 'get-url none net-str timeout-error 'get-url]
+			unless resp [return chain-error/new 'get-url network net-str timeout-error 'get-url]
 		]
 		res: json/decode resp
 		res
