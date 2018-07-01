@@ -1,18 +1,30 @@
 Red [
-	Title:	"bitcoin utility functions"
+	Title:	"get btc info from network"
 	Author: "bitbegin"
-	File: 	%bitcoin.red
+	File: 	%btc-network.red
 	Tabs: 	4
 	Rights:  "Copyright (C) 2018 Red Foundation. All rights reserved."
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
 
-btc: context [
+btc-network: context [
 
-	get-url: func [network [url!] params [string!] /local net-str res][
+	timeout-error: func [name][
+		chain-error/new name none 'network-timeout none
+	]
+
+	get-url: func [network [url!] params [string!] return: [map!]
+		/local net-str resp res
+	][
 		net-str: append copy network params
-		res: json/decode read net-str
+		resp: attempt [read net-str]
+		unless resp [
+			wait 0.5
+			resp: attempt [read net-str]
+			unless resp [return chain-error/new 'get-url none net-str timeout-error 'get-url]
+		]
+		res: json/decode resp
 		res
 	]
 
@@ -20,15 +32,11 @@ btc: context [
 		/local resp err-no err-msg data balance
 	][
 		resp: get-url network append copy "/address/" address
+		if chain-error/error? resp [return chain-error/new 'get-balance network address resp]
 		err-no: select resp 'err_no
-		if err-no = none [
-			wait 0.5
-			resp: get-url network append copy "/address/" address
-			err-no: select resp 'err_no
-		]
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return chain-error/create 'get-balance err-no err-msg none
+			return chain-error/new 'get-balance err-no err-msg none
 		]
 
 		data: select resp 'data
@@ -39,14 +47,15 @@ btc: context [
 	]
 
 	;- return: [tx-hash value]
-	get-utxs: func [network [url!] address [string!] return: [none! block! map!]
+	get-unspent: func [network [url!] address [string!] return: [none! block! map!]
 		/local resp err-no err-msg data list utxs item hash value
 	][
 		resp: get-url network append copy "/address/" reduce [address "/unspent"]
+		if chain-error/error? resp [return chain-error/new 'get-unspent network address resp]
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return chain-error/create 'get-utxs err-no err-msg none
+			return chain-error/new 'get-unspent err-no err-msg none
 		]
 		data: select resp 'data
 		if data = none [return none]
@@ -66,10 +75,11 @@ btc: context [
 		/local resp err-no err-msg data ret version lock_time inputs outputs item info
 	][
 		resp: get-url network append copy "/tx/" reduce [txid "?verbose=3"]
+		if chain-error/error? resp [return chain-error/new 'get-tx-info network address resp]
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return chain-error/create 'get-tx-info err-no err-msg none
+			return chain-error/new 'get-tx-info err-no err-msg none
 		]
 		data: select resp 'data
 		if data = none [return none]
@@ -124,15 +134,19 @@ btc: context [
 	][
 		body: make map! reduce ['rawhex tx]
 		data: json/encode body
-		resp: json/decode write append copy network "/tools/tx-publish" compose/only [
-			POST
-			(headers)
-			(data)
+		resp: attempt [
+			write append copy network "/tools/tx-publish" compose/only [
+				POST
+				(headers)
+				(data)
+			]
 		]
+		unless resp [return chain-error/new 'publish-tx network tx timeout-error 'publish-tx]
+		resp: json/decode resp
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return chain-error/create 'publish-tx err-no err-msg none
+			return chain-error/new 'publish-tx err-no err-msg none
 		]
 		[]
 	]
@@ -143,18 +157,22 @@ btc: context [
 	][
 		body: make map! reduce ['rawhex tx]
 		data: json/encode body
-		resp: json/decode write append copy network "/tools/tx-decode" compose/only [
-			POST
-			(headers)
-			(data)
+		resp: attempt [
+			write append copy network "/tools/tx-decode" compose/only [
+				POST
+				(headers)
+				(data)
+			]
 		]
+		unless resp [return chain-error/new 'decode-tx network tx timeout-error 'publish-tx]
+		resp: json/decode resp
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return chain-error/create 'decode-tx err-no err-msg none
+			return chain-error/new 'decode-tx err-no err-msg none
 		]
 		data: select resp 'data
-		if data = none [return chain-error/create 'decode-tx none "no data" none]
+		if data = none [return chain-error/new 'decode-tx none "no data" none]
 		txid: select data 'txid
 		reduce [txid]
 	]
