@@ -18,7 +18,7 @@ int256: context [
 		make vector! compose/only [integer! 16 (empty)]
 	]
 
-	set 'to-i256 function [value [integer! float! binary! string!] return: [vector! string!]][
+	set 'to-i256 function [value [integer! float! binary! string!] return: [vector! map!]][
 		switch/default type?/word value [
 			integer! [
 				spec: reduce [0 0 0 0 0 0 0 0 0 0 0 0 0 0 value / 65536 value % 65536]
@@ -56,7 +56,7 @@ int256: context [
 				factor: to-i256 10
 				bin: value
 				while [all [not tail? bin bin/1 <> #"."]][
-					if any [bin/1 < #"0" bin/1 > #"9"][return "to-i256 error: invalid char!"]
+					if any [bin/1 < #"0" bin/1 > #"9"][return chain-error/new 'to-i256 bin/1 "invalid char" none]
 					v: to-i256 to integer! (bin/1 - #"0")
 					res: mul256 res factor
 					res: add256 res v
@@ -64,19 +64,25 @@ int256: context [
 				]
 				return res
 			]
-		][make error! "to-i256 error: invalid type!"]
+			none! [
+				return to-i256 0
+			]
+		][return chain-error/new 'to-i256 bin/1 "invalid type" none]
 		
 		make vector! compose/only [integer! 16 (spec)]
 	]
 
-	set 'i256-to-int function [bigint [vector!] return: [integer!]][
-		repeat idx 12 [if (bigint/:idx) <> 0 [make error! "i256-to-int error!"]]
+	set 'i256-to-int function [bigint [vector!] return: [integer! map!]
+		/local
+			idx high low
+	][
+		repeat idx 12 [if (bigint/:idx) <> 0 [return chain-error/new 'i256-to-int idx reduce [bigint/:idx "too large"] none]]
 		high: bigint/15 << 16
 		if negative? high [high: 65536 + high]
 		if negative? low: bigint/16 [low: 65536 + low]
 		high + low
 	]
-	
+
 	set 'i256-to-float function [bigint [vector!] return: [float!]][
 		res: 0.0
 		p: 1.0 
@@ -102,6 +108,28 @@ int256: context [
 			zero? idx: idx - 1
 		]
 		bin
+	]
+
+	set 'i256-to-string function [bigint [vector!] return: [string! map!]
+		/local
+			res factor rest chr
+	][
+		res: make string! 64
+		factor: to-i256 10
+		rest: bigint
+		forever [
+			rest: div256/rem rest factor
+			chr: to string! i256-to-int rest/2
+			insert res chr
+			if i256-zero? rest/1 [break]
+			rest: rest/1
+		]
+		res
+	]
+
+	set 'i256-zero? function [bigint [vector!] return: [logic!] /local idx][
+		repeat idx length? bigint [if (bigint/:idx) <> 0 [return false]]
+		true
 	]
 
 	less-equal256?: routine [
@@ -273,9 +301,8 @@ int256: context [
 		res
 	]
 
-	set 'div256 function [dividend [vector!] divisor [vector!] /rem return: [vector! block!]][
-		t: 0 repeat idx 16 [t: t + divisor/:idx]
-		if zero? t [cause-error 'math 'zero-divide []]
+	set 'div256 function [dividend [vector!] divisor [vector!] /rem return: [vector! block! map!]][
+		if i256-zero? divisor [return chain-error/new 'div256 divisor "zero-divide" none]
 		
 		q: make-i256
 		r: make-i256
@@ -296,7 +323,7 @@ int256: context [
 		either rem [reduce [q r]][q]
 	]
 
-	set 'mod256 func [l [vector!] r [vector!] return: [vector!]][
+	set 'mod256 func [l [vector!] r [vector!] return: [vector! map!]][
 		second div256/rem l r
 	]
 ]
