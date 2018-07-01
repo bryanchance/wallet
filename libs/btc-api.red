@@ -1,14 +1,14 @@
 Red [
-	Title:	"get btc info from network"
+	Title:	"network api for btc"
 	Author: "bitbegin"
-	File: 	%btc-network.red
+	File: 	%btc-api.red
 	Tabs: 	4
 	Rights:  "Copyright (C) 2018 Red Foundation. All rights reserved."
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
 
-btc-network: context [
+btc-api: context [
 
 	timeout-error: func [name][
 		chain-error/new name none 'network-timeout none
