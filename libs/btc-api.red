@@ -39,10 +39,8 @@ btc-api: context [
 			return chain-error/new 'get-balance err-no err-msg none
 		]
 
-		data: select resp 'data
-		if data = none [return none]
-		balance: select data 'balance
-		if balance = none [return none]
+		unless data: select resp 'data [return none]
+		unless balance: select data 'balance [return none]
 		to-i256 balance
 	]
 
@@ -57,10 +55,8 @@ btc-api: context [
 			err-msg: select resp 'err_msg
 			return chain-error/new 'get-unspent err-no err-msg none
 		]
-		data: select resp 'data
-		if data = none [return none]
-		list: select data 'list
-		if list = none [return none]
+		unless data: select resp 'data [return none]
+		unless list: select data 'list [return none]
 		if list = [] [return none]
 		utxs: copy []
 		foreach item list [
@@ -81,21 +77,16 @@ btc-api: context [
 			err-msg: select resp 'err_msg
 			return chain-error/new 'get-tx-info err-no err-msg none
 		]
-		data: select resp 'data
-		if data = none [return none]
+		unless data: select resp 'data [return none]
 		ret: copy []
-		version: select data 'version
-		if version = none [return none]
-		lock_time: select data 'lock_time
-		if lock_time = none [return none]
+		unless version: select data 'version [return none]
+		unless lock_time: select data 'lock_time [return none]
 		append ret reduce ['version version]
 		append ret reduce ['lock_time lock_time]
 
-		inputs: select data 'inputs
-		if inputs = none [return none]
+		unless inputs: select data 'inputs [return none]
 		if inputs = [] [return none]
-		outputs: select data 'outputs
-		if outputs = none [return none]
+		unless outputs: select data 'outputs [return none]
 		if outputs = [] [return none]
 
 		info: copy []
@@ -171,9 +162,8 @@ btc-api: context [
 			err-msg: select resp 'err_msg
 			return chain-error/new 'decode-tx err-no err-msg none
 		]
-		data: select resp 'data
-		if data = none [return chain-error/new 'decode-tx none "no data" none]
-		txid: select data 'txid
+		unless data: select resp 'data [return chain-error/new 'decode-tx none "no data" none]
+		unless txid: select data 'txid [return chain-error/new 'decode-tx none "no txid" none]
 		reduce [txid]
 	]
 
