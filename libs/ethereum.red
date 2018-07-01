@@ -1,16 +1,13 @@
 Red [
-	Title:	"Ethereum utility functions"
-	Author: "Xie Qingtian"
-	File: 	%ethereum.red
+	Title:	"network api for eth"
+	Author: "Xie Qingtian & bitbegin"
+	File: 	%eth-api.red
 	Tabs: 	4
 	Rights:  "Copyright (C) 2018 Red Foundation. All rights reserved."
-	License: {
-		Distributed under the Boost Software License, Version 1.0.
-		See https://github.com/red/red/blob/master/BSL-License.txt
-	}
+	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
-eth: context [
+eth-api: context [
 
 	eth-to-wei: func [eth /local cnt n d scale][
 		cnt: 0
