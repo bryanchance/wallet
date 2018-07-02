@@ -3619,117 +3619,140 @@ Red []
 	--test-- "subtract-2"
 		x: to-i256 #{00}
 		y: to-i256 #{01}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 -1
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-3"
 		x: to-i256 #{00}
 		y: to-i256 #{02}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 -2
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-4"
 		x: to-i256 #{00}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{01}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-5"
 		x: to-i256 #{00}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF953E0BDA00B87F15}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-6"
 		x: to-i256 #{00}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF4798D0731143EBB8}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-7"
 		x: to-i256 #{00}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF88100DF333C77}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-8"
 		x: to-i256 #{00}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB29A5534003EE17B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-9"
 		x: to-i256 #{00}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDA6E34B0C38FAC40}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-10"
 		x: to-i256 #{00}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE85C7F6F9A79AF7F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-11"
 		x: to-i256 #{00}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD05140339CB1E1B9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-12"
 		x: to-i256 #{00}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA7895512548B8604}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-13"
 		x: to-i256 #{00}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9A6D7279108082E7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-14"
 		x: to-i256 #{00}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF76101B4D27582AEC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-15"
 		x: to-i256 #{00}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF031F33B215C53A6D64}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-16"
 		x: to-i256 #{00}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A02870F9B41691BDBD0F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-17"
 		x: to-i256 #{00}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B6281608200276327E7BF9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-18"
 		x: to-i256 #{00}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F1AFB0EC32BBD072F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-19"
 		x: to-i256 #{00}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D570151F320D8654584638}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-20"
 		x: to-i256 #{00}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CE77827AC6CD6D4DFD}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-21"
 		x: to-i256 #{00}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E52A55F8CB9663DAB0}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-22"
 		x: to-i256 #{00}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF4078373BB395CFE7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-23"
 		x: to-i256 #{00}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED3801668D56D99787DFFBEA}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-24"
 		x: to-i256 #{00}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E1691282DEB6729B79A6BF65}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-25"
 		x: to-i256 #{00}
@@ -3740,117 +3763,140 @@ Red []
 	--test-- "subtract-26"
 		x: to-i256 #{00}
 		y: to-i256 #{01}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 -1
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-27"
 		x: to-i256 #{00}
 		y: to-i256 #{02}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 -2
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-28"
 		x: to-i256 #{00}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{01}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-29"
 		x: to-i256 #{00}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF953E0BDA00B87F15}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-30"
 		x: to-i256 #{00}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF4798D0731143EBB8}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-31"
 		x: to-i256 #{00}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF88100DF333C77}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-32"
 		x: to-i256 #{00}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB29A5534003EE17B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-33"
 		x: to-i256 #{00}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDA6E34B0C38FAC40}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-34"
 		x: to-i256 #{00}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE85C7F6F9A79AF7F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-35"
 		x: to-i256 #{00}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD05140339CB1E1B9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-36"
 		x: to-i256 #{00}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA7895512548B8604}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-37"
 		x: to-i256 #{00}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9A6D7279108082E7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-38"
 		x: to-i256 #{00}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF76101B4D27582AEC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-39"
 		x: to-i256 #{00}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF031F33B215C53A6D64}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-40"
 		x: to-i256 #{00}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A02870F9B41691BDBD0F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-41"
 		x: to-i256 #{00}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B6281608200276327E7BF9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-42"
 		x: to-i256 #{00}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F1AFB0EC32BBD072F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-43"
 		x: to-i256 #{00}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D570151F320D8654584638}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-44"
 		x: to-i256 #{00}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CE77827AC6CD6D4DFD}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-45"
 		x: to-i256 #{00}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E52A55F8CB9663DAB0}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-46"
 		x: to-i256 #{00}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF4078373BB395CFE7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-47"
 		x: to-i256 #{00}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED3801668D56D99787DFFBEA}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-48"
 		x: to-i256 #{00}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E1691282DEB6729B79A6BF65}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-49"
 		x: to-i256 #{01}
@@ -3867,112 +3913,134 @@ Red []
 	--test-- "subtract-51"
 		x: to-i256 #{01}
 		y: to-i256 #{02}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 -1
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-52"
 		x: to-i256 #{01}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{02}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-53"
 		x: to-i256 #{01}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF953E0BDA00B87F16}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-54"
 		x: to-i256 #{01}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF4798D0731143EBB9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-55"
 		x: to-i256 #{01}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF88100DF333C78}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-56"
 		x: to-i256 #{01}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB29A5534003EE17C}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-57"
 		x: to-i256 #{01}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDA6E34B0C38FAC41}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-58"
 		x: to-i256 #{01}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE85C7F6F9A79AF80}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-59"
 		x: to-i256 #{01}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD05140339CB1E1BA}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-60"
 		x: to-i256 #{01}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA7895512548B8605}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-61"
 		x: to-i256 #{01}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9A6D7279108082E8}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-62"
 		x: to-i256 #{01}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF76101B4D27582AED}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-63"
 		x: to-i256 #{01}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF031F33B215C53A6D65}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-64"
 		x: to-i256 #{01}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A02870F9B41691BDBD10}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-65"
 		x: to-i256 #{01}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B6281608200276327E7BFA}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-66"
 		x: to-i256 #{01}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F1AFB0EC32BBD0730}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-67"
 		x: to-i256 #{01}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D570151F320D8654584639}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-68"
 		x: to-i256 #{01}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CE77827AC6CD6D4DFE}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-69"
 		x: to-i256 #{01}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E52A55F8CB9663DAB1}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-70"
 		x: to-i256 #{01}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF4078373BB395CFE8}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-71"
 		x: to-i256 #{01}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED3801668D56D99787DFFBEB}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-72"
 		x: to-i256 #{01}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E1691282DEB6729B79A6BF66}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-73"
 		x: to-i256 #{02}
@@ -3995,107 +4063,128 @@ Red []
 	--test-- "subtract-76"
 		x: to-i256 #{02}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{03}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-77"
 		x: to-i256 #{02}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF953E0BDA00B87F17}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-78"
 		x: to-i256 #{02}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF4798D0731143EBBA}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-79"
 		x: to-i256 #{02}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF88100DF333C79}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-80"
 		x: to-i256 #{02}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB29A5534003EE17D}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-81"
 		x: to-i256 #{02}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDA6E34B0C38FAC42}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-82"
 		x: to-i256 #{02}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE85C7F6F9A79AF81}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-83"
 		x: to-i256 #{02}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD05140339CB1E1BB}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-84"
 		x: to-i256 #{02}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA7895512548B8606}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-85"
 		x: to-i256 #{02}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9A6D7279108082E9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-86"
 		x: to-i256 #{02}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF76101B4D27582AEE}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-87"
 		x: to-i256 #{02}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF031F33B215C53A6D66}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-88"
 		x: to-i256 #{02}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A02870F9B41691BDBD11}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-89"
 		x: to-i256 #{02}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B6281608200276327E7BFB}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-90"
 		x: to-i256 #{02}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F1AFB0EC32BBD0731}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-91"
 		x: to-i256 #{02}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D570151F320D865458463A}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-92"
 		x: to-i256 #{02}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CE77827AC6CD6D4DFF}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-93"
 		x: to-i256 #{02}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E52A55F8CB9663DAB2}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-94"
 		x: to-i256 #{02}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF4078373BB395CFE9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-95"
 		x: to-i256 #{02}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED3801668D56D99787DFFBEC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-96"
 		x: to-i256 #{02}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E1691282DEB6729B79A6BF67}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-97"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
@@ -4268,12 +4357,14 @@ Red []
 	--test-- "subtract-125"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{6AC1F425FF4780EC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-126"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB25AC499108B6CA3}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-127"
 		x: to-i256 #{6AC1F425FF4780EB}
@@ -4320,57 +4411,68 @@ Red []
 	--test-- "subtract-134"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE0D20F73269FABD7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-135"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF0389F5A63BC481EE4F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-136"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A028DBBBA83C91053DFA}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-137"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B6281672E1F69C31C5FCE4}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-138"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F85BD02E92B04881A}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-139"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D5701589F401AC539FC723}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-140"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CEE2446EECCCB4CEE8}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-141"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E59517ECF195AB5B9B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-142"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BFAB3A2B61B2DD50D2}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-143"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED380166F818CDBD87277CD5}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-144"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E1691283497866C178EE4050}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-145"
 		x: to-i256 #{B8672F8CEEBC1448}
@@ -4399,7 +4501,8 @@ Red []
 	--test-- "subtract-149"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B8672F8CEEBC1449}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-150"
 		x: to-i256 #{B8672F8CEEBC1448}
@@ -4458,52 +4561,62 @@ Red []
 	--test-- "subtract-159"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF03D79AE1A2B3F681AC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-160"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A0292960E3A38079D157}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-161"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B62816C0873203213A9041}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-162"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087FD3623E501A791B77}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-163"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D57015D7993D1343145A80}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-164"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CF2FE9AA53BC296245}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-165"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E5E2BD2858851FEEF8}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-166"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BFF8DF66C8A251E42F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-167"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED38016745BE0924769C1032}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-168"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E1691283971DA2286862D3AD}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-169"
 		x: to-i256 #{077EFF20CCC389}
@@ -4532,102 +4645,122 @@ Red []
 	--test-- "subtract-173"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{077EFF20CCC38A}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-174"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF95458AD92185429E}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-175"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF47A04F723210AF41}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-176"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB2A1D433210BA504}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-177"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDA75B3AFE45C6FC9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-178"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE863FE6EBB467308}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-179"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD058BF32BD7EA542}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-180"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA790D4117558498D}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-181"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9A74F178314D4670}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-182"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF76179A4C4824EE75}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-183"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF031F3B3114E60730ED}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-184"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A02871013315B28A8098}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-185"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B6281608278175534B3F82}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-186"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F1B028DC24C89CAB8}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-187"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D570151F398C85752509C1}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-188"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CE7789F9C5EE3A1186}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-189"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E52A5D77CAB7309E39}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-190"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF407FB63AD4629370}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-191"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED3801668D5E5896A8ACBF73}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-192"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E1691282DEBDF19A9A7382EE}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-193"
 		x: to-i256 #{4D65AACBFFC11E85}
@@ -4656,17 +4789,20 @@ Red []
 	--test-- "subtract-197"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4D65AACBFFC11E86}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-198"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE2A3B6A600799D9A}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-199"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF94FE7B3F11050A3D}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-200"
 		x: to-i256 #{4D65AACBFFC11E85}
@@ -4695,67 +4831,80 @@ Red []
 	--test-- "subtract-204"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF4EEFFDE544CA489}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-205"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE7D31D451041A16C}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-206"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC375C61927194971}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-207"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF036C995CE1C4FB8BE9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-208"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A028BE5F5EE2917EDB94}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-209"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B628165585AD42323F9A7E}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-210"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F6860B98F2B7E25B4}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-211"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D570156C97B852541964BD}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-212"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CEC4E82592CD2E6C82}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-213"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E577BBA3979624F935}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-214"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF8DDDE207B356EE6C}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-215"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED380166DABC846387A11A6F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-216"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E16912832C1C1D677967DDEA}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-217"
 		x: to-i256 #{2591CB4F3C7053C0}
@@ -4784,17 +4933,20 @@ Red []
 	--test-- "subtract-221"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{2591CB4F3C7053C1}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-222"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBACFD7293D28D2D5}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-223"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF6D2A9BC24DB43F78}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-224"
 		x: to-i256 #{2591CB4F3C7053C0}
@@ -4805,7 +4957,8 @@ Red []
 	--test-- "subtract-225"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD82C20833CAF353B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-226"
 		x: to-i256 #{2591CB4F3C7053C0}
@@ -4816,72 +4969,86 @@ Red []
 	--test-- "subtract-227"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5E30B82D9223579}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-228"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCD1B206190FBD9C4}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-229"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBFFF3DC84CF0D6A7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-230"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9BA1E69C63C87EAC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-231"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF0344C57D6501AAC124}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-232"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A028968B7F65CE2E10CF}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-233"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B628162DB1CDC56EEECFB9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-234"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F408CDA12682D5AEF}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-235"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D5701544C3D8D590C899F8}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-236"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CE9D14461609DDA1BD}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-237"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E54FE7C41AD2D42E70}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-238"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF660A028AF00623A7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-239"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED380166B2E8A4E6C4504FAA}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-240"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E169128304483DEAB6171325}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-241"
 		x: to-i256 #{17A3809065865081}
@@ -4910,17 +5077,20 @@ Red []
 	--test-- "subtract-245"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{17A3809065865082}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-246"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFACE18C6A663ECF96}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-247"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5F3C510376CA3C39}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-248"
 		x: to-i256 #{17A3809065865081}
@@ -4931,82 +5101,98 @@ Red []
 	--test-- "subtract-249"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCA3DD5C465C531FC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-250"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF211B5412915FCC1}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-251"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE7F4C0C40238323A}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-252"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBF2CD5A2BA11D685}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-253"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB210F3097606D368}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-254"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8DB39BDD8CDE7B6D}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-255"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF0336D732A62AC0BDE5}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-256"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A028889D34A6F7440D90}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-257"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B628161FC383069804CC7A}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-258"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F329E8F53914357B0}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-259"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D5701536D58E16B9DE96B9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-260"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CE8F25FB5732F39E7E}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-261"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E541F9795BFBEA2B31}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-262"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF581BB7CC191C2068}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-263"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED380166A4FA5A27ED664C6B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-264"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E1691282F659F32BDF2D0FE6}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-265"
 		x: to-i256 #{2FAEBFCC634E1E47}
@@ -5035,17 +5221,20 @@ Red []
 	--test-- "subtract-269"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{2FAEBFCC634E1E48}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-270"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC4ECCBA664069D5C}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-271"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7747903F749209FF}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-272"
 		x: to-i256 #{2FAEBFCC634E1E47}
@@ -5056,7 +5245,8 @@ Red []
 	--test-- "subtract-273"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE2491500638CFFC2}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-274"
 		x: to-i256 #{2FAEBFCC634E1E47}
@@ -5073,67 +5263,80 @@ Red []
 	--test-- "subtract-276"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD73814DEB7D9A44B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-277"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCA1C324573CEA12E}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-278"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA5BEDB198AA64933}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-279"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF034EE271E228888BAB}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-280"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A028A0A873E2F50BDB56}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-281"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B6281637CEC24295CC9A40}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-282"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F4AA9CE8F8F0B2576}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-283"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D570154EE0CD52B7A6647F}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-284"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CEA7313A9330BB6C44}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-285"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E55A04B897F9B1F8F7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-286"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF7026F70816E3EE2E}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-287"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED380166BD059963EB2E1A31}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-288"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E16912830E653267DCF4DDAC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-289"
 		x: to-i256 #{5876AAEDAB7479FC}
@@ -5162,17 +5365,20 @@ Red []
 	--test-- "subtract-293"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{5876AAEDAB7479FD}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-294"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEDB4B6C7AC2CF911}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-295"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA00F7B60BCB865B4}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-296"
 		x: to-i256 #{5876AAEDAB7479FC}
@@ -5207,62 +5413,74 @@ Red []
 	--test-- "subtract-301"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF2E41D66BBF4FCE3}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-302"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCE86C63AD2CCA4E8}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-303"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF0377AA5D0370AEE760}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-304"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A028C9705F043D32370B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-305"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B628166096AD63DDF2F5F5}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-306"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F7371B9B0D731812B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-307"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D5701577A8B873FFCCC034}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-308"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CECFF925B478E1C7F9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-309"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E582CCA3B941D854AC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-310"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BF98EEE2295F0A49E3}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-311"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED380166E5CD8485335475E6}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-312"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E1691283372D1D89251B3961}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-313"
 		x: to-i256 #{65928D86EF7F7D19}
@@ -5291,17 +5509,20 @@ Red []
 	--test-- "subtract-317"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{65928D86EF7F7D1A}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-318"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAD09960F037FC2E}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-319"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAD2B5DFA00C368D1}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-320"
 		x: to-i256 #{65928D86EF7F7D19}
@@ -5342,57 +5563,68 @@ Red []
 	--test-- "subtract-326"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDBA2A8D416D7A805}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-327"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF0384C63F9CB4B9EA7D}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-328"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A028D68C419D813D3A28}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-329"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B628166DB28FFD21FDF912}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-330"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087F808D9C4A1B3C8448}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-331"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D5701584C49B0D43D7C351}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-332"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CEDD15084DBCECCB16}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-333"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E58FE8865285E357C9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-334"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BFA60AC4C2A3154D00}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-335"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED380166F2E9671E775F7903}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-336"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E16912834449002269263C7E}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-337"
 		x: to-i256 #{89EFE4B2D8A7D514}
@@ -5421,7 +5653,8 @@ Red []
 	--test-- "subtract-341"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{89EFE4B2D8A7D515}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-342"
 		x: to-i256 #{89EFE4B2D8A7D514}
@@ -5432,7 +5665,8 @@ Red []
 	--test-- "subtract-343"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD188B525E9EBC0CC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-344"
 		x: to-i256 #{89EFE4B2D8A7D514}
@@ -5479,52 +5713,62 @@ Red []
 	--test-- "subtract-351"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{94AFAB01AFCD4E9A5095746D79B7362BCBA904748E79DF03A92396C89DE24278}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-352"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F8FD20627730A671545C3DCD160695BB952B83288AF4A028FAE998C96A659223}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-353"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC0F9A080F955221CD49389F38BB7BA93302677248B62816920FE7290B26510D}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-354"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AFC36EC0E83E34C24EC3F1E97B5A5AC61FA4F5FE228E087FA4EAF3760464DC43}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-355"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EA3A8AF72B9F1D27F6008172BA19658CD485FE50F0D57015A921F2392D001B4C}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-356"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E6D2BDE1682CDBB894324A7C540E7A390AC7C06A969511CF01725F79A6152311}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-357"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{4EE1243BB5DAD4E7AF3A5E0EDB9E03D4504179B33778B3E5B445DD7E6F0BAFC4}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-358"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FB517592F7408C8C3FF68AD6603F922D02D9FFF056E093BFCA681BEE8C3DA4FB}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-359"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B834D2908DCA211D35F1CA28C722D878E592FAE5ED3801671746BE4A6087D0FE}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-360"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{176648F6E761413CB4D5B41818BCBB81B6545AE8E169128368A6574E524E9479}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-361"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
@@ -5553,7 +5797,8 @@ Red []
 	--test-- "subtract-365"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929D}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-366"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
@@ -5648,7 +5893,8 @@ Red []
 	--test-- "subtract-381"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{BA31793A060D864D5EA4E9A161E6CDA88498753EA8FED4E20B2246B5D1296D4C}
+		--assert z = select select sub256 x y 'error 'id
 
 	--test-- "subtract-382"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
@@ -5665,7 +5911,8 @@ Red []
 	--test-- "subtract-384"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{82B69DF53793F2A264403FAA9F058555EAAB567452EF337FBF82C085B46C5201}
+		--assert z = select select sub256 x y 'error 'id
 
 	--test-- "subtract-385"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
@@ -5694,7 +5941,8 @@ Red []
 	--test-- "subtract-389"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F2}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-390"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
@@ -5759,32 +6007,38 @@ Red []
 	--test-- "subtract-400"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{9BB28A9F389CA828FC3936A063B0A070367D814C03853EDAAE39FDFF337CB055}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-401"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E31279A59864ABB078ECFAD222B4E5ED9DD6E449BDC187ED97264E5FA0C0BEEA}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-402"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B6C64E5E710D8E50FA67B41C6553C50A8A7972D597996856AA015AAC99FF4A20}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-403"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F13D6A94B46E76B6A1A443A5A412CFD13F5A7B2865E0CFECAE38596FC29A8929}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-404"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EDD59D7EF0FC35473FD60CAF3E07E47D759C3D420BA071A60688C6B03BAF90EE}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-405"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{55E403D93EAA2E765ADE2041C5976E18BB15F68AAC8413BCB95C44B504A61DA1}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-406"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
@@ -5795,12 +6049,14 @@ Red []
 	--test-- "subtract-407"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{BF37B22E16997AABE1958C5BB11C42BD506777BD6243613E1C5D2580F6223EDB}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-408"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{1E69289470309ACB6079764B02B625C62128D7C05674725A6DBCBE84E7E90256}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-409"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
@@ -5829,7 +6085,8 @@ Red []
 	--test-- "subtract-413"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818408}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-414"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
@@ -5894,7 +6151,8 @@ Red []
 	--test-- "subtract-424"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B8A010F9A037FC78834C3BCE40FBBA8298A69D0245C3B6ED1713AF9F92BBF16B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-425"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
@@ -5905,7 +6163,8 @@ Red []
 	--test-- "subtract-426"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{D3B3D4B8D8A8E2A0817AB94A429EDF1CECA28E8BD9D7E06912DB0C4CF93E8B36}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-427"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
@@ -5922,7 +6181,8 @@ Red []
 	--test-- "subtract-429"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{72D18A33A64582C5E1F1256FA2E2882B1D3F1240EEC28BCF2235F65563E55EB7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-430"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
@@ -5933,12 +6193,14 @@ Red []
 	--test-- "subtract-431"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC2538887E34CEFB68A891898E675CCFB2909373A481D9508536D72155617FF1}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-432"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{3B56AEEED7CBEF1AE78C7B78E0013FD88351F37698B2EA6CD69670254728436C}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-433"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
@@ -5967,7 +6229,8 @@ Red []
 	--test-- "subtract-437"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D2}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-438"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
@@ -6032,7 +6295,8 @@ Red []
 	--test-- "subtract-448"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E4EC3C40C78F19D801D18283FE5CDB65AC040E766BEBD6840438A352997D6635}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-449"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
@@ -6061,7 +6325,8 @@ Red []
 	--test-- "subtract-453"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{9F1DB57ACD9CA02560766C256043A90E309C83B514EAAB660F5AEA086AA6D381}
+		--assert z  = select select sub256 x  y 'error 'id
 
 	--test-- "subtract-454"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
@@ -6078,7 +6343,8 @@ Red []
 	--test-- "subtract-456"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{67A2DA35FF230C7A6611C22E9D6260BB96AF64EABEDB0A03C3BB63D84DE9B836}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-457"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
@@ -6107,7 +6373,8 @@ Red []
 	--test-- "subtract-461"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-462"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
@@ -6172,7 +6439,8 @@ Red []
 	--test-- "subtract-472"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{AA75200A842E31725A94F2FABF9DD09EF72306239DA46EEE0001A48F70E2272C}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-473"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
@@ -6183,22 +6451,26 @@ Red []
 	--test-- "subtract-474"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F1D50F10E3F634F9D748B72C7EA2161C5E7C692157E0B800E8EDF4EFDE2635C1}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-475"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{C588E3C9BC9F179A58C37076C140F5394B1EF7AD31B89869FBC9013CD764C0F7}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-476"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FC9832EA3C8DBE909E31C90999F514AC3641C219A5BFA1B958506D40791507C5}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-477"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{64A699448A3BB7BFB939DC9C21849E477BBB7B6246A343D00B23EB45420B9478}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-478"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
@@ -6209,12 +6481,14 @@ Red []
 	--test-- "subtract-479"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{CDFA4799622B03F53FF148B60D0972EC110CFC94FC6291516E24CC113387B5B2}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-480"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{2D2BBDFFBBC22414BED532A55EA355F4E1CE5C97F093A26DBF846515254E792D}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-481"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
@@ -6243,7 +6517,8 @@ Red []
 	--test-- "subtract-485"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B204}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-486"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
@@ -6308,7 +6583,8 @@ Red []
 	--test-- "subtract-496"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{ADDCED2047A072E1BC6329F125A8BBF2C0E14409F7E4CD34A7B1374EF7CD1F67}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-497"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
@@ -6319,12 +6595,14 @@ Red []
 	--test-- "subtract-498"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F53CDC26A76876693916EE22E4AD0170283AA707B2211647909D87AF65112DFC}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-499"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{C8F0B0DF80115909BA91A76D274BE08D14DD35938BF8F6B0A37893FC5E4FB932}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-500"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
@@ -6335,7 +6613,8 @@ Red []
 	--test-- "subtract-501"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{680E665A4DADF92F1B081392878F899B4579B948A0E3A216B2D37E04C8F68CB3}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-502"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
@@ -6346,12 +6625,14 @@ Red []
 	--test-- "subtract-503"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{D16214AF259D4564A1BF7FAC73145E3FDACB3A7B56A2EF9815D45ED0BA72ADED}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-504"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{30938B157F34658420A3699BC4AE4148AB8C9A7E4AD400B46733F7D4AC397168}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-505"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
@@ -6380,7 +6661,8 @@ Red []
 	--test-- "subtract-509"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2551}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-510"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
@@ -6446,7 +6728,7 @@ Red []
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		z: to-i256 #{45CE86C5F9F279B2A15B165E9E1932577B678AC157012B1DF4DDB94A2ED692B4}
-		--assert z  = sub256 x  y
+		--assert z  = select select sub256 x y 'error 'id
 
 	--test-- "subtract-521"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
@@ -6464,7 +6746,7 @@ Red []
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		z: to-i256 #{60E24A8532635FDA9F8993DA9FBC56F1CF637C4AEB155499F0A515F795592C7F}
-		--assert z  = sub256 x  y
+		--assert z  = select select sub256 x y 'error 'id
 
 	--test-- "subtract-524"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
@@ -6488,12 +6770,13 @@ Red []
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		z: to-i256 #{6953AE54D7EF4C3586B76C19EB84D4A495518132B5BF4D816300E0CBF17C213A}
-		--assert z  = sub256 x  y
+		--assert z  = select select sub256 x y 'error 'id
 
 	--test-- "subtract-528"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{C88524BB31866C55059B56093D1EB7AD6612E135A9F05E9DB46079CFE342E4B5}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-529"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
@@ -6522,7 +6805,8 @@ Red []
 	--test-- "subtract-533"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A301A}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-534"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
@@ -6587,47 +6871,56 @@ Red []
 	--test-- "subtract-544"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{995E356EB88CC20E109EE9971977A3FEC8CF048437994B43DEBB7ADA11A49D7D}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-545"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{FDABAACF7FF019E51465B2F6B5C7038E9251833834140C6930817CDADE27ED28}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-546"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E0BE24751854C5958D52ADC8D87BE97C30286781F1D59456C7A7CB3A7EE8AC12}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-547"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{B471F92DF0FDA8360ECD67131B1AC8991CCAF60DCBAD74BFDA82D78778273748}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-548"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EEE91564345E909BB609F69C59D9D35FD1ABFE6099F4DC55DEB9D64AA0C27651}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-549"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{EB81484E70EC4F2C543BBFA5F3CEE80C07EDC07A3FB47E0F370A438B19D77E16}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-550"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{538FAEA8BE9A485B6F43D3387B5E71A74D6779C2E0982025E9DDC18FE2CE0AC9}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-551"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{BCE35CFD96899490F5FB3F5266E3464BE2B8FAF596576DA74CDEA25BD44A2C03}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-552"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{1C14D363F020B4B074DF2941B87D2954B37A5AF88A887EC39E3E3B5FC610EF7E}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-553"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
@@ -6656,7 +6949,8 @@ Red []
 	--test-- "subtract-557"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200417}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-558"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
@@ -6721,7 +7015,8 @@ Red []
 	--test-- "subtract-568"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{DC7AD87122032D7D1AA3AA44B2945DB2E616098EA141DD9C91DCD87E3D5A717A}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-569"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
@@ -6738,7 +7033,8 @@ Red []
 	--test-- "subtract-571"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{F78E9C305A7413A518D227C0B437824D3A11FB18355607188DA4352BA3DD0B45}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-572"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
@@ -6755,7 +7051,8 @@ Red []
 	--test-- "subtract-574"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{96AC51AB2810B3CA794893E6147B2B5B6AAE7ECD4A40B27E9CFF1F340E83DEC6}
+		--assert z  = select select sub256 x y 'error 'id
 
 	--test-- "subtract-575"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
@@ -6766,7 +7063,8 @@ Red []
 	--test-- "subtract-576"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{5F3176665997201F7EE3E9EF5199E308D0C16002F431111C515F9903F1C6C37B}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-577"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
@@ -6795,7 +7093,8 @@ Red []
 	--test-- "subtract-581"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ sub256 x  y ]
+		z: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409C}
+		--assert z  = sub256 x  y
 
 	--test-- "subtract-582"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
@@ -6861,7 +7160,7 @@ Red []
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		z: to-i256 #{7D49620AC86C0D5D9BBFC05560FA7AAA1554A98BAD10CC80407D3F7A4B93ADFF}
-		--assert z  = sub256 x  y
+		--assert z  = select select sub256 x y 'error 'id
 
 	--test-- "subtract-593"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
