@@ -312,7 +312,7 @@ int256: context [
 				i256-negative? res
 			]
 		][
-			return chain-error/new 'add256 none "overflow" none
+			return chain-error/new 'add256 res "overflow" none
 		]
 		res
 	]
@@ -363,7 +363,7 @@ int256: context [
 				i256-negative? res
 			]
 		][
-			return chain-error/new 'sub256 none "overflow" none
+			return chain-error/new 'sub256 res "overflow" none
 		]
 		res
 	]
