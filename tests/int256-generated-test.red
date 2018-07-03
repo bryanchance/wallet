@@ -4,7 +4,7 @@ Red []
 #include %../libs/chain-error.red
 #include %../libs/int256.red
 
-~~~start-file~~~ "uint256-generated"
+~~~start-file~~~ "int256-generated"
 
 ===start-group=== "add"
 	--test-- "add-1"
@@ -7666,7 +7666,8 @@ Red []
 	--test-- "multiply-76"
 		x: to-i256 #{02}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 -2
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-77"
 		x: to-i256 #{02}
@@ -7732,7 +7733,7 @@ Red []
 		x: to-i256 #{02}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		z: to-i256 #{D6A0A9FCA06562CB5ED517250C9193A868ADF716E30C41F9C1989BD4758B2538}
-		--assert z  = mul256 x  y
+		--assert z  = select select mul256 x y 'error 'id
 
 	--test-- "multiply-88"
 		x: to-i256 #{02}
@@ -7750,7 +7751,7 @@ Red []
 		x: to-i256 #{02}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		z: to-i256 #{A079227E2F83967B62781C2D094B4A73C0B61403BAE3EF01CA09E279A885F1A2}
-		--assert z  = mul256 x  y
+		--assert z  = select select mul256 x y 'error 'id
 
 	--test-- "multiply-91"
 		x: to-i256 #{02}
@@ -7767,7 +7768,8 @@ Red []
 	--test-- "multiply-93"
 		x: to-i256 #{02}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{623DB788944A5630A18B43E248C3F8575F7D0C99910E9835AB540E68D3384AA0}
+		--assert z = select select mul256 x y 'error 'id
 
 	--test-- "multiply-94"
 		x: to-i256 #{02}
@@ -7779,12 +7781,13 @@ Red []
 		x: to-i256 #{02}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		z: to-i256 #{8F965ADEE46BBDC5941C6BAE71BA4F0E34DA0A34258FFD32E5524CD0F040082C}
-		--assert z  = mul256 x  y
+		--assert z  = select select mul256 x y 'error 'id
 
 	--test-- "multiply-96"
 		x: to-i256 #{02}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D1336E12313D7D86965497CFCE8688FC93574A2E3D2DDAFA42931AC90CB28136}
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-97"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
@@ -7807,107 +7810,128 @@ Red []
 	--test-- "multiply-100"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{02}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 -2
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-101"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-102"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-103"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-104"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-105"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-106"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-107"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-108"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-109"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-110"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-111"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-112"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-113"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-114"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-115"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-116"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-117"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-118"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-119"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-120"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 y
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-121"
 		x: to-i256 #{6AC1F425FF4780EB}
@@ -7936,7 +7960,8 @@ Red []
 	--test-- "multiply-125"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-126"
 		x: to-i256 #{6AC1F425FF4780EB}
@@ -7995,52 +8020,62 @@ Red []
 	--test-- "multiply-135"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{525BD65240A9AC3DC5880929DD2DEBCA06ED95EC426333555CE89DC7C9EF9534}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-136"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{CE5EA7D097AF880BFFC1265969136576D18BDC94FC83B8405C605C4CF822F33B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-137"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F38E576382EC7DFC752955945F1E38B7F9701D34A18C987BB32466B1FED8B26D}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-138"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FB0129F1532D7AEAA47FDC7F93FEE142B30C631B2AA2B01DD5DB9B9886D9E7DB}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-139"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7B0048E5603BA614C4FD493359A81B6944FB1A520BC6EA3A541D92FF2E538A98}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-140"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{A9E62F02285A2FB69A53DB4BBD10AB7EEE3655D41F21F2008D34A13A217FE8C1}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-141"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{31BA9A0BCCA539A4EDBA63FAE1AAA554BEE11EC6A3352C33B3DC49F40E2E4070}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-142"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{46E16BF8686D426DA04EE74CD29DD1D3D08F11E43852D004CAA031607B75A6F3}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-143"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E5C45ABBF33B8C2FA5BBA4B9AF9F516AF84CAD49B436ABC89C3742175388C032}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-144"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{BECA69E3D630F235AA2CA79FFFA8E06E654811BF2FF68F5E0D404AF64438CE49}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-145"
 		x: to-i256 #{B8672F8CEEBC1448}
@@ -8069,7 +8104,8 @@ Red []
 	--test-- "multiply-149"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-150"
 		x: to-i256 #{B8672F8CEEBC1448}
@@ -8128,52 +8164,62 @@ Red []
 	--test-- "multiply-159"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{EED6A2F14A3C4970E82CE63EFB2FE4489EC97705E08452E8B0EDDF2CA9956BE0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-160"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{55C35E87BE8594DEB15CAECF75F3547A39E6886F49810AAC192003F566D9A7C8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-161"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{0048702B47A2A73D1F56BAEC2E61928A1408FCF322190177D5F1E37F61E1ADF8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-162"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{4E4E576F3C4A3C77D94FD19D2B1E37638BDD4088B5FE181136A42F7DF5C24EC8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-163"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2F5905DB91F590B588882565D9498C0993E22856672CF15BAA1B02E5C08FE040}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-164"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{56DBF554A146693B4D87ED5CD7C904D2AEC1DFA2606AEF2992D85BE7335E4CD8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-165"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{4B01BA65F1C0F91103ECC6670099FEBBBC3989DD70A5C47F547CF019AD94BE80}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-166"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8E9A50DAA0A7A1E1042361CC77A525251F3265D740ED4C370408888C59FB7B08}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-167"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{12927A945114CA9746ACBB66299E5008A6EF4FFFD65A950BD215381BBD7ADE30}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-168"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{0789AC961270EA00EF417DACD8F81F7CCA002047FB08613EA87E0C244DFA4798}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-169"
 		x: to-i256 #{077EFF20CCC389}
@@ -8202,7 +8248,8 @@ Red []
 	--test-- "multiply-173"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-174"
 		x: to-i256 #{077EFF20CCC389}
@@ -8261,52 +8308,62 @@ Red []
 	--test-- "multiply-183"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D2FFFE4B980B4F6BAC8653727D9887A1253888396CC773C015E8764646B8497C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-184"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9B06BA033C6BBE8E6EFEC80BD74A46743F8717C942C2C4684787E022F27F65F9}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-185"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{55DD48D92CC63D772C78EC0250D4B624F8FAE177B915482897AD8EF7B774FCBF}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-186"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{4F0D9A057C353DE1CF4C4D4E9F539CA20F5FB9ADD02DCA6A5D4BA9E401EA5AD9}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-187"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DC77452965B15D13D24F955EF06988306A9FC261807BEBA03A4DAFF6AAA5C408}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-188"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9B114DA282DCC0574AA1870925C256AB91E095313F5BE507695F4B45087D8C9B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-189"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{487FF5E88759A50E51BD1497054823BD3678ECB515CF8BF63888FF4630BBE7D0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-190"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7E85421520DDB9C161F1ECD4D2B85BBA505A9840E73F89E325B358CA3B62C861}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-191"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B1FD1D2AD91FEEBF55AB4D3A653E2DA09D12D25CF8D29C1C658BC158ADC6F1C6}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-192"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{6E5D89A6491D1A9F42545C2CBEE0AC53DD8142AA73261E4D98E718B9BD7DA3F3}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-193"
 		x: to-i256 #{4D65AACBFFC11E85}
@@ -8335,7 +8392,8 @@ Red []
 	--test-- "multiply-197"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-198"
 		x: to-i256 #{4D65AACBFFC11E85}
@@ -8394,52 +8452,62 @@ Red []
 	--test-- "multiply-207"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{65305D949FE34E86122532C847C306521786719293F3B22B5AF9E3449B6F730C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-208"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E88C0C89CA06E63F26C07455EDA2188126C624EBDEC7CAB6200F0AEF92F60535}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-209"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9A36F48E2D4942AF4FE423008E2CAD6E53D7599C7D202C9198D02761740969A3}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-210"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{6700EBA87B4F8A1EF2584F8369B644E753EC962DBF78D946D7EC498AE484C295}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-211"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B436984AEB264EF767A4822050886A8E3F45F3E39CF129AFE066D86D1DB0F4E8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-212"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1AAE50FB6B7F40BF784ACED27FE51C283AE2E85D908C2F6BAF0A50EEA855D58F}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-213"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{A29ABB374C7C5E49F5F20A82F952B3065208539D165347DCCA0CC0EDFBCEC290}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-214"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{4ABA044A9F523284EC0E5D3D374A1BACC6F9E9F6F4081F32EA2F6EBA4EA6EAFD}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-215"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DCA4C3BA39636D69CB75A1CF0A7ACF30A049FB3CCF9F0A692793800127B2B36E}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-216"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D9E82D9A21EE745F4ADED5F5F3A0A0B7B2308CD1860621C68E3896855BCBBA87}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-217"
 		x: to-i256 #{2591CB4F3C7053C0}
@@ -8468,7 +8536,8 @@ Red []
 	--test-- "multiply-221"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-222"
 		x: to-i256 #{2591CB4F3C7053C0}
@@ -8527,52 +8596,62 @@ Red []
 	--test-- "multiply-231"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{71204C7DE117928FA800C4311AD557ECD0AD8813B19B962B375357AAD6F68900}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-232"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{EE42E52AA160C5AFC7523E4B3001BCC4B5CFC973C9B960428C5625DEF2D657C0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-233"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FF280A738C99819988A59435264D755F25F6C9E556C45E2FA94663BF86014A40}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-234"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2F36E9129366532512E4D6DE67CCA4D21FC7B91C8CBD5B9BE9A1B98DC0565FC0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-235"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B2442AA25B636EAC5EFE98122CEFDF33D2FA6400CB957C7E14E5A38C46872E00}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-236"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{CE4F0A522A7A772BEDC8BB6B4EAC91ED62898BB6EE2B271CF256481F130C7B40}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-237"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{46BD82846EA9D30E181A0FCA19504CEA7C356BB04419473AEAA0264BE834EC00}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-238"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DA7C6BB86928CF0FB24B6F5240A83457A8E7567B6E370B6327CA3471A42C2DC0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-239"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B3A9EB760371DFEBFA88ED0192275ACD47520272A5BCDE7C13C1710D6AF63280}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-240"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{401D9EC368FC3715673DDFDC839231974520110E50E9D467760A2DF94AB2B540}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-241"
 		x: to-i256 #{17A3809065865081}
@@ -8601,7 +8680,8 @@ Red []
 	--test-- "multiply-245"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-246"
 		x: to-i256 #{17A3809065865081}
@@ -8660,52 +8740,62 @@ Red []
 	--test-- "multiply-255"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8C842C05347DD5EF0EA7E60B6729479FE25E27B16940087786DBA367A507A09C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-256"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1A7009CA8D853DD887C1BCA9A47F2DE880765081A6F994334BC635BD63750B71}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-257"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{AB9C6823B76E47BCA014319C4FD12B80D3B09E77FFEA093A07A2417AE62FB787}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-258"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7D2436A9F876AEC52C94D44A2F357F7331D96F46F7CC1AA04E9D8EC495E6B151}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-259"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2BDC1098E8F5E6C62AFE9807D433AB3B88455172B0086FD33D8ABB8B10431DC8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-260"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FF72E40E8D674DCE1998D2559B6F55A7400F082D424663BBB634FC54B01EA383}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-261"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{496B23FD27BD32B64F945E7BB69BA71600B88F093F683031AC74E1DE1B37CD50}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-262"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{EF1AE11D6CA952316E6E7468342C25723C53439458BBE2526DC1F56ABAA00C99}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-263"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E4467476E84886F638A2CFA8B919D0AFCC6397EFAE8F336D1D5FCEED5AECEF16}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-264"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DEE833D182AA210BFEC64F5AB008B85F6C8EED78D10B9317B0120A088F4BFE1B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-265"
 		x: to-i256 #{2FAEBFCC634E1E47}
@@ -8734,7 +8824,8 @@ Red []
 	--test-- "multiply-269"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-270"
 		x: to-i256 #{2FAEBFCC634E1E47}
@@ -8793,52 +8884,62 @@ Red []
 	--test-- "multiply-279"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{64CF6EED99F2F1ACC7E8A50E8258B3CEA9A2D30092FA599023BE970E7381F144}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-280"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1F70E33DFFCBBDD9FA52EB33083016DC5CD080B37AEE9D6CD9F4C7C8F0A6CED7}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-281"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3C35336B260B80057492F4BB731BD6DEB7BD89F405F9C1A3F3C399661B866FF1}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-282"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FDC455B9D4ED6B7569441261C6A2F98F0BC2812359B0A06CB952D0EB5A697FF7}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-283"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9F6D531676042DB2C80615CFF735D60759729857D1680B245530EF2F3639F678}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-284"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8CFE122074ACEC3EE6759B65B7484FC487FE3290F70723329128E1B79D75B8D5}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-285"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2DEB95D19CE58540AC841F9AE007BA6E1395C622AD20669D5A741FAAE50DB930}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-286"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{A0DD7EB329BB151C6AFA6F35E87176AD6AB3373F0AA45ADB840B0345F5B444EF}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-287"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FF430DEB53842F3B5338476FA134023924B6E4AC6AE804C527368BEAD20FB61A}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-288"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{61BD4BEFB35F18D9D3C917F9F3EEED3B2971EB52E1C87D8FD33A9251588D14FD}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-289"
 		x: to-i256 #{5876AAEDAB7479FC}
@@ -8867,7 +8968,8 @@ Red []
 	--test-- "multiply-293"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-294"
 		x: to-i256 #{5876AAEDAB7479FC}
@@ -8926,52 +9028,62 @@ Red []
 	--test-- "multiply-303"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9FF54E6D1004C644C828E846E307B3B60F72DF14396B02236D815539DF780D90}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-304"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7C7C22D03832EE7E1A13F2D8AC45CCE544AF531ED472223ADD624AC02B11CE3C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-305"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{C2D97C58C8787EB11DE7E2B6B2A9C9511C2E0A6CE7398A7353D83824031145E4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-306"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2477793D7B19BA3421745E41CF263957BE1D31158254392D3BCD463DF33BB6BC}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-307"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{77E73C69C3E11148F11B8112F134198E8ADD53EB9F482B8D74F6D128068A68E0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-308"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9C9ECBB4BB237C1C2C3D7D7FF855D8350275DF9C1CE1A17B93A0DF5CC8E6A5F4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-309"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2EB8BECEE117091761604A8C17B909E1FD5FF115CEB0D1B72047B0401B978AC0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-310"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E6C429A71C6995533A9B7601E99B231B3C2942A2232698D9D55118BCE797299C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-311"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F0241A2BAAC4A4AFF04A2EFAD60B019A91740B99F8E06631EBBB6537ED6A6BA8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-312"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E7E4253F89156474085D498610BB521BEC74B2B20842654F747FEE8C3EA0DB94}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-313"
 		x: to-i256 #{65928D86EF7F7D19}
@@ -9000,7 +9112,8 @@ Red []
 	--test-- "multiply-317"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-318"
 		x: to-i256 #{65928D86EF7F7D19}
@@ -9059,52 +9172,62 @@ Red []
 	--test-- "multiply-327"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7BD2876E6EF8878A658C702AAC2FA14C6FC48CD31227370CC833401D95457D3C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-328"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{464A29E31C05F9F909C2D14061F66A5A80F906757F1BC5FF196BBB2653B73689}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-329"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{600D4FFD5F309DF9396196727EA6543AE37A954F94AE52F9F865DFFA57964FAF}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-330"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{CACDD65D229ABE035FFC0E21DB9E364BC248408492A0973198E9707FFCB75969}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-331"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FAE4C8A3245206C686B283FF8D45889D36EF0FDB554A8A6E7C4E3C098B4FCC88}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-332"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8D63CD6DCBFDD445C3E273E561CF42A8E8579DBD0A664CD11570CFD0ADBBD94B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-333"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{18D8C6DD18AAA6ADEB668AA8190C58CDF9D2F41FBAAFBE6684A10EDBC127B4D0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-334"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{AF7945A8A5062BFED657BAA0AC0151190AF704CAFF9CA703A55872268341E771}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-335"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D8F539CDF78269D1BA8B35DC5ABF5D7169452BB85AAF5F75E5CD8011EE092426}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-336"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3B13B4734D26A7C5242B5196AF78494E70B3B9598D90AEF8A3380E247527FE23}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-337"
 		x: to-i256 #{89EFE4B2D8A7D514}
@@ -9133,7 +9256,8 @@ Red []
 	--test-- "multiply-341"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-342"
 		x: to-i256 #{89EFE4B2D8A7D514}
@@ -9192,52 +9316,62 @@ Red []
 	--test-- "multiply-351"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{309C05708AF2A89B37D392F016A7B90CBADE4327B52364EE31C3E4413E2F4030}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-352"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7D76F4D7C02C2124F31CE1EC3B644224B8D57D44DAD9883109A62C40C216BFD4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-353"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F3D30DB36C63499156AD5108CCA32DC119907E2A4F5E6AF9A4EAD681D989238C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-354"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{85FCB7F3A857D535FD73BD0038EE9565E6124BE0BFD31169132B944EF6985554}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-355"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2432FB5EB8560D12ED14728D6838372A3948F00DE0930FD1F6D7F98EE825EBA0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-356"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{461960EB8EDE68631D1FF00E728356FDEB7D9B9910680FC0E0FA3586A987673C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-357"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{660602A6C304D02B38BDFA711655D543FD29A1DD4BC3F71D3B1101EF026E7A40}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-358"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{36187D258FD53D7E533A4F098D3F07BBF124499632BE6ED086312A26CA9F8EF4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-359"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2C916FA9164777720888CBBB6A560DC9170C593B90F11CD7861DBBBD40409FB8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-360"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{40D5408D2138561A7CF83C39DE1F04BF24C07214EBEB793405A09A24AED7031C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-361"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
@@ -9261,107 +9395,127 @@ Red []
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{02}
 		z: to-i256 #{D6A0A9FCA06562CB5ED517250C9193A868ADF716E30C41F9C1989BD4758B2538}
-		--assert z  = mul256 x  y
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-365"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-366"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{525BD65240A9AC3DC5880929DD2DEBCA06ED95EC426333555CE89DC7C9EF9534}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-367"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{EED6A2F14A3C4970E82CE63EFB2FE4489EC97705E08452E8B0EDDF2CA9956BE0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-368"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D2FFFE4B980B4F6BAC8653727D9887A1253888396CC773C015E8764646B8497C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-369"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{65305D949FE34E86122532C847C306521786719293F3B22B5AF9E3449B6F730C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-370"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{71204C7DE117928FA800C4311AD557ECD0AD8813B19B962B375357AAD6F68900}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-371"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8C842C05347DD5EF0EA7E60B6729479FE25E27B16940087786DBA367A507A09C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-372"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{64CF6EED99F2F1ACC7E8A50E8258B3CEA9A2D30092FA599023BE970E7381F144}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-373"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9FF54E6D1004C644C828E846E307B3B60F72DF14396B02236D815539DF780D90}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-374"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7BD2876E6EF8878A658C702AAC2FA14C6FC48CD31227370CC833401D95457D3C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-375"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{309C05708AF2A89B37D392F016A7B90CBADE4327B52364EE31C3E4413E2F4030}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-376"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8AFDDCE103B25625809C667EAE5872A6304307A902B24A1CFB7DEC9318033CDC}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-377"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{867302FF631B5C50168A8C15372671D8750AE69935A1A125415E5D27479B7244}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-378"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D8B773402CDDBD59B60F96E1A30F5A149A98F9B4B3624AE11D1882125D8BD15C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-379"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{0106EB9AC7544B5DE33DF1DF364397E1406D77E50F0AF7B0FFDF3703891145E0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-380"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DBAC4BAF1EBFF6BC15F5C713F08A8D95B15AA2F616E81CE810F692A825392FD4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-381"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{0FC7DB9B4CA66F79B20E81765BC2646452ADD0895EE97D2ED2AE18E83EFE5CC0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-382"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FF58FEB8B40BEDF7C3CD8DC1597EB82B937AC28A5185E1641D10A3A9CD60913C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-383"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{761C6128DD9FD89D4FB83E77A030EC424573A8B0FE334222809D07D796C50968}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-384"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2DA107439857676C749585C9A0F8BDE32592A458A4BBF76591C8C5E09A82C474}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-385"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
@@ -9390,102 +9544,122 @@ Red []
 	--test-- "multiply-389"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-390"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{CE5EA7D097AF880BFFC1265969136576D18BDC94FC83B8405C605C4CF822F33B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-391"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{55C35E87BE8594DEB15CAECF75F3547A39E6886F49810AAC192003F566D9A7C8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-392"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9B06BA033C6BBE8E6EFEC80BD74A46743F8717C942C2C4684787E022F27F65F9}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-393"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E88C0C89CA06E63F26C07455EDA2188126C624EBDEC7CAB6200F0AEF92F60535}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-394"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{EE42E52AA160C5AFC7523E4B3001BCC4B5CFC973C9B960428C5625DEF2D657C0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-395"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1A7009CA8D853DD887C1BCA9A47F2DE880765081A6F994334BC635BD63750B71}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-396"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1F70E33DFFCBBDD9FA52EB33083016DC5CD080B37AEE9D6CD9F4C7C8F0A6CED7}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-397"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7C7C22D03832EE7E1A13F2D8AC45CCE544AF531ED472223ADD624AC02B11CE3C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-398"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{464A29E31C05F9F909C2D14061F66A5A80F906757F1BC5FF196BBB2653B73689}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-399"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7D76F4D7C02C2124F31CE1EC3B644224B8D57D44DAD9883109A62C40C216BFD4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-400"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8AFDDCE103B25625809C667EAE5872A6304307A902B24A1CFB7DEC9318033CDC}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-401"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{30C9BFCE115CB3937E85145A84C9548D86567DB3753F8225AAC90F33E6C51897}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-402"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1F1B8C1D10D04ED33BB73F9E0D86EF34703F39D5E676B1F3987BFA640B141EC1}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-403"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{53EEC1FE25672A2C7DE3F73C47A3D39A3505C066A9F0C90FF74AA4E5AC5B7548}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-404"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1F865AF274B75E709CB741194F48DDD3BC02682A81BEE2B1A1BA21EC9CC45AD3}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-405"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{AB470907E9FEFAB6C1CC532B8B6F302F43D0A9C15839579CC9BD03ABAC3DC050}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-406"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B1C4B8FCCF9203ADDB975A7C2BE1D7221365CF17944658022C5B0A4B74CFB989}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-407"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3FD0398DD3B116FEF21A283DFB58EDA738CA100DFBD957EA708AFB59D8DD84B6}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-408"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1F55D9B5858E13D897C17E280B3FC4D4A34CBEC5953CF14E7822391DBEA3C7EB}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-409"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
@@ -9514,102 +9688,122 @@ Red []
 	--test-- "multiply-413"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-414"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F38E576382EC7DFC752955945F1E38B7F9701D34A18C987BB32466B1FED8B26D}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-415"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{0048702B47A2A73D1F56BAEC2E61928A1408FCF322190177D5F1E37F61E1ADF8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-416"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{55DD48D92CC63D772C78EC0250D4B624F8FAE177B915482897AD8EF7B774FCBF}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-417"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9A36F48E2D4942AF4FE423008E2CAD6E53D7599C7D202C9198D02761740969A3}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-418"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FF280A738C99819988A59435264D755F25F6C9E556C45E2FA94663BF86014A40}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-419"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{AB9C6823B76E47BCA014319C4FD12B80D3B09E77FFEA093A07A2417AE62FB787}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-420"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3C35336B260B80057492F4BB731BD6DEB7BD89F405F9C1A3F3C399661B866FF1}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-421"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{C2D97C58C8787EB11DE7E2B6B2A9C9511C2E0A6CE7398A7353D83824031145E4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-422"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{600D4FFD5F309DF9396196727EA6543AE37A954F94AE52F9F865DFFA57964FAF}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-423"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F3D30DB36C63499156AD5108CCA32DC119907E2A4F5E6AF9A4EAD681D989238C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-424"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{867302FF631B5C50168A8C15372671D8750AE69935A1A125415E5D27479B7244}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-425"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{30C9BFCE115CB3937E85145A84C9548D86567DB3753F8225AAC90F33E6C51897}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-426"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{BAD2600C6B95498B6B52691B880836CCB41C60F0D271503D41F341F4147191B7}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-427"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{65A63D82B3CC79452791E0543ADB9A9018E7823575EAAA6D61024127F3293478}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-428"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{EC067E2F3063DEA47B1D2CD59C00265B8F8B5B9C2D544C86637D51B7204F6A15}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-429"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7A3F28697075BB05B50AC8839FC678EBB5566FDC657E319AA378824343D24530}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-430"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8F4984E6C5B1969CDFFC28302307D704F1F0DB5984A6D2F3777AB12C194D34AF}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-431"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{BE0DC5D0A85B0F69150795795F1A8584B6675507B41DD6CA139A03F97811749A}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-432"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E6204C7BF10349E0086B4F353E166D22F5A74551A745D29983C9A0AE5EDBB03D}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-433"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
@@ -9633,107 +9827,127 @@ Red []
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{02}
 		z: to-i256 #{A079227E2F83967B62781C2D094B4A73C0B61403BAE3EF01CA09E279A885F1A2}
-		--assert z  = mul256 x  y
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-437"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-438"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FB0129F1532D7AEAA47FDC7F93FEE142B30C631B2AA2B01DD5DB9B9886D9E7DB}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-439"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{4E4E576F3C4A3C77D94FD19D2B1E37638BDD4088B5FE181136A42F7DF5C24EC8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-440"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{4F0D9A057C353DE1CF4C4D4E9F539CA20F5FB9ADD02DCA6A5D4BA9E401EA5AD9}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-441"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{6700EBA87B4F8A1EF2584F8369B644E753EC962DBF78D946D7EC498AE484C295}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-442"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2F36E9129366532512E4D6DE67CCA4D21FC7B91C8CBD5B9BE9A1B98DC0565FC0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-443"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7D2436A9F876AEC52C94D44A2F357F7331D96F46F7CC1AA04E9D8EC495E6B151}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-444"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FDC455B9D4ED6B7569441261C6A2F98F0BC2812359B0A06CB952D0EB5A697FF7}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-445"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2477793D7B19BA3421745E41CF263957BE1D31158254392D3BCD463DF33BB6BC}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-446"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{CACDD65D229ABE035FFC0E21DB9E364BC248408492A0973198E9707FFCB75969}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-447"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{85FCB7F3A857D535FD73BD0038EE9565E6124BE0BFD31169132B944EF6985554}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-448"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D8B773402CDDBD59B60F96E1A30F5A149A98F9B4B3624AE11D1882125D8BD15C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-449"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1F1B8C1D10D04ED33BB73F9E0D86EF34703F39D5E676B1F3987BFA640B141EC1}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-450"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{BAD2600C6B95498B6B52691B880836CCB41C60F0D271503D41F341F4147191B7}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-451"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F092207AC21414CD7C2012D209ABC42A81FA7038BD457D5A40E2CD9725786C48}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-452"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3104556C820744A5361F1F3E6367C5CA954DD3FE793E9165292C3DA0C6FC3C73}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-453"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{38AF228972710B070191E9FC117D5B5BE83028F0C25A38384EBC40015B3FF650}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-454"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D05EC96E36AC28922F95531113E0031F932FF8EFF79D21CD37CB845A5BBB7C69}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-455"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3BB5B2A863B7843910B56AB6A6D535061C4BA7ABB3FC487EED68B6745BC4A5F6}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-456"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{654B8FE92D5F8FC93DC9283D514BA0126F8E2C0BD3962A2E4D5B6D0F2969E68B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-457"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
@@ -9762,102 +9976,122 @@ Red []
 	--test-- "multiply-461"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-462"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7B0048E5603BA614C4FD493359A81B6944FB1A520BC6EA3A541D92FF2E538A98}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-463"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2F5905DB91F590B588882565D9498C0993E22856672CF15BAA1B02E5C08FE040}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-464"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DC77452965B15D13D24F955EF06988306A9FC261807BEBA03A4DAFF6AAA5C408}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-465"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B436984AEB264EF767A4822050886A8E3F45F3E39CF129AFE066D86D1DB0F4E8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-466"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B2442AA25B636EAC5EFE98122CEFDF33D2FA6400CB957C7E14E5A38C46872E00}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-467"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2BDC1098E8F5E6C62AFE9807D433AB3B88455172B0086FD33D8ABB8B10431DC8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-468"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9F6D531676042DB2C80615CFF735D60759729857D1680B245530EF2F3639F678}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-469"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{77E73C69C3E11148F11B8112F134198E8ADD53EB9F482B8D74F6D128068A68E0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-470"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FAE4C8A3245206C686B283FF8D45889D36EF0FDB554A8A6E7C4E3C098B4FCC88}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-471"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2432FB5EB8560D12ED14728D6838372A3948F00DE0930FD1F6D7F98EE825EBA0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-472"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{0106EB9AC7544B5DE33DF1DF364397E1406D77E50F0AF7B0FFDF3703891145E0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-473"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{53EEC1FE25672A2C7DE3F73C47A3D39A3505C066A9F0C90FF74AA4E5AC5B7548}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-474"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{65A63D82B3CC79452791E0543ADB9A9018E7823575EAAA6D61024127F3293478}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-475"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F092207AC21414CD7C2012D209ABC42A81FA7038BD457D5A40E2CD9725786C48}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-476"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{AF64648799B75508844464A86E350D81107BB25F8D7E0D0534725E40A6343D58}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-477"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F21E846F306C4A3178CB8BAA2B2CA8F98A82F782EC2CBF84E8E9F5DD2023F680}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-478"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DDDB736C45F2653CF71EC360BB18F560D92D23C4A4017FAABCF0D9CB8306A488}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-479"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{55F0B70D2ED73B7EA675D225150F2F32DA74D092B11AB8FF37E7FA7058511730}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-480"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E86C450D85B01E3F5DC8F97B91BB013C24CA70CE42F9FB6FC6566D4323877C18}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-481"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
@@ -9886,102 +10120,122 @@ Red []
 	--test-- "multiply-485"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-486"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{A9E62F02285A2FB69A53DB4BBD10AB7EEE3655D41F21F2008D34A13A217FE8C1}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-487"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{56DBF554A146693B4D87ED5CD7C904D2AEC1DFA2606AEF2992D85BE7335E4CD8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-488"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9B114DA282DCC0574AA1870925C256AB91E095313F5BE507695F4B45087D8C9B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-489"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1AAE50FB6B7F40BF784ACED27FE51C283AE2E85D908C2F6BAF0A50EEA855D58F}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-490"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{CE4F0A522A7A772BEDC8BB6B4EAC91ED62898BB6EE2B271CF256481F130C7B40}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-491"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FF72E40E8D674DCE1998D2559B6F55A7400F082D424663BBB634FC54B01EA383}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-492"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8CFE122074ACEC3EE6759B65B7484FC487FE3290F70723329128E1B79D75B8D5}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-493"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9C9ECBB4BB237C1C2C3D7D7FF855D8350275DF9C1CE1A17B93A0DF5CC8E6A5F4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-494"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8D63CD6DCBFDD445C3E273E561CF42A8E8579DBD0A664CD11570CFD0ADBBD94B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-495"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{461960EB8EDE68631D1FF00E728356FDEB7D9B9910680FC0E0FA3586A987673C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-496"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DBAC4BAF1EBFF6BC15F5C713F08A8D95B15AA2F616E81CE810F692A825392FD4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-497"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1F865AF274B75E709CB741194F48DDD3BC02682A81BEE2B1A1BA21EC9CC45AD3}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-498"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{EC067E2F3063DEA47B1D2CD59C00265B8F8B5B9C2D544C86637D51B7204F6A15}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-499"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3104556C820744A5361F1F3E6367C5CA954DD3FE793E9165292C3DA0C6FC3C73}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-500"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{AF64648799B75508844464A86E350D81107BB25F8D7E0D0534725E40A6343D58}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-501"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7DE08473AF24245583BF7B94611421BD8CAB93EBFB897C2B6DBC2032B6660FF0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-502"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9EEDE8417B91037F0707908EDB8FD00E506D24953C58E62D71E6DBF40AF1F24B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-503"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D45FCD4D3641FA119CF6BEF8F2C7AEA8BC115B4B95C1D52D53B930B44BC35842}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-504"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{633664B4E36DB7E69A3ADE66C12E1CE4B2BDA6FF446153ECF9DD849FC05D87D1}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-505"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
@@ -10004,107 +10258,128 @@ Red []
 	--test-- "multiply-508"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{02}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{623DB788944A5630A18B43E248C3F8575F7D0C99910E9835AB540E68D3384AA0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-509"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-510"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{31BA9A0BCCA539A4EDBA63FAE1AAA554BEE11EC6A3352C33B3DC49F40E2E4070}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-511"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{4B01BA65F1C0F91103ECC6670099FEBBBC3989DD70A5C47F547CF019AD94BE80}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-512"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{487FF5E88759A50E51BD1497054823BD3678ECB515CF8BF63888FF4630BBE7D0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-513"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{A29ABB374C7C5E49F5F20A82F952B3065208539D165347DCCA0CC0EDFBCEC290}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-514"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{46BD82846EA9D30E181A0FCA19504CEA7C356BB04419473AEAA0264BE834EC00}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-515"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{496B23FD27BD32B64F945E7BB69BA71600B88F093F683031AC74E1DE1B37CD50}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-516"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2DEB95D19CE58540AC841F9AE007BA6E1395C622AD20669D5A741FAAE50DB930}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-517"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2EB8BECEE117091761604A8C17B909E1FD5FF115CEB0D1B72047B0401B978AC0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-518"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{18D8C6DD18AAA6ADEB668AA8190C58CDF9D2F41FBAAFBE6684A10EDBC127B4D0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-519"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{660602A6C304D02B38BDFA711655D543FD29A1DD4BC3F71D3B1101EF026E7A40}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-520"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{0FC7DB9B4CA66F79B20E81765BC2646452ADD0895EE97D2ED2AE18E83EFE5CC0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-521"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{AB470907E9FEFAB6C1CC532B8B6F302F43D0A9C15839579CC9BD03ABAC3DC050}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-522"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7A3F28697075BB05B50AC8839FC678EBB5566FDC657E319AA378824343D24530}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-523"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{38AF228972710B070191E9FC117D5B5BE83028F0C25A38384EBC40015B3FF650}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-524"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F21E846F306C4A3178CB8BAA2B2CA8F98A82F782EC2CBF84E8E9F5DD2023F680}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-525"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7DE08473AF24245583BF7B94611421BD8CAB93EBFB897C2B6DBC2032B6660FF0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-526"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B6D1BEB60436C4EF9CDBF0A223553380155B711B5CBB250A7FE5AEE6CA5EA4D0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-527"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D57BF2CD1AB373F003A84D6FEC51D0FE11C6A1A03FA100C0D390DDA9AE0074E0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-528"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{BED7ED2CE335656241C7FA51B3B70A39E5D8887D06B84696059B8D33D3AE9770}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-529"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
@@ -10133,102 +10408,122 @@ Red []
 	--test-- "multiply-533"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-534"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{46E16BF8686D426DA04EE74CD29DD1D3D08F11E43852D004CAA031607B75A6F3}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-535"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8E9A50DAA0A7A1E1042361CC77A525251F3265D740ED4C370408888C59FB7B08}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-536"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{7E85421520DDB9C161F1ECD4D2B85BBA505A9840E73F89E325B358CA3B62C861}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-537"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{4ABA044A9F523284EC0E5D3D374A1BACC6F9E9F6F4081F32EA2F6EBA4EA6EAFD}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-538"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DA7C6BB86928CF0FB24B6F5240A83457A8E7567B6E370B6327CA3471A42C2DC0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-539"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{EF1AE11D6CA952316E6E7468342C25723C53439458BBE2526DC1F56ABAA00C99}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-540"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{A0DD7EB329BB151C6AFA6F35E87176AD6AB3373F0AA45ADB840B0345F5B444EF}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-541"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E6C429A71C6995533A9B7601E99B231B3C2942A2232698D9D55118BCE797299C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-542"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{AF7945A8A5062BFED657BAA0AC0151190AF704CAFF9CA703A55872268341E771}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-543"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{36187D258FD53D7E533A4F098D3F07BBF124499632BE6ED086312A26CA9F8EF4}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-544"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FF58FEB8B40BEDF7C3CD8DC1597EB82B937AC28A5185E1641D10A3A9CD60913C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-545"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B1C4B8FCCF9203ADDB975A7C2BE1D7221365CF17944658022C5B0A4B74CFB989}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-546"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{8F4984E6C5B1969CDFFC28302307D704F1F0DB5984A6D2F3777AB12C194D34AF}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-547"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D05EC96E36AC28922F95531113E0031F932FF8EFF79D21CD37CB845A5BBB7C69}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-548"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DDDB736C45F2653CF71EC360BB18F560D92D23C4A4017FAABCF0D9CB8306A488}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-549"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9EEDE8417B91037F0707908EDB8FD00E506D24953C58E62D71E6DBF40AF1F24B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-550"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B6D1BEB60436C4EF9CDBF0A223553380155B711B5CBB250A7FE5AEE6CA5EA4D0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-551"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9C758341793366A9CC424213CE554564470D9C09FF76E33061F1E609F5008626}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-552"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B055CCAC4C3C026C3A20B868C3023351026CAD6DAB530AD5BBBF56D09F025F23}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-553"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
@@ -10252,107 +10547,127 @@ Red []
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{02}
 		z: to-i256 #{8F965ADEE46BBDC5941C6BAE71BA4F0E34DA0A34258FFD32E5524CD0F040082C}
-		--assert z  = mul256 x  y
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-557"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-558"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E5C45ABBF33B8C2FA5BBA4B9AF9F516AF84CAD49B436ABC89C3742175388C032}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-559"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{12927A945114CA9746ACBB66299E5008A6EF4FFFD65A950BD215381BBD7ADE30}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-560"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B1FD1D2AD91FEEBF55AB4D3A653E2DA09D12D25CF8D29C1C658BC158ADC6F1C6}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-561"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DCA4C3BA39636D69CB75A1CF0A7ACF30A049FB3CCF9F0A692793800127B2B36E}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-562"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B3A9EB760371DFEBFA88ED0192275ACD47520272A5BCDE7C13C1710D6AF63280}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-563"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E4467476E84886F638A2CFA8B919D0AFCC6397EFAE8F336D1D5FCEED5AECEF16}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-564"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{FF430DEB53842F3B5338476FA134023924B6E4AC6AE804C527368BEAD20FB61A}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-565"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{F0241A2BAAC4A4AFF04A2EFAD60B019A91740B99F8E06631EBBB6537ED6A6BA8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-566"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D8F539CDF78269D1BA8B35DC5ABF5D7169452BB85AAF5F75E5CD8011EE092426}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-567"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2C916FA9164777720888CBBB6A560DC9170C593B90F11CD7861DBBBD40409FB8}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-568"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{761C6128DD9FD89D4FB83E77A030EC424573A8B0FE334222809D07D796C50968}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-569"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3FD0398DD3B116FEF21A283DFB58EDA738CA100DFBD957EA708AFB59D8DD84B6}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-570"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{BE0DC5D0A85B0F69150795795F1A8584B6675507B41DD6CA139A03F97811749A}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-571"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3BB5B2A863B7843910B56AB6A6D535061C4BA7ABB3FC487EED68B6745BC4A5F6}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-572"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{55F0B70D2ED73B7EA675D225150F2F32DA74D092B11AB8FF37E7FA7058511730}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-573"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D45FCD4D3641FA119CF6BEF8F2C7AEA8BC115B4B95C1D52D53B930B44BC35842}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-574"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D57BF2CD1AB373F003A84D6FEC51D0FE11C6A1A03FA100C0D390DDA9AE0074E0}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-575"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{9C758341793366A9CC424213CE554564470D9C09FF76E33061F1E609F5008626}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-576"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{97FE854BE3729A9FD55329302A21D73C4EB671FDD7EA33DA4E3E9B25AC0DF952}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-577"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
@@ -10375,107 +10690,128 @@ Red []
 	--test-- "multiply-580"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{02}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D1336E12313D7D86965497CFCE8688FC93574A2E3D2DDAFA42931AC90CB28136}
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-581"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		--assert error? try [ mul256 x  y ]
+		z: negative256 x
+		--assert z  = mul256 x  y
 
 	--test-- "multiply-582"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{6AC1F425FF4780EB}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{BECA69E3D630F235AA2CA79FFFA8E06E654811BF2FF68F5E0D404AF64438CE49}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-583"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{B8672F8CEEBC1448}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{0789AC961270EA00EF417DACD8F81F7CCA002047FB08613EA87E0C244DFA4798}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-584"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{077EFF20CCC389}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{6E5D89A6491D1A9F42545C2CBEE0AC53DD8142AA73261E4D98E718B9BD7DA3F3}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-585"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{4D65AACBFFC11E85}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{D9E82D9A21EE745F4ADED5F5F3A0A0B7B2308CD1860621C68E3896855BCBBA87}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-586"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{2591CB4F3C7053C0}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{401D9EC368FC3715673DDFDC839231974520110E50E9D467760A2DF94AB2B540}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-587"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{17A3809065865081}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{DEE833D182AA210BFEC64F5AB008B85F6C8EED78D10B9317B0120A088F4BFE1B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-588"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{61BD4BEFB35F18D9D3C917F9F3EEED3B2971EB52E1C87D8FD33A9251588D14FD}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-589"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{5876AAEDAB7479FC}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E7E4253F89156474085D498610BB521BEC74B2B20842654F747FEE8C3EA0DB94}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-590"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{65928D86EF7F7D19}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{3B13B4734D26A7C5242B5196AF78494E70B3B9598D90AEF8A3380E247527FE23}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-591"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{40D5408D2138561A7CF83C39DE1F04BF24C07214EBEB793405A09A24AED7031C}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-592"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{2DA107439857676C749585C9A0F8BDE32592A458A4BBF76591C8C5E09A82C474}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-593"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{1F55D9B5858E13D897C17E280B3FC4D4A34CBEC5953CF14E7822391DBEA3C7EB}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-594"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E6204C7BF10349E0086B4F353E166D22F5A74551A745D29983C9A0AE5EDBB03D}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-595"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{654B8FE92D5F8FC93DC9283D514BA0126F8E2C0BD3962A2E4D5B6D0F2969E68B}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-596"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{E86C450D85B01E3F5DC8F97B91BB013C24CA70CE42F9FB6FC6566D4323877C18}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-597"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{633664B4E36DB7E69A3ADE66C12E1CE4B2BDA6FF446153ECF9DD849FC05D87D1}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-598"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{BED7ED2CE335656241C7FA51B3B70A39E5D8887D06B84696059B8D33D3AE9770}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-599"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{B055CCAC4C3C026C3A20B868C3023351026CAD6DAB530AD5BBBF56D09F025F23}
+		--assert z  = select select mul256 x  y 'error 'id
 
 	--test-- "multiply-600"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		--assert error? try [ mul256 x  y ]
+		z: to-i256 #{97FE854BE3729A9FD55329302A21D73C4EB671FDD7EA33DA4E3E9B25AC0DF952}
+		--assert z  = select select mul256 x  y 'error 'id
 
 ===end-group===
 
