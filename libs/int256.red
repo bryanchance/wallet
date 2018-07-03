@@ -436,6 +436,10 @@ int256: context [
 		sub256 to-i256 0 bigint
 	]
 
+	set 'negative256 function [bigint [vector!] return: [vector! map!]][
+		negative bigint
+	]
+
 	valid-length?: func [bigint [vector!] return: [integer!] /local i count][
 		count: 0
 		repeat i 16 [
