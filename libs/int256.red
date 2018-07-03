@@ -24,7 +24,7 @@ int256: context [
 				either value >= 0 [
 					spec: reduce [0 0 0 0 0 0 0 0 0 0 0 0 0 0 value / 65536 value % 65536]
 				][
-					return sub256 to-i256 0 to-i256 (0 - value)
+					return negative to-i256 (0 - value)
 				]
 			]
 			float! [
@@ -44,7 +44,7 @@ int256: context [
 					]
 					insert/dup spec 0 16 - length? spec
 				][
-					return sub256 to-i256 0 to-i256 (0 - value)
+					return negative to-i256 (0 - value)
 				]
 			]
 			binary! [
@@ -81,7 +81,7 @@ int256: context [
 					bin: next bin
 				]
 				if value/1 = #"-" [
-					res: sub256 to-i256 0 res
+					res: negative res
 				]
 				return res
 			]
@@ -99,7 +99,7 @@ int256: context [
 	][
 		neg?: i256-negative? bigint
 		either neg? [
-			value: sub256 to-i256 0 bigint
+			value: negative bigint
 		][
 			value: bigint
 		]
@@ -114,7 +114,7 @@ int256: context [
 	set 'i256-to-float function [bigint [vector!] return: [float!]][
 		neg?: i256-negative? bigint
 		either neg? [
-			value: sub256 to-i256 0 bigint
+			value: negative bigint
 		][
 			value: bigint
 		]
@@ -155,7 +155,7 @@ int256: context [
 		]
 		neg?: i256-negative? bigint
 		either neg? [
-			value: sub256 to-i256 0 bigint
+			value: negative bigint
 		][
 			value: bigint
 		]
@@ -218,8 +218,9 @@ int256: context [
 		less-equal256? left right
 	]
 
-	shift-left: routine [v [vector!] /local	p [byte-ptr!]][
+	shift-left: routine [v [vector!] return: [integer!] /local	p [byte-ptr!] c [integer!]][
 		p: vector/rs-head v
+		c: (as-integer p/2) >>> 7
 		p/2: p/2 << 1 or (p/1 >>> 7)
 		p/1: p/1 << 1 or (p/6 >>> 7)
 		p/6: p/6 << 1 or (p/5 >>> 7)
@@ -259,6 +260,7 @@ int256: context [
 		p/57: p/57 << 1 or (p/62 >>> 7)
 		p/62: p/62 << 1 or (p/61 >>> 7)
 		p/61: p/61 << 1
+		c
 	]
 
 	set 'shl256 function [v [vector!]][
@@ -270,6 +272,7 @@ int256: context [
 		left  [vector!]
 		right [vector!]
 		res	  [vector!]
+		return: [integer!]
 		/local
 			pl [byte-ptr!]
 			pr [byte-ptr!]
@@ -296,6 +299,7 @@ int256: context [
 			p/1: as-byte v
 			p/2: as-byte v >>> 8
 		]
+		c
 	]
 
 	set 'add256 function [left [vector!] right [vector!] return: [vector!]][
@@ -369,27 +373,88 @@ int256: context [
 	]
 
 	set 'mul256 function [left [vector!] right [vector!] return: [vector! map!]][
-		idx: 16
-		res: make-i256
-		either i256-negative? left [s: sub256 to-i256 0 left][s: copy left]
-		either i256-negative? right [right-raw: sub256 to-i256 0 right][right-raw: right]
-		until [
-			r: right-raw/:idx
-			loop 16 [
-				if r and 1 <> 0 [
-					res: add256 res s
-					if chain-error/error? res [return chain-error/new 'mul256 none "overflow" res]
-				]
-				shl256 s
-				r: shift r 1
-			]
-			zero? idx: idx - 1
+		either left-neg?: i256-negative? left [
+			left-abs: negative left
+			if chain-error/error? left-abs [return chain-error/new 'mul256 left "overflow" left-abs]
+		][
+			left-abs: left
 		]
-		if (i256-negative? left) <> (i256-negative? right) [
-			res: sub256 to-i256 0 res
+		either right-neg?: i256-negative? right [
+			right-abs: negative right
+			if chain-error/error? right-abs [return chain-error/new 'mul256 right "overflow" right-abs]
+		][
+			right-abs: right
+		]
+
+		res-abs: u256-mul left-abs right-abs
+		if chain-error/error? res-abs [
+			res: res-abs/error/id
+			if left-neg? <> right-neg? [
+				res: negative res
+			]
+			return chain-error/new 'mul256 res "overflow" none
+		]
+		res: res-abs
+		if left-neg? <> right-neg? [
+			res: negative res
 		]
 		res
 	]
+
+	u256-mul: func [left [vector!] right [vector!] return: [vector! map!]][
+		idx: 16
+		res: make-i256
+		s: copy left
+		overflow?: false
+		bigint-count: valid-length? right
+		repeat i bigint-count [
+			r: right/:idx
+			either i = bigint-count [
+				int-count: int16-valid-length? r
+			][
+				int-count: 16
+			]
+			loop int-count [
+				if r and 1 <> 0 [
+					if 0 <> add-256 res s res-new: make-i256 [
+						overflow?: true
+					]
+					res: res-new
+				]
+				if 0 <> shift-left s [
+					overflow?: true
+				]
+				r: shift r 1
+			]
+			idx: idx - 1
+		]
+		if overflow? [return chain-error/new 'u256-mul res "overflow" none]
+		res
+	]
+
+	negative: func [bigint [vector!] return: [vector! map!]][
+		sub256 to-i256 0 bigint
+	]
+
+	valid-length?: func [bigint [vector!] return: [integer!] /local i count][
+		count: 0
+		repeat i 16 [
+			if bigint/(i) <> 0 [break]
+			count: count + 1
+		]
+		16 - count
+	]
+
+	int16-valid-length?: func [int16 [integer!] return: [integer!] /local i mask count][
+		count: 0
+		repeat i 16 [
+			mask: 1 << (16 - i)
+			if mask = (int16 and mask) [break]
+			count: count + 1
+		]
+		16 - count
+	]
+
 
 	set 'div256 function [dividend [vector!] divisor [vector!] /rem return: [vector! block! map!]][
 		if i256-zero? divisor [return chain-error/new 'div256 divisor "zero-divide" none]
