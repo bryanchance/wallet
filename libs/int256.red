@@ -531,16 +531,20 @@ int256: context [
 			divisor-abs: divisor
 		]
 
-		res-abs: u256-div dividend-abs divisor-abs
+		res-abs: u256-div/rem dividend-abs divisor-abs
 
 		either dividend-neg? <> divisor-neg? [
-			q: negative256 res-abs
+			q: negative256 res-abs/1
 		][
-			q: res-abs
+			q: res-abs/1
 		]
 
 		if rem [
-			r: sub256 dividend mul256 divisor q
+			either zero256? res-abs/2 [
+				r: res-abs/2
+			][
+				either dividend-neg? [r: sub256 divisor-abs res-abs/2][r: res-abs/2]
+			]
 			return reduce [q r]
 		]
 		q
