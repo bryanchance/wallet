@@ -79,7 +79,7 @@ int256: context [
 				res: to-i256 0
 				factor: to-i256 10
 				bin: value
-				if value/1 = #"-" [
+				if any [value/1 = #"-" value/1 = #"+"] [
 					bin: next value
 				]
 				while [all [not tail? bin bin/1 <> #"."]][
