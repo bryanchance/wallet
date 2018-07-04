@@ -441,11 +441,11 @@ int256: context [
 		res: make-i256
 		s: copy left
 		overflow?: false
-		bigint-count: zero-head-length? right
+		bigint-count: valid-length? right
 		repeat i bigint-count [
 			r: right/:idx
 			either i = bigint-count [
-				bits: int16-zero-head-length? r
+				bits: int16-valid-length? r
 			][
 				bits: 16
 			]
@@ -467,7 +467,7 @@ int256: context [
 		res
 	]
 
-	zero-head-length?: func [bigint [vector!] return: [integer!] /local i count][
+	valid-length?: func [bigint [vector!] return: [integer!] /local i count][
 		count: 0
 		repeat i 16 [
 			if bigint/(i) <> 0 [break]
@@ -476,7 +476,7 @@ int256: context [
 		16 - count
 	]
 
-	int16-zero-head-length?: func [int16 [integer!] return: [integer!] /local i mask count][
+	int16-valid-length?: func [int16 [integer!] return: [integer!] /local i mask count][
 		count: 0
 		repeat i 16 [
 			mask: 1 << (16 - i)
@@ -493,9 +493,9 @@ int256: context [
 		
 		q: make-i256
 		r: make-i256
-		bigint-count: zero-head-length? dividend
-		repeat idx (16 - bigint-count) [
-			d: dividend/(bigint-count + idx)
+		bigint-count: valid-length? dividend
+		repeat idx bigint-count [
+			d: dividend/(16 - bigint-count + idx)
 			bit: 15
 			loop 16 [
 				shl256 r
