@@ -7,10 +7,16 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#do [_eth-api_red_: yes]
+#if error? try [_json_red_] [#include %JSON.red]
+#if error? try [_int256_red_] [#include %int256.red]
+
 eth-api: context [
 
-	timeout-error: func [name][
-		chain-error/new name none 'network-timeout none
+	system/catalog/errors/user: make system/catalog/errors/user [eth-api: ["eth-api [" :arg1 ": (" :arg2 " " :arg3 ")]"]]
+
+	new-error: func [name [word!] arg2 arg3][
+		cause-error 'user 'eth-api [name arg2 arg3]
 	]
 
 	pad64: function [data [string! binary!]][
@@ -46,29 +52,33 @@ eth-api: context [
 		lowercase take/part enbase/base checksum str 'sha256 16 16
 	]
 
-	call-rpc: func [network [url!] method [word!] params [none! block!] /local data blk res err-msg error][
+	call-rpc: func [network [url!] method [word!] params [none! block!] /local data blk res retry? err-msg error][
 		body/method: method
 		body/params: params
 		data: json/encode body
 		headers/cookie: cookie data
-		blk: [
-			compose/only [
-				POST
-				(headers)
-				(to-binary data)
-			]
+		blk: compose/only [
+			POST
+			(headers)
+			(to-binary data)
 		]
-		res: attempt [write network blk]
-		unless res [
-			wait 0.3
-			res: attempt [write network blk]
-			unless res [return chain-error/new 'call-rpc network blk timeout-error 'call-rpc]
+
+		res: try [write network blk]
+		retry?: false
+		either error? res [
+			retry?: true
+		][
+			res: json/decode res
+			if res <> [] [retry?: true]
+		]
+		if retry? [
+			wait 0.1
+			res: write network blk
 		]
 		res: json/decode res
 		unless data: select res 'result [			;-- error
 			err-msg: select res 'error
-			error: chain-error/new 'call-rpc network err-msg none
-			return chain-error/new 'call-rpc network blk error
+			new-error 'call-rpc "server error" reduce [network err-msg]
 		]
 		data
 	]
@@ -78,9 +88,7 @@ eth-api: context [
 			poke amount 2 #"0"
 			n: 1
 		][n: 2]
-		n: to-i256 debase/base skip amount n 16
-		n: i256-to-float n
-		n / 1e18
+		to-i256 debase/base skip amount n 16
 	]
 
 	get-balance-token: func [network [url!] contract [string!] address [string!] /local token-url params res][
@@ -89,19 +97,16 @@ eth-api: context [
 		params/to: token-url
 		params/data: rejoin ["0x70a08231" pad64 copy skip address 2]
 		res: call-rpc network 'eth_call reduce [params 'latest]
-		if chain-error/error? res [return chain-error/new 'get-balance-token network reduce [address contract] res]
 		parse-balance res
 	]
 
 	get-balance: func [network [url!] address [string!] /local res][
 		res: call-rpc network 'eth_getBalance reduce [address 'latest]
-		if chain-error/error? res [return chain-error/new 'get-balance network address res]
 		parse-balance res
 	]
 
 	get-nonce: func [network [url!] address [string!] /local n res][
 		res: call-rpc network 'eth_getTransactionCount reduce [address 'pending]
-		if chain-error/error? res [return chain-error/new 'get-nonce network address res]
 
 		either (length? res) % 2 <> 0 [
 			poke res 2 #"0"
