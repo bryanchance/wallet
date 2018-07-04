@@ -12,19 +12,28 @@ Red [
 
 
 int256: context [
+
+	system/catalog/errors/user: make system/catalog/errors/user [int256: ["int256 [" :arg1 ": (" :arg2 " " :arg3 ")]"]]
+
+	new-error: func [name [word!] arg2 arg3][
+		cause-error 'user 'int256 [name arg2 arg3]
+	]
+
 	empty: [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 
 	make-i256: function [][
 		make vector! compose/only [integer! 32 (empty)]
 	]
 
-	set 'to-i256 function [value [integer! float! binary! string! none!] return: [vector! map!]][
+	set 'to-i256 function [value [integer! float! binary! string! none!] return: [vector!]
+		/local spec v n bin res factor
+	][
 		switch/default type?/word value [
 			integer! [
 				either value >= 0 [
 					spec: reduce [0 0 0 0 0 0 0 0 0 0 0 0 0 0 value / 65536 value % 65536]
 				][
-					return negative to-i256 (0 - value)
+					return negative256 to-i256 (0 - value)
 				]
 			]
 			float! [
@@ -39,12 +48,12 @@ int256: context [
 							value - (n * 65536.0)
 						]
 						insert spec v
-						if 16 < length? spec [return chain-error/new 'to-i256 value "float too large" none]
+						if 16 < length? spec [new-error 'to-i256 "float too large" value]
 						value: n
 					]
 					insert/dup spec 0 16 - length? spec
 				][
-					return negative to-i256 (0 - value)
+					return negative256 to-i256 (0 - value)
 				]
 			]
 			binary! [
@@ -56,7 +65,7 @@ int256: context [
 					v: bin/1
 					unless head? bin [bin: back bin v: bin/1 << 8 + v]
 					insert spec v
-					if 16 < length? spec [return chain-error/new 'to-i256 value "binary too large" none]
+					if 16 < length? spec [new-error 'to-i256 "binary too large" value]
 				]
 				insert/dup spec 0 16 - length? spec
 			]
@@ -72,49 +81,45 @@ int256: context [
 					bin: next value
 				]
 				while [all [not tail? bin bin/1 <> #"."]][
-					if any [bin/1 < #"0" bin/1 > #"9"][return chain-error/new 'to-i256 bin/1 "invalid char" none]
+					if any [bin/1 < #"0" bin/1 > #"9"][new-error 'to-i256 "invalid char" bin/1]
 					v: to-i256 to integer! (bin/1 - #"0")
 					res: mul256 res factor
-					if chain-error/error? res [return chain-error/new 'to-i256 bin/1 "mul256 overflow" res]
 					res: add256 res v
-					if chain-error/error? res [return chain-error/new 'to-i256 bin/1 "add256 overflow" res]
 					bin: next bin
 				]
 				if value/1 = #"-" [
-					res: negative res
+					res: negative256 res
 				]
 				return res
 			]
-			none! [
-				return to-i256 0
-			]
-		][return chain-error/new 'to-i256 none "invalid type" none]
+		][new-error 'to-i256 "invalid type" type?/word value]
 		
 		make vector! compose/only [integer! 32 (spec)]
 	]
 
-	set 'i256-to-int function [bigint [vector!] return: [integer! map!]
-		/local
-			idx value high low ret
+	set 'i256-to-int function [bigint [vector!] return: [integer!]
+		/local neg? value high low res
 	][
-		neg?: i256-negative? bigint
+		neg?: negative256? bigint
 		either neg? [
-			value: negative bigint
+			value: negative256 bigint
 		][
 			value: bigint
 		]
-		if less-equal256? (to-i256 7FFFFFFFh) value [return chain-error/new 'i256-to-int value "too large" none]
+		if less-equal? (to-i256 7FFFFFFFh) value [new-error 'i256-to-int "too large" value]
 		high: value/15 << 16
 		low: value/16
-		ret: high + low
-		if neg? [return 0 - ret]
-		ret
+		res: high + low
+		if neg? [return 0 - res]
+		res
 	]
 
-	set 'i256-to-float function [bigint [vector!] return: [float!]][
-		neg?: i256-negative? bigint
+	set 'i256-to-float function [bigint [vector!] return: [float!]
+		/local neg? value res p idx v
+	][
+		neg?: negative256? bigint
 		either neg? [
-			value: negative bigint
+			value: negative256 bigint
 		][
 			value: bigint
 		]
@@ -131,7 +136,9 @@ int256: context [
 		res
 	]
 
-	set 'i256-to-bin function [bigint [vector!] return: [binary!]][
+	set 'i256-to-bin function [bigint [vector!] return: [binary!]
+		/local bin idx v
+	][
 		bin: make binary! 32
 		idx: 16
 
@@ -144,18 +151,17 @@ int256: context [
 		bin
 	]
 
-	set 'i256-to-string function [bigint [vector!] return: [string! map!]
-		/local
-			neg? value res factor rest chr
+	set 'i256-to-string function [bigint [vector!] return: [string!]
+		/local neg? value res factor rest chr
 	][
 		res: make string! 64
 		if bigint = to-i256 #{8000000000000000000000000000000000000000000000000000000000000000} [
 			append res {-57896044618658097711785492504343953926634992332820282019728792003956564819968}
 			return res
 		]
-		neg?: i256-negative? bigint
+		neg?: negative256? bigint
 		either neg? [
-			value: negative bigint
+			value: negative256 bigint
 		][
 			value: bigint
 		]
@@ -163,10 +169,9 @@ int256: context [
 		rest: value
 		forever [
 			rest: div256/rem rest factor
-			if chain-error/error? rest [return chain-error/new 'i256-to-string none "div256 error" rest]
 			chr: to string! i256-to-int rest/2
 			insert res chr
-			if i256-zero? rest/1 [break]
+			if zero256? rest/1 [break]
 			rest: rest/1
 		]
 		if neg? [
@@ -175,17 +180,25 @@ int256: context [
 		res
 	]
 
-	set 'i256-zero? function [bigint [vector!] return: [logic!] /local idx][
+	set 'zero256? function [bigint [vector!] return: [logic!] /local idx][
 		repeat idx length? bigint [if (bigint/:idx) <> 0 [return false]]
 		true
 	]
 
-	set 'i256-negative? function [bigint [vector!] return: [logic!] /local idx][
+	set 'negative256? function [bigint [vector!] return: [logic!] /local idx][
 		if bigint/1 and 8000h = 8000h [return true]
 		false
 	]
 
-	less-equal256?: routine [
+	u256-negative: func [bigint [vector!] return: [vector! map!]][
+		sub256 to-i256 0 bigint
+	]
+
+	set 'negative256 function [bigint [vector!] return: [vector! map!]][
+		u256-negative bigint
+	]
+
+	less-equal?: routine [
 		left	[vector!]
 		right	[vector!]
 		return: [logic!]
@@ -215,7 +228,14 @@ int256: context [
 	]
 
 	set 'lesser-or-equal256? function [left [vector!] right [vector!] return: [logic!]][
-		less-equal256? left right
+		if all [negative256? left not negative256? right][return yes]
+		if all [not negative256? left negative256? right][return no]
+		if all [not negative256? left not negative256? right][less-equal? left right]
+		not less-equal? left right
+	]
+
+	set 'u256-lesser-or-equal? function [left [vector!] right [vector!] return: [logic!]][
+		less-equal? left right
 	]
 
 	shift-left: routine [v [vector!] return: [integer!] /local	p [byte-ptr!] c [integer!]][
@@ -268,7 +288,7 @@ int256: context [
 		v
 	]
 
-	add-256: routine [
+	u256-add: routine [
 		left  [vector!]
 		right [vector!]
 		res	  [vector!]
@@ -302,26 +322,28 @@ int256: context [
 		c
 	]
 
-	set 'add256 function [left [vector!] right [vector!] return: [vector!]][
-		add-256 left right res: make-i256
+	set 'add256 function [left [vector!] right [vector!] return: [vector!]
+		/local res
+	][
+		u256-add left right res: make-i256
 		if any [
 			all [
-				i256-negative? left
-				i256-negative? right
-				not i256-negative? res
+				negative256? left
+				negative256? right
+				not negative256? res
 			]
 			all [
-				not i256-negative? left
-				not i256-negative? right
-				i256-negative? res
+				not negative256? left
+				not negative256? right
+				negative256? res
 			]
 		][
-			return chain-error/new 'add256 res "overflow" none
+			new-error 'add256 "overflow" res
 		]
 		res
 	]
 
-	sub-256: routine [
+	u256-sub: routine [
 		left  [vector!]
 		right [vector!]
 		res	  [vector!]
@@ -353,70 +375,83 @@ int256: context [
 		]
 	]
 
-	set 'sub256 function [left [vector!] right [vector!] return: [vector! map!]][
-		sub-256 left right res: make-i256
+	set 'sub256 function [left [vector!] right [vector!] return: [vector!]
+		/local res
+	][
+		u256-sub left right res: make-i256
 		if any [
 			all [
-				i256-negative? left
-				not i256-negative? right
-				not i256-negative? res
+				negative256? left
+				not negative256? right
+				not negative256? res
 			]
 			all [
-				not i256-negative? left
-				i256-negative? right
-				i256-negative? res
+				not negative256? left
+				negative256? right
+				negative256? res
 			]
 		][
-			return chain-error/new 'sub256 res "overflow" none
+			new-error 'sub256 "overflow" res
 		]
 		res
 	]
 
-	set 'mul256 function [left [vector!] right [vector!] return: [vector! map!]][
-		either left-neg?: i256-negative? left [
-			left-abs: negative left
-			if chain-error/error? left-abs [return chain-error/new 'mul256 left "overflow" left-abs]
+	set 'mul256 function [left [vector!] right [vector!] return: [vector!]
+		/local left-neg? left-abs right-neg? right-abs res-abs res
+	][
+		either left-neg?: negative256? left [
+			left-abs: negative256 left
 		][
 			left-abs: left
 		]
-		either right-neg?: i256-negative? right [
-			right-abs: negative right
-			if chain-error/error? right-abs [return chain-error/new 'mul256 right "overflow" right-abs]
+		either right-neg?: negative256? right [
+			right-abs: negative256 right
 		][
 			right-abs: right
 		]
 
-		res-abs: u256-mul left-abs right-abs
-		if chain-error/error? res-abs [
-			res: res-abs/error/id
-			if left-neg? <> right-neg? [
-				res: negative res
+		res-abs: try [u256-mul left-abs right-abs]
+		if error? res-abs [
+			either all [
+				res-abs/arg1 = 'u256-mul
+				res-abs/arg2 = "overflow"
+			][
+				res: res-abs/arg3
+				if left-neg? <> right-neg? [
+					res: negative256 res
+				]
+				new-error 'mul256 "overflow" res
+			][
+				return res-abs
 			]
-			return chain-error/new 'mul256 res "overflow" none
 		]
-		res: res-abs
-		if left-neg? <> right-neg? [
-			res: negative res
+
+		either left-neg? <> right-neg? [
+			res: negative256 res-abs
+		][
+			res: res-abs
 		]
 		res
 	]
 
-	u256-mul: func [left [vector!] right [vector!] return: [vector! map!]][
+	u256-mul: func [left [vector!] right [vector!] return: [vector!]
+		/local idx res s overflow? bigint-count i r bits res-new
+	][
 		idx: 16
 		res: make-i256
 		s: copy left
 		overflow?: false
-		bigint-count: valid-length? right
+		bigint-count: zero-head-length? right
 		repeat i bigint-count [
 			r: right/:idx
 			either i = bigint-count [
-				int-count: int16-valid-length? r
+				bits: int16-zero-head-length? r
 			][
-				int-count: 16
+				bits: 16
 			]
-			loop int-count [
+			loop bits [
 				if r and 1 <> 0 [
-					if 0 <> add-256 res s res-new: make-i256 [
+					if 0 <> u256-add res s res-new: make-i256 [
 						overflow?: true
 					]
 					res: res-new
@@ -428,19 +463,11 @@ int256: context [
 			]
 			idx: idx - 1
 		]
-		if overflow? [return chain-error/new 'u256-mul res "overflow" none]
+		if overflow? [new-error 'u256-mul "overflow" res]
 		res
 	]
 
-	negative: func [bigint [vector!] return: [vector! map!]][
-		sub256 to-i256 0 bigint
-	]
-
-	set 'negative256 function [bigint [vector!] return: [vector! map!]][
-		negative bigint
-	]
-
-	valid-length?: func [bigint [vector!] return: [integer!] /local i count][
+	zero-head-length?: func [bigint [vector!] return: [integer!] /local i count][
 		count: 0
 		repeat i 16 [
 			if bigint/(i) <> 0 [break]
@@ -449,7 +476,7 @@ int256: context [
 		16 - count
 	]
 
-	int16-valid-length?: func [int16 [integer!] return: [integer!] /local i mask count][
+	int16-zero-head-length?: func [int16 [integer!] return: [integer!] /local i mask count][
 		count: 0
 		repeat i 16 [
 			mask: 1 << (16 - i)
@@ -459,38 +486,62 @@ int256: context [
 		16 - count
 	]
 
-
-	set 'div256 function [dividend [vector!] divisor [vector!] /rem return: [vector! block! map!]][
-		if i256-zero? divisor [return chain-error/new 'div256 divisor "zero-divide" none]
+	u256-div: func [dividend [vector!] divisor [vector!] /rem return: [vector! block!]
+		/local q r bigint-count idx d bit new-r
+	][
+		if zero256? divisor [new-error 'u256-div "zero-divide" none]
 		
 		q: make-i256
 		r: make-i256
-		either i256-negative? dividend [dividend-raw: sub256 to-i256 0 dividend][dividend-raw: dividend]
-		either i256-negative? divisor [divisor-raw: sub256 to-i256 0 divisor][divisor-raw: divisor]
-		repeat idx 16 [
-			d: dividend-raw/:idx
+		bigint-count: zero-head-length? dividend
+		repeat idx (16 - bigint-count) [
+			d: dividend/(bigint-count + idx)
 			bit: 15
 			loop 16 [
 				shl256 r
 				r/16: r/16 or (1 and shift d bit)
 				shl256 q
-				if less-equal256? divisor-raw r [
-					r: sub256 r divisor-raw
-					if chain-error/error? r [return chain-error/new 'div256 none "overflow" r]
+				if less-equal? divisor r [
+					u256-sub r divisor new-r: make-i256
+					r: new-r
 					q/16: q/16 or 1
 				]
 				bit: bit - 1
 			]
 		]
-		if (i256-negative? dividend) <> (i256-negative? divisor) [
-			q: sub256 to-i256 0 q
-		]
 		either rem [reduce [q r]][q]
 	]
 
-	set 'mod256 func [l [vector!] r [vector!] return: [vector! map!]][
-		res: div256/rem l r
-		if chain-error/error? res [return chain-error/new 'mod256 none none res]
-		second res
+	set 'div256 function [dividend [vector!] divisor [vector!] /rem return: [vector! block!]
+		/local dividend-neg? dividend-abs divisor-neg? divisor-abs res-abs q r
+	][
+		either dividend-neg?: negative256? dividend [
+			dividend-abs: negative256 dividend
+		][
+			dividend-abs: dividend
+		]
+		either divisor-neg?: negative256? divisor [
+			divisor-abs: negative256 divisor
+		][
+			divisor-abs: divisor
+		]
+
+		res-abs: u256-div dividend-abs divisor-abs
+
+		either dividend-neg? <> divisor-neg? [
+			q: negative256 res-abs
+		][
+			q: res-abs
+		]
+
+		if rem [
+			r: sub256 dividend mul256 divisor q
+			return reduce [q r]
+		]
+		q
+	]
+
+	set 'mod256 func [l [vector!] r [vector!] return: [vector!]][
+		second div256/rem l r
 	]
 ]
