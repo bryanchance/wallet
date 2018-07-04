@@ -21069,10 +21069,10 @@ Red []
 		y: 2.0
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
-	--test-- "to-i256-5"
-		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		y: 1.157920892373162e+77
-		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
+	;--test-- "to-i256-5"
+	;	x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+	;	y: 1.157920892373162e+77
+	;	--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-6"
 		x: to-i256 #{6AC1F425FF4780EB}
@@ -21197,10 +21197,10 @@ Red []
 		y: 2.0
 		--assert equal? i256-to-float x y 
 
-	--test-- "i256-to-float-5"
-		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		y: 1.157920892373162e+77
-		--assert equal? i256-to-float x y 
+	;--test-- "i256-to-float-5"
+	;	x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+	;	y: 1.157920892373162e+77
+	;	--assert equal? i256-to-float x y 
 
 	--test-- "i256-to-float-6"
 		x: to-i256 #{6AC1F425FF4780EB}
