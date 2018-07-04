@@ -51,7 +51,7 @@ string-to-i256: func [s [string!] scalar [integer!] return: [vector!]
 ]
 
 form-i256: func [bigint [vector!] scalar [integer!] max-point [integer!] return: [string!]
-	/local str abs len left right res
+	/local str abs len left right s res
 ][
 	abs: str: i256-to-string bigint
 	if any [str/1 = #"-" str/1 = #"+"] [abs: next abs]
@@ -64,13 +64,15 @@ form-i256: func [bigint [vector!] scalar [integer!] max-point [integer!] return:
 		left: copy/part abs len - scalar
 		right: copy/part at abs (len + 1 - scalar) scalar
 	]
-	trim/tail/with right #"0"
-	if right = "" [
+	s: right
+	forever [
+		s: back tail s
+		either s/1 = #"0" [remove s][break]
+	]
+	if empty? right [
 		right: "0"
 	]
-	if all [left = "0" right = "0"][
-		return "0"
-	]
+
 	if max-point < length? right [
 		right: copy/part right max-point
 	]

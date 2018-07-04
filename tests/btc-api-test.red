@@ -1,6 +1,7 @@
 Red []
 #if error? try [_int256_red_] [#include %../libs/int256.red]
 #if error? try [_btc-api_red_] [#include %../libs/btc-api.red]
+#if error? try [_int-encode_red_] [#include %../libs/int-encode.red]
 
 network: https://chain.api.btc.com/v3
 
@@ -8,7 +9,7 @@ print "get-balance"
 balance: try [btc-api/get-balance network "15urYnyeJe3gwbGJ74wcX89Tz7ZtsFDVew"]
 either not error? balance [
 	either balance [
-		print ["balance: " i256-to-string balance]
+		print ["balance: " form-i256 balance 8 8]
 	][
 		print "no record"
 	]
