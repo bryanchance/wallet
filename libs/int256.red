@@ -228,9 +228,10 @@ int256: context [
 	]
 
 	set 'lesser-or-equal256? function [left [vector!] right [vector!] return: [logic!]][
+		if left = right [return yes]
 		if all [negative256? left not negative256? right][return yes]
 		if all [not negative256? left negative256? right][return no]
-		if all [not negative256? left not negative256? right][less-equal? left right]
+		if all [not negative256? left not negative256? right][return less-equal? left right]
 		not less-equal? left right
 	]
 
@@ -489,8 +490,8 @@ int256: context [
 	u256-div: func [dividend [vector!] divisor [vector!] /rem return: [vector! block!]
 		/local q r bigint-count idx d bit new-r
 	][
-		if zero256? divisor [new-error 'u256-div "zero-divide" none]
-		
+		if zero256? divisor [new-error 'u256-div "zero-divide" reduce [dividend divisor]]
+
 		q: make-i256
 		r: make-i256
 		bigint-count: valid-length? dividend
@@ -515,6 +516,8 @@ int256: context [
 	set 'div256 function [dividend [vector!] divisor [vector!] /rem return: [vector! block!]
 		/local dividend-neg? dividend-abs divisor-neg? divisor-abs res-abs q r
 	][
+		if zero256? divisor [new-error 'div256 "zero-divide" reduce [dividend divisor]]
+
 		either dividend-neg?: negative256? dividend [
 			dividend-abs: negative256 dividend
 		][
