@@ -338,7 +338,7 @@ int256: context [
 				negative256? res
 			]
 		][
-			new-error 'add256 "overflow" res
+			new-error 'add256 "overflow" reduce [left right res]
 		]
 		res
 	]
@@ -391,7 +391,7 @@ int256: context [
 				negative256? res
 			]
 		][
-			new-error 'sub256 "overflow" res
+			new-error 'sub256 "overflow" reduce [left right res]
 		]
 		res
 	]
@@ -416,11 +416,11 @@ int256: context [
 				res-abs/arg1 = 'u256-mul
 				res-abs/arg2 = "overflow"
 			][
-				res: res-abs/arg3
+				res: pick res-abs/arg3 3
 				if left-neg? <> right-neg? [
 					res: negative256 res
 				]
-				new-error 'mul256 "overflow" res
+				new-error 'mul256 "overflow" reduce [left right res]
 			][
 				return res-abs
 			]
@@ -463,7 +463,7 @@ int256: context [
 			]
 			idx: idx - 1
 		]
-		if overflow? [new-error 'u256-mul "overflow" res]
+		if overflow? [new-error 'u256-mul "overflow" reduce [left right res]]
 		res
 	]
 
