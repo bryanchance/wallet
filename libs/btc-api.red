@@ -130,13 +130,13 @@ btc-api: context [
 		Accept: "application/json"
 	]
 
-	post-url: func [url [url!] header [block!] data [string!] return: [map!]
+	post-url: func [url [url!] body [map!] return: [map!]
 		/local command res 
 	][
 		command: compose/only [
 				POST
-				(header)
-				(data)
+				(headers)
+				(json/encode body)
 		]
 		res: try [write url command]
 		if not error? res [
@@ -155,12 +155,11 @@ btc-api: context [
 
 	publish-tx: func [network [url!] tx [string!] return: [logic!]
 		/local
-			url body resp data err-no err-msg
+			url body resp err-no err-msg
 	][
 		url: rejoin [network "/tools/tx-publish"]
 		body: make map! reduce ['rawhex tx]
-		data: json/encode body
-		resp: post-url url headers data
+		resp: post-url url body
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
@@ -175,8 +174,7 @@ btc-api: context [
 	][
 		url: rejoin [network "/tools/tx-decode"]
 		body: make map! reduce ['rawhex tx]
-		data: json/encode body
-		resp: post-url url headers data
+		resp: post-url url body
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
