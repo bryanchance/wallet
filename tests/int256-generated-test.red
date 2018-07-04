@@ -1,7 +1,6 @@
 Red []
 
 #include %../../red/quick-test/quick-test.red
-#include %../libs/chain-error.red
 #include %../libs/int256.red
 
 ~~~start-file~~~ "int256-generated"
@@ -21075,12 +21074,12 @@ Red []
 	;	--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-6"
-		x: to-i256 #{6AC1F425FF4780EB}
+		x: to-i256 #{6AC1F425FF478000}
 		y: 7.692698082559361e+18
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-7"
-		x: to-i256 #{B8672F8CEEBC1448}
+		x: to-i256 #{B8672F8CEEBC1800}
 		y: 1.328764150792717e+19
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
@@ -21090,87 +21089,87 @@ Red []
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-9"
-		x: to-i256 #{4D65AACBFFC11E85}
+		x: to-i256 #{4D65AACBFFC12000}
 		y: 5.577051506714157e+18
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-10"
-		x: to-i256 #{2591CB4F3C7053C0}
+		x: to-i256 #{2591CB4F3C705400}
 		y: 2.707168392203228e+18
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-11"
-		x: to-i256 #{17A3809065865081}
+		x: to-i256 #{17A3809065865100}
 		y: 1.7033464417431268e+18
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-12"
-		x: to-i256 #{2FAEBFCC634E1E47}
+		x: to-i256 #{2FAEBFCC634E1E00}
 		y: 3.4358944502905646e+18
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-13"
-		x: to-i256 #{5876AAEDAB7479FC}
+		x: to-i256 #{5876AAEDAB747800}
 		y: 6.374470260350024e+18
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-14"
-		x: to-i256 #{65928D86EF7F7D19}
+		x: to-i256 #{65928D86EF7F7C00}
 		y: 7.319067955113721e+18
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-15"
-		x: to-i256 #{89EFE4B2D8A7D514}
+		x: to-i256 #{89EFE4B2D8A7D800}
 		y: 9.939414359420164e+18
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-16"
-		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
+		x: to-i256 #{6B5054FE5032B000000000000000000000000000000000000000000000000000}
 		y: 4.853940916655719e+76
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-17"
-		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
+		x: to-i256 #{0702DF9D88CF5980000000000000000000000000000000000000000000000000}
 		y: 3.171266970767153e+75
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-18"
-		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
+		x: to-i256 #{23F065F7F06AAE00000000000000000000000000000000000000000000000000}
 		y: 1.6255696756767824e+76
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-19"
-		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
+		x: to-i256 #{503C913F17C1CC00000000000000000000000000000000000000000000000000}
 		y: 3.6292041164746845e+76
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-20"
-		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
+		x: to-i256 #{15C57508D460E300000000000000000000000000000000000000000000000000}
 		y: 9.847446434378146e+75
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-21"
-		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
+		x: to-i256 #{192D421E97D32400000000000000000000000000000000000000000000000000}
 		y: 1.138778567254299e+76
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-22"
-		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
+		x: to-i256 #{B11EDBC44A252800000000000000000000000000000000000000000000000000}
 		y: 8.011389638558939e+76
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-23"
-		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
+		x: to-i256 #{04AE8A6D08BF7380000000000000000000000000000000000000000000000000}
 		y: 2.117638164155805e+75
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-24"
-		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
+		x: to-i256 #{47CB2D6F7235E000000000000000000000000000000000000000000000000000}
 		y: 3.2473195786729375e+76
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
 	--test-- "to-i256-25"
-		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
+		x: to-i256 #{E899B709189EC000000000000000000000000000000000000000000000000000}
 		y: 1.0520817173704268e+77
 		--assert (lesser-or-equal256? x to-i256 y) and (lesser-or-equal256? to-i256 y x) 
 
@@ -21284,7 +21283,7 @@ Red []
 
 	--test-- "i256-to-float-22"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		y: 8.011389638558939e+76
+		y: 8.011389638558939e76
 		--assert equal? i256-to-float x y 
 
 	--test-- "i256-to-float-23"
@@ -21299,7 +21298,7 @@ Red []
 
 	--test-- "i256-to-float-25"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		y: 1.0520817173704268e+77
+		y: 1.052081717370427e77
 		--assert equal? i256-to-float x y 
 
 ===end-group===
