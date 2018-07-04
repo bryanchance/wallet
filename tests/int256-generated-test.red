@@ -17467,7 +17467,7 @@ Red []
 	--test-- "lesser or equal-4"
 		x: to-i256 #{00}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-5"
@@ -17569,7 +17569,7 @@ Red []
 	--test-- "lesser or equal-21"
 		x: to-i256 #{00}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-22"
@@ -17587,7 +17587,7 @@ Red []
 	--test-- "lesser or equal-24"
 		x: to-i256 #{00}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-25"
@@ -17611,7 +17611,7 @@ Red []
 	--test-- "lesser or equal-28"
 		x: to-i256 #{00}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-29"
@@ -17713,7 +17713,7 @@ Red []
 	--test-- "lesser or equal-45"
 		x: to-i256 #{00}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-46"
@@ -17731,7 +17731,7 @@ Red []
 	--test-- "lesser or equal-48"
 		x: to-i256 #{00}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-49"
@@ -17755,7 +17755,7 @@ Red []
 	--test-- "lesser or equal-52"
 		x: to-i256 #{01}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-53"
@@ -17857,7 +17857,7 @@ Red []
 	--test-- "lesser or equal-69"
 		x: to-i256 #{01}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-70"
@@ -17875,7 +17875,7 @@ Red []
 	--test-- "lesser or equal-72"
 		x: to-i256 #{01}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-73"
@@ -17899,7 +17899,7 @@ Red []
 	--test-- "lesser or equal-76"
 		x: to-i256 #{02}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-77"
@@ -18001,7 +18001,7 @@ Red []
 	--test-- "lesser or equal-93"
 		x: to-i256 #{02}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-94"
@@ -18019,127 +18019,127 @@ Red []
 	--test-- "lesser or equal-96"
 		x: to-i256 #{02}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-97"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{00}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-98"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{00}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-99"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{01}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-100"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{02}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-101"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{6AC1F425FF4780EB}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-102"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{B8672F8CEEBC1448}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-103"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{077EFF20CCC389}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-104"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{4D65AACBFFC11E85}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-105"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{2591CB4F3C7053C0}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-106"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{17A3809065865081}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-107"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-108"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{5876AAEDAB7479FC}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-109"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{65928D86EF7F7D19}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-110"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-111"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-112"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-113"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-114"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-115"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-116"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-117"
@@ -18151,13 +18151,13 @@ Red []
 	--test-- "lesser or equal-118"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-119"
 		x: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-120"
@@ -18193,7 +18193,7 @@ Red []
 	--test-- "lesser or equal-125"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-126"
@@ -18289,7 +18289,7 @@ Red []
 	--test-- "lesser or equal-141"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-142"
@@ -18307,7 +18307,7 @@ Red []
 	--test-- "lesser or equal-144"
 		x: to-i256 #{6AC1F425FF4780EB}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-145"
@@ -18337,7 +18337,7 @@ Red []
 	--test-- "lesser or equal-149"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-150"
@@ -18433,7 +18433,7 @@ Red []
 	--test-- "lesser or equal-165"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-166"
@@ -18451,7 +18451,7 @@ Red []
 	--test-- "lesser or equal-168"
 		x: to-i256 #{B8672F8CEEBC1448}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-169"
@@ -18481,7 +18481,7 @@ Red []
 	--test-- "lesser or equal-173"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-174"
@@ -18577,7 +18577,7 @@ Red []
 	--test-- "lesser or equal-189"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-190"
@@ -18595,7 +18595,7 @@ Red []
 	--test-- "lesser or equal-192"
 		x: to-i256 #{077EFF20CCC389}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-193"
@@ -18625,7 +18625,7 @@ Red []
 	--test-- "lesser or equal-197"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-198"
@@ -18721,7 +18721,7 @@ Red []
 	--test-- "lesser or equal-213"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-214"
@@ -18739,7 +18739,7 @@ Red []
 	--test-- "lesser or equal-216"
 		x: to-i256 #{4D65AACBFFC11E85}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-217"
@@ -18769,7 +18769,7 @@ Red []
 	--test-- "lesser or equal-221"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-222"
@@ -18865,7 +18865,7 @@ Red []
 	--test-- "lesser or equal-237"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-238"
@@ -18883,7 +18883,7 @@ Red []
 	--test-- "lesser or equal-240"
 		x: to-i256 #{2591CB4F3C7053C0}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-241"
@@ -18913,7 +18913,7 @@ Red []
 	--test-- "lesser or equal-245"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-246"
@@ -19009,7 +19009,7 @@ Red []
 	--test-- "lesser or equal-261"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-262"
@@ -19027,7 +19027,7 @@ Red []
 	--test-- "lesser or equal-264"
 		x: to-i256 #{17A3809065865081}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-265"
@@ -19057,7 +19057,7 @@ Red []
 	--test-- "lesser or equal-269"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-270"
@@ -19153,7 +19153,7 @@ Red []
 	--test-- "lesser or equal-285"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-286"
@@ -19171,7 +19171,7 @@ Red []
 	--test-- "lesser or equal-288"
 		x: to-i256 #{2FAEBFCC634E1E47}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-289"
@@ -19201,7 +19201,7 @@ Red []
 	--test-- "lesser or equal-293"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-294"
@@ -19297,7 +19297,7 @@ Red []
 	--test-- "lesser or equal-309"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-310"
@@ -19315,7 +19315,7 @@ Red []
 	--test-- "lesser or equal-312"
 		x: to-i256 #{5876AAEDAB7479FC}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-313"
@@ -19345,7 +19345,7 @@ Red []
 	--test-- "lesser or equal-317"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-318"
@@ -19441,7 +19441,7 @@ Red []
 	--test-- "lesser or equal-333"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-334"
@@ -19459,7 +19459,7 @@ Red []
 	--test-- "lesser or equal-336"
 		x: to-i256 #{65928D86EF7F7D19}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-337"
@@ -19489,7 +19489,7 @@ Red []
 	--test-- "lesser or equal-341"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-342"
@@ -19585,7 +19585,7 @@ Red []
 	--test-- "lesser or equal-357"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-358"
@@ -19603,7 +19603,7 @@ Red []
 	--test-- "lesser or equal-360"
 		x: to-i256 #{89EFE4B2D8A7D514}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-361"
@@ -19633,7 +19633,7 @@ Red []
 	--test-- "lesser or equal-365"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-366"
@@ -19729,7 +19729,7 @@ Red []
 	--test-- "lesser or equal-381"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-382"
@@ -19747,7 +19747,7 @@ Red []
 	--test-- "lesser or equal-384"
 		x: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-385"
@@ -19777,7 +19777,7 @@ Red []
 	--test-- "lesser or equal-389"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-390"
@@ -19873,7 +19873,7 @@ Red []
 	--test-- "lesser or equal-405"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-406"
@@ -19891,7 +19891,7 @@ Red []
 	--test-- "lesser or equal-408"
 		x: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-409"
@@ -19921,7 +19921,7 @@ Red []
 	--test-- "lesser or equal-413"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-414"
@@ -20017,7 +20017,7 @@ Red []
 	--test-- "lesser or equal-429"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-430"
@@ -20035,7 +20035,7 @@ Red []
 	--test-- "lesser or equal-432"
 		x: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-433"
@@ -20065,7 +20065,7 @@ Red []
 	--test-- "lesser or equal-437"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-438"
@@ -20161,7 +20161,7 @@ Red []
 	--test-- "lesser or equal-453"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-454"
@@ -20179,7 +20179,7 @@ Red []
 	--test-- "lesser or equal-456"
 		x: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-457"
@@ -20209,7 +20209,7 @@ Red []
 	--test-- "lesser or equal-461"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-462"
@@ -20305,7 +20305,7 @@ Red []
 	--test-- "lesser or equal-477"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-478"
@@ -20323,7 +20323,7 @@ Red []
 	--test-- "lesser or equal-480"
 		x: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-481"
@@ -20353,7 +20353,7 @@ Red []
 	--test-- "lesser or equal-485"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-486"
@@ -20449,7 +20449,7 @@ Red []
 	--test-- "lesser or equal-501"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-502"
@@ -20467,31 +20467,31 @@ Red []
 	--test-- "lesser or equal-504"
 		x: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-505"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{00}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-506"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{00}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-507"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{01}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-508"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{02}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-509"
@@ -20503,109 +20503,109 @@ Red []
 	--test-- "lesser or equal-510"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{6AC1F425FF4780EB}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-511"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{B8672F8CEEBC1448}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-512"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{077EFF20CCC389}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-513"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{4D65AACBFFC11E85}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-514"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{2591CB4F3C7053C0}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-515"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{17A3809065865081}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-516"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-517"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{5876AAEDAB7479FC}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-518"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{65928D86EF7F7D19}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-519"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-520"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-521"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-522"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-523"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-524"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-525"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-526"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-527"
 		x: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-528"
@@ -20641,7 +20641,7 @@ Red []
 	--test-- "lesser or equal-533"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-534"
@@ -20743,7 +20743,7 @@ Red []
 	--test-- "lesser or equal-550"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-551"
@@ -20755,7 +20755,7 @@ Red []
 	--test-- "lesser or equal-552"
 		x: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-553"
@@ -20785,7 +20785,7 @@ Red []
 	--test-- "lesser or equal-557"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-558"
@@ -20887,7 +20887,7 @@ Red []
 	--test-- "lesser or equal-574"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{B11EDBC44A252B1850C5A1F12461FC2BAFBE864CC8874C1AD5AA0734699C2550}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-575"
@@ -20899,31 +20899,31 @@ Red []
 	--test-- "lesser or equal-576"
 		x: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
 		y: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
-		z: true
+		z: false
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-577"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{00}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-578"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{00}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-579"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{01}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-580"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{02}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-581"
@@ -20935,97 +20935,97 @@ Red []
 	--test-- "lesser or equal-582"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{6AC1F425FF4780EB}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-583"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{B8672F8CEEBC1448}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-584"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{077EFF20CCC389}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-585"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{4D65AACBFFC11E85}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-586"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{2591CB4F3C7053C0}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-587"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{17A3809065865081}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-588"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{2FAEBFCC634E1E47}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-589"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{5876AAEDAB7479FC}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-590"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{65928D86EF7F7D19}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-591"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{89EFE4B2D8A7D514}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-592"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{6B5054FE5032B165AF6A8B928648C9D43456FB8B718620FCE0CC4DEA3AC5929C}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-593"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{0702DF9D88CF598EABA3C232E9F96A446AD47CD7750B5FD78F064BE96E4242F1}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-594"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{23F065F7F06AADDE32B6C760C7448456CCFD988DB749D7E9F7DFFD89CD818407}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-595"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{503C913F17C1CB3DB13C0E1684A5A539E05B0A01DD71F780E504F13CD442F8D1}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-596"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{15C57508D460E2D809FF7E8D45E69A732B7A01AF0F2A8FEAE0CDF279ABA7B9C8}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-597"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{192D421E97D324476BCDB583ABF185C6F5383F95696AEE31887D85393292B203}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-598"
@@ -21037,13 +21037,13 @@ Red []
 	--test-- "lesser or equal-599"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{04AE8A6D08BF7373C00975299FC06DD2FD26000FA91F6C40BF87C8C44C6A3019}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 	--test-- "lesser or equal-600"
 		x: to-i256 #{E899B709189EBEC34B2A4BE7E743447E49ABA5171E96ED7D21498D648659409B}
 		y: to-i256 #{47CB2D6F7235DEE2CA0E35D738DD27871A6D051A12C7FE9972A9266878200416}
-		z: false
+		z: true
 		--assert z  = lesser-or-equal256? x  y
 
 ===end-group===
