@@ -26,7 +26,7 @@ int256: context [
 	]
 
 	set 'to-i256 function [value [integer! float! binary! string! none!] return: [vector!]
-		/local spec v n bin res factor
+		/local spec v n bin res factor f
 	][
 		switch/default type?/word value [
 			integer! [
@@ -38,6 +38,7 @@ int256: context [
 			]
 			float! [
 				either value >= 0 [
+					f: value
 					spec: make block! 16
 					while [value <> 0.0][
 						v: to integer! either value < 65536.0 [
@@ -48,7 +49,7 @@ int256: context [
 							value - (n * 65536.0)
 						]
 						insert spec v
-						if 16 < length? spec [new-error 'to-i256 "float too large" value]
+						if 16 < length? spec [new-error 'to-i256 "float too large" f]
 						value: n
 					]
 					insert/dup spec 0 16 - length? spec
@@ -232,7 +233,8 @@ int256: context [
 		if all [negative256? left not negative256? right][return yes]
 		if all [not negative256? left negative256? right][return no]
 		if all [not negative256? left not negative256? right][return less-equal? left right]
-		not less-equal? left right
+		
+		not less-equal? negative256 left negative256 right
 	]
 
 	set 'u256-lesser-or-equal? function [left [vector!] right [vector!] return: [logic!]][
