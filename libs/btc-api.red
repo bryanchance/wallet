@@ -7,36 +7,45 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#do [_btc-api_red_: yes]
+#if error? try [_json_red_] [#include %JSON.red]
+#if error? try [_int256_red_] [#include %int256.red]
 
 btc-api: context [
 
-	timeout-error: func [name][
-		chain-error/new name none 'network-timeout none
+	system/catalog/errors/user: make system/catalog/errors/user [btc-api: ["btc-api [" :arg1 ": (" :arg2 " " :arg3 ")]"]]
+
+	new-error: func [name [word!] arg2 arg3][
+		cause-error 'user 'btc-api [name arg2 arg3]
 	]
 
-	get-url: func [network [url!] params [string!] return: [map!]
-		/local net-str resp res
+	get-url: func [url [url!] return: [map!]
+		/local res 
 	][
-		net-str: append copy network params
-		resp: attempt [read net-str]
-		unless resp [
-			wait 0.5
-			resp: attempt [read net-str]
-			unless resp [return chain-error/new 'get-url network net-str timeout-error 'get-url]
+		res: try [read url]
+		if not error? res [
+			res: json/decode res
+			if res <> [] [return res]
 		]
-		res: json/decode resp
+
+		wait 0.5
+		res: try [read url]
+		if error? res [new-error 'get-url "timeout" url]
+
+		res: json/decode res
+		if res = [] [new-error 'get-url "server error" url]
 		res
 	]
 
-	get-balance: func [network [url!] address [string!] return: [none! vector! map!]
-		/local resp err-no err-msg data balance
+	get-balance: func [network [url!] address [string!] return: [none! vector!]
+		/local url resp err-no err-msg data balance
 	][
-		resp: get-url network append copy "/address/" address
-		if chain-error/error? resp [return chain-error/new 'get-balance network address resp]
+		url: rejoin [network "/address/" address]
+		resp: get-url url
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return chain-error/new 'get-balance err-no err-msg none
+			new-error 'get-balance "server error" reduce [url err-no err-msg]
 		]
 
 		unless data: select resp 'data [return none]
@@ -44,16 +53,15 @@ btc-api: context [
 		to-i256 balance
 	]
 
-	;- return: [tx-hash value]
-	get-unspent: func [network [url!] address [string!] return: [none! block! map!]
-		/local resp err-no err-msg data list utxs item hash value
+	get-unspent: func [network [url!] address [string!] return: [none! block!]
+		/local url resp err-no err-msg data list utxs item
 	][
-		resp: get-url network append copy "/address/" reduce [address "/unspent"]
-		if chain-error/error? resp [return chain-error/new 'get-unspent network address resp]
+		url: rejoin [network "/address/" address "/unspent"]
+		resp: get-url url
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return chain-error/new 'get-unspent err-no err-msg none
+			new-error 'get-unspent "server error" reduce [url err-no err-msg]
 		]
 		unless data: select resp 'data [return none]
 		unless list: select data 'list [return none]
@@ -62,20 +70,23 @@ btc-api: context [
 		foreach item list [
 			hash: select item 'tx_hash
 			value: select item 'value
-			append/only utxs reduce ['tx-hash hash 'value to-i256 value]
+			append/only utxs reduce [
+				'tx-hash select item 'tx_hash
+				'value to-i256 select item 'value
+			]
 		]
 		utxs
 	]
 
-	get-tx-info: func [network [url!] txid [string!] return: [none! block! map!]
-		/local resp err-no err-msg data ret version lock_time inputs outputs item info
+	get-tx-info: func [network [url!] txid [string!] return: [none! block!]
+		/local url resp err-no err-msg data ret version lock_time inputs outputs item info
 	][
-		resp: get-url network append copy "/tx/" reduce [txid "?verbose=3"]
-		if chain-error/error? resp [return chain-error/new 'get-tx-info network address resp]
+		url: rejoin [network "/tx/" txid "?verbose=3"]
+		resp: get-url url
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return chain-error/new 'get-tx-info err-no err-msg none
+			new-error 'get-tx-info "server error" reduce [url err-no err-msg]
 		]
 		unless data: select resp 'data [return none]
 		ret: copy []
@@ -105,7 +116,7 @@ btc-api: context [
 		foreach item outputs [
 			append/only info reduce [
 				'addresses select item 'addresses
-				'value select item 'value
+				'value to-i256 select item 'value
 				'script-hex select item 'script_hex
 				'type select item 'type
 			]
@@ -119,52 +130,61 @@ btc-api: context [
 		Accept: "application/json"
 	]
 
-	publish-tx: func [network [url!] tx [string!] return: [block! map!]
-		/local
-			body resp data err-no err-msg
+	post-url: func [url [url!] header [block!] data [string!] return: [map!]
+		/local command res 
 	][
-		body: make map! reduce ['rawhex tx]
-		data: json/encode body
-		resp: attempt [
-			write append copy network "/tools/tx-publish" compose/only [
+		command: compose/only [
 				POST
-				(headers)
+				(header)
 				(data)
-			]
 		]
-		unless resp [return chain-error/new 'publish-tx network tx timeout-error 'publish-tx]
-		resp: json/decode resp
-		err-no: select resp 'err_no
-		if 0 <> err-no [
-			err-msg: select resp 'err_msg
-			return chain-error/new 'publish-tx err-no err-msg none
+		res: try [write url command]
+		if not error? res [
+			res: json/decode res
+			if res <> [] [return res]
 		]
-		[]
+
+		wait 0.5
+		res: try [write url command]
+		if error? res [new-error 'post-url "timeout" reduce [url command]]
+
+		res: json/decode res
+		if res = [] [new-error 'post-url "server error" [url command]]
+		res
 	]
 
-	decode-tx: func [network [url!] tx [string!] return: [block! string!]
+	publish-tx: func [network [url!] tx [string!] return: [logic!]
 		/local
-			body resp data err-no err-msg txid
+			url body resp data err-no err-msg
 	][
+		url: rejoin [network "/tools/tx-publish"]
 		body: make map! reduce ['rawhex tx]
 		data: json/encode body
-		resp: attempt [
-			write append copy network "/tools/tx-decode" compose/only [
-				POST
-				(headers)
-				(data)
-			]
-		]
-		unless resp [return chain-error/new 'decode-tx network tx timeout-error 'publish-tx]
-		resp: json/decode resp
+		resp: post-url url headers data
 		err-no: select resp 'err_no
 		if 0 <> err-no [
 			err-msg: select resp 'err_msg
-			return chain-error/new 'decode-tx err-no err-msg none
+			new-error 'publish-tx "server error" reduce [url err-no err-msg]
 		]
-		unless data: select resp 'data [return chain-error/new 'decode-tx none "no data" none]
-		unless txid: select data 'txid [return chain-error/new 'decode-tx none "no txid" none]
-		reduce [txid]
+		true
+	]
+
+	decode-tx: func [network [url!] tx [string!] return: [string!]
+		/local
+			url body resp data err-no err-msg txid
+	][
+		url: rejoin [network "/tools/tx-decode"]
+		body: make map! reduce ['rawhex tx]
+		data: json/encode body
+		resp: post-url url headers data
+		err-no: select resp 'err_no
+		if 0 <> err-no [
+			err-msg: select resp 'err_msg
+			new-error 'decode-tx "server error" reduce [url err-no err-msg]
+		]
+		unless data: select resp 'data [new-error 'decode-tx "no data" url]
+		unless txid: select data 'txid [new-error 'decode-tx "no txid" url]
+		txid
 	]
 
 ]

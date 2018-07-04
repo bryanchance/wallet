@@ -10,6 +10,7 @@ Red [
 	}
 ]
 
+#do [_int256_red_: yes]
 
 int256: context [
 

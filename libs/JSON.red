@@ -5,6 +5,8 @@ Red [
     License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#do [_json_red_: yes]
+
 json: context [
 	quoted-char: charset {"\/bfnrt}
 	exponent:	 charset "eE"
