@@ -16,5 +16,4 @@ blk: []
 print proto-parser/parse-files [%protob/types.proto %protob/messages.proto] blk
 
 write %messages.red {Red [Title: "auto generated, don't modify it manully!"]}
-write/append %messages.red { #do [_messages_red_: yes] }
 write/append %messages.red blk
