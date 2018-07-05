@@ -9,6 +9,8 @@ Red [
 	}
 ]
 
+#do [_hidapi_red_: yes]
+
 #system [
 	#switch OS [
 		Windows  [#include %windows.reds]
@@ -29,6 +31,13 @@ Red [
 ]
 
 hid: context [
+
+	system/catalog/errors/user: make system/catalog/errors/user [hid: ["hid [" :arg1 ": (" :arg2 " " :arg3 ")]"]]
+
+	new-error: func [name [word!] arg2 arg3][
+		cause-error 'user 'hid [name arg2 arg3]
+	]
+
 	enumerate-connected-devices: routine [
 		ids			[block!]
 		return:		[block!]
@@ -40,7 +49,7 @@ hid: context [
 		hid/hid-free-enumeration
 	]
 
-	open: routine [
+	_open: routine [
 		id			[integer!]
 		index		[integer!]
 		/local
@@ -56,7 +65,18 @@ hid: context [
 		]
 	]
 
-	read: routine [
+	open: func [id [integer!] index [integer!] return: [handle!] /local res][
+		unless res: _open id index [
+			either hid/enum-freed? [
+				new-error 'open "no enum" reduce [id index]
+			][
+				new-error 'open "not found" reduce [id index]
+			]
+		]
+		res
+	]
+
+	_read: routine [
 		dev			[handle!]
 		buffer		[binary!]
 		timeout		[integer!]		;-- millisec
@@ -75,7 +95,13 @@ hid: context [
 		sz
 	]
 
-	write: routine [
+	read: func [dev [handle!] buffer [binary!] timeout [integer!] return: [integer!] /local res][
+		res: _read dev buffer timeout
+		if res = -1 [new-error 'read "error" dev]
+		res
+	]
+
+	_write: routine [
 		dev			[handle!]
 		data		[binary!]
 		return:		[integer!]
@@ -83,10 +109,13 @@ hid: context [
 			sz		[integer!]
 	][
 		sz: hid/write as int-ptr! dev/value binary/rs-head data binary/rs-length? data
-		;if sz = -1 [
-		;	probe "write error"
-		;]
 		sz
+	]
+
+	write: func [dev [handle!] data [binary!] return: [integer!] /local res][
+		res: _write dev data
+		if res = -1 [new-error 'write "error" dev]
+		res
 	]
 
 	close: routine [
