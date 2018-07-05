@@ -664,7 +664,7 @@ proto-encode: context [
 				foreach sub-msg sub-ctx/3 [
 					if varint = sub-msg/1 [nvalue: sub-msg/2 break]
 				]
-				if nvalue = none [new-error 'decode-type "not found" reduce [wire-type name varint]
+				if nvalue = none [new-error 'decode-type "not found" reduce [wire-type name varint]]
 				either repeated? [
 					either block! = type? ovalue [
 						put value name append ovalue nvalue
