@@ -6,13 +6,19 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
-#include %proto-parser.red
+#do [_proto-encode_red_: yes]
+#if error? try [_proto-parser_red_] [#include %proto-parser.red]
 
 proto-encode: context [
-	
+
+	system/catalog/errors/user: make system/catalog/errors/user [proto-encode: ["proto-encode [" :arg1 ": (" :arg2 " " :arg3 ")]"]]
+
+	new-error: func [name [word!] arg2 arg3][
+		cause-error 'user 'proto-encode [name arg2 arg3]
+	]
+
 	msg-ctx: none
 	varint-buffer: make binary! 16
-	error: make block! 10
 
 	get-wire-type-id: func [
 		wire-type		[word!]
@@ -29,8 +35,7 @@ proto-encode: context [
 		ret: proto-parser/get-msg-type msg-ctx wire-type
 		if 'enum = ret [return 0]
 		if 'message = ret [return 2]
-		append/only error reduce ['get-wire-type-id 'Failure ret]
-		return error
+		new-error 'get-wire-type-id "not support" ret
 	]
 
 	encode-varint: func [
@@ -125,7 +130,7 @@ proto-encode: context [
 			v-type
 	][
 		v-type: type? value
-		if all [string! <> v-type binary! <> v-type] [append/only error reduce ['append-series 'NotSeries value] return error]
+		if all [string! <> v-type binary! <> v-type] [new-error 'append-series "not series" value]
 
 		ret: 0
 
@@ -152,7 +157,7 @@ proto-encode: context [
 			v-type
 	][
 		v-type: type? value
-		if integer! <> v-type [append/only error reduce ['append-integer 'NotInteger value] return error]
+		if integer! <> v-type [new-error 'append-integer "not integer" value]
 
 		ret: 0
 
@@ -176,7 +181,7 @@ proto-encode: context [
 			v-type
 	][
 		v-type: type? value
-		if binary! <> v-type [append/only error reduce ['append-int64 'NotBinary value] return error]
+		if binary! <> v-type [new-error 'append-int64 "not binary" value]
 
 		ret: 0
 
@@ -206,7 +211,7 @@ proto-encode: context [
 			v-type
 	][
 		v-type: type? value
-		if logic! <> v-type [append/only error reduce ['append-logic 'NotLogic value] return error]
+		if logic! <> v-type [new-error 'append-logic "not logic" value]
 
 		ret: 0
 
@@ -223,15 +228,15 @@ proto-encode: context [
 		value
 		repeated-buf	[binary!]
 		data			[binary!]
-		return:			[integer! block!]
+		return:			[integer!]
 		/local
 			ret			[integer!]
-			len			[integer! block!]
+			len			[integer! error!]
 			buffer		[binary!]
 			v-type
 	][
 		v-type: type? value
-		if map! <> v-type [append/only error reduce ['append-embedded 'NotMap value] return error]
+		if map! <> v-type [new-error 'append-embedded "not map" value]
 
 		ret: 0
 
@@ -239,9 +244,9 @@ proto-encode: context [
 		ret: ret + length? repeated-buf
 
 		buffer: make binary! 100
-		len: encode true wire-type value buffer
-		if block! = type? len [append/only error reduce ['encode-embedded 'encode wire-type] return error]
-		if len <> length? buffer [append/only error reduce ['encode-embedded 'LengthNotEqual len len <> length? buffer] return error]
+		len: try [encode true wire-type value buffer]
+		if error? len [new-error 'append-embedded len wire-type]
+		if len <> length? buffer [new-error 'append-embedded "not equal" reduce [len length? buffer]]
 
 		encode-varint len
 		append data varint-buffer
@@ -256,22 +261,21 @@ proto-encode: context [
 		field-number	[integer!]
 		value			[integer! logic! string! binary! map! block! word!]
 		data			[binary!]
-		return:			[integer! block!]
+		return:			[integer!]
 		/local
 			tag			[integer!]
-			len			[integer! block!]
+			len			[integer!]
 			ret			[integer!]
 			rep-buf		[binary!]
 			sub-ctx		[block!]
 			sub-msg		[block!]
 			enum-value	[integer!]
-			type-id		[integer! block!]
+			type-id		[integer!]
 			v-type
 			sub
 	][
 		v-type: type? value
 		type-id: get-wire-type-id wire-type
-		if block! = type? type-id [append/only error reduce ['encode-type 'Failure type-id] return error]
 		tag: field-number << 3 or type-id
 		encode-varint tag
 		rep-buf: make binary! 8
@@ -283,12 +287,10 @@ proto-encode: context [
 				either block! = v-type [
 					foreach sub value [
 						len: append-series sub rep-buf data
-						if block! = type? len [append/only error reduce ['encode-type 'SeriesRepeatedError sub] return error]
 						ret: ret + len
 					]
 				][
 					len: append-series value rep-buf data
-					if block! = type? len [append/only error reduce ['encode-type 'SeriesError value] return error]
 					ret: ret + len
 				]
 				return ret
@@ -297,12 +299,10 @@ proto-encode: context [
 				either block! = v-type [
 					foreach sub value [
 						len: append-int64 sub rep-buf data
-						if block! = type? len [append/only error reduce ['encode-type 'Integer64RepeatedError sub] return error]
 						ret: ret + len
 					]
 				][
 					len: append-int64 value rep-buf data
-					if block! = type? len [append/only error reduce ['encode-type 'Integer64Error value] return error]
 					ret: ret + len
 				]
 				return ret
@@ -311,12 +311,10 @@ proto-encode: context [
 				either block! = v-type [
 					foreach sub value [
 						len: append-integer sub rep-buf data
-						if block! = type? len [append/only error reduce ['encode-type 'IntegerRepeatedError sub] return error]
 						ret: ret + len
 					]
 				][
 					len: append-integer value rep-buf data
-					if block! = type? len [append/only error reduce ['encode-type 'IntegerError value] return error]
 					ret: ret + len
 				]
 				return ret
@@ -325,30 +323,25 @@ proto-encode: context [
 				either block! = v-type [
 					foreach sub value [
 						len: append-logic sub rep-buf data
-						if block! = type? len [append/only error reduce ['encode-type 'BoolRepeatedError sub] return error]
 						ret: ret + len
 					]
 				][
 					len: append-logic value rep-buf data
-					if block! = type? len [append/only error reduce ['encode-type 'BoolError value] return error]
 					ret: ret + len
 				]
 				return ret
 			]
 		]
 		sub-ctx: proto-parser/get-msg msg-ctx wire-type
-		if sub-ctx = [] [append/only error reduce ['encode-type 'NotDefined wire-type value] return error]
-		if all [sub-ctx/1 <> 'message sub-ctx/1 <> 'enum] [append/only error reduce ['encode 'NotKeyWord sub-ctx/1 value] return error]
+		if all [sub-ctx/1 <> 'message sub-ctx/1 <> 'enum] [new-error 'encode-type "not message/enum" reduce [sub-ctx/1 value]]
 		if sub-ctx/1 = 'message [
 			either block! = v-type [
 				foreach sub value [
 					len: append-embedded wire-type sub rep-buf data
-					if block! = type? len [append/only error reduce ['encode-type 'EmbeddedRepeatedError wire-type sub] return error]
 					ret: ret + len
 				]
 			][
 				len: append-embedded wire-type value rep-buf data
-				if block! = type? len [append/only error reduce ['encode-type 'EmbeddedError wire-type value] return error]
 				ret: ret + len
 			]
 			return ret
@@ -360,9 +353,8 @@ proto-encode: context [
 					foreach sub-msg sub-ctx/3 [
 						if sub = sub-msg/2 [enum-value: sub-msg/1 break]
 					]
-					if enum-value = -1 [append/only error reduce ['encode-type 'EnumRepeatedError 'NotFound sub] return error]
+					if enum-value = -1 [new-error 'encode-type "not found" sub]
 					len: append-integer enum-value rep-buf data
-					if block! = type? len [append/only error reduce ['encode-type 'EnumRepeatedError enum-value] return error]
 					ret: ret + len
 				]
 			][
@@ -370,9 +362,8 @@ proto-encode: context [
 				foreach sub-msg sub-ctx/3 [
 					if value = sub-msg/2 [enum-value: sub-msg/1 break]
 				]
-				if enum-value = -1 [append/only error reduce ['encode-type 'EnumRepeatedError 'NotFound value] return error]
+				if enum-value = -1 [new-error 'encode-type "not found" sub]
 				len: append-integer enum-value rep-buf data
-				if block! = type? len [append/only error reduce ['encode-type 'EnumError enum-value] return error]
 				ret: ret + len
 			]
 			return ret
@@ -386,12 +377,12 @@ proto-encode: context [
 		name			[word!]				;-- structure message's field name
 		value			[integer! logic! string! binary! map! block! word!]
 		data			[binary!]
-		return:			[integer! block!]
+		return:			[integer!]
 		/local
 			sub			[block!]
 			olen		[integer!]
 			nlen		[integer!]
-			len			[integer! block!]
+			len			[integer! error!]
 			ret			[integer!]
 			repeated?	[logic!]
 			v-type
@@ -402,18 +393,17 @@ proto-encode: context [
 				olen: length? data
 				repeated?: sub/2 = 'repeated
 				v-type: type? value
-				if all [repeated? block! <> v-type][append/only error reduce ['encode-each 'RepeatedError v-type] return error]
-				len: encode-type sub/3 sub/1 value data
-				if block! = type? len [append/only error ['encode-each 'Failure] return error]
+				if all [repeated? block! <> v-type][new-error 'encode-each "not repeated" reduce [msg name value]]
+				len: try [encode-type sub/3 sub/1 value data]
+				if error? len [new-error 'encode-each len reduce [msg name]]
 				nlen: length? data
-				if len <> (nlen - olen) [append/only error reduce ['encode-each 'LengthNotEqual len nlen - olen] return error]
+				if len <> (nlen - olen) [new-error 'encode-each "not equal" reduce [len (nlen - olen)]]
 				ret: ret + len
 				return ret
 			]
 		]
 
-		append/only error reduce ['encode-each 'NotFound name]
-		return error
+		new-error 'encode-each "not found" reduce [msg name]
 	]
 
 	encode: func [
@@ -421,30 +411,28 @@ proto-encode: context [
 		msg				[word!]
 		value			[map!]
 		data			[binary!]
-		return:			[integer! block!]
+		return:			[integer!]
 		/local
 			keys		[block!]
 			buffer		[binary!]
 			key			[word!]
 			ret			[integer!]
-			len			[integer! block!]
+			len			[integer!]
 			sub-ctx		[block!]
 			sub
 	][
 		keys: keys-of value
 		if 0 = length? keys [return 0]
 
-		if ctx = [] [append/only error reduce ['encode 'CtxError msg] return error]
-		if ctx <> true [msg-ctx: ctx clear error]
+		if ctx = [] [new-error 'encode "empty ctx" msg]
+		if ctx <> true [msg-ctx: ctx]
 
 		ret: 0
 		foreach key keys [
 			sub: value/:key
 			sub-ctx: proto-parser/get-msg msg-ctx msg
-			if sub-ctx = [] [append/only error reduce ['encode 'NotDefined msg] return error]
-			if sub-ctx/1 <> 'message [append/only error reduce ['encode 'NotMessage msg] return error]
+			if sub-ctx/1 <> 'message [new-error 'encode "not message" msg]
 			len: encode-each sub-ctx/3 msg key sub data
-			if block! = type? len [append/only error reduce ['encode 'Failure msg] return error]
 			ret: ret + len
 		]
 		ret
@@ -485,7 +473,7 @@ proto-encode: context [
 
 	decode-varint: func [
 		data			[binary!]
-		return:			[integer! block!]
+		return:			[integer!]
 		/local
 			i			[integer!]
 			j			[integer!]
@@ -535,8 +523,7 @@ proto-encode: context [
 			i: i + 1
 			i > dlen
 		]
-		append/only error reduce ['decode-varint 'Failure data]
-		return error
+		new-error 'decode-varint "no end" reduce [i dlen]
 	]
 
 	decode-type: func [
@@ -548,7 +535,7 @@ proto-encode: context [
 		return:				[integer!]
 		/local
 			ret				[integer!]
-			len				[integer!]
+			len				[integer! error!]
 			varint			[integer! logic!]
 			vlen			[integer!]
 			nres			[map!]
@@ -564,12 +551,11 @@ proto-encode: context [
 		switch wire-type [
 			string bytes [
 				vlen: decode-varint data
-				if block! = type? vlen [append/only error reduce ['decode-type 'SeriesError] return error]
 				len: length? varint-buffer
-				if len > 5 [append/only error reduce ['decode-type 'SeriesError varint-buffer] return error]
+				if len > 5 [new-error 'decode-type "too large" reduce [wire-type name varint-buffer]]
 				varint: to integer! varint-buffer
 				;-- we don't support too large string/binary
-				if varint < 0 [append/only error reduce ['decode-type 'SeriesError varint] return error]
+				if varint < 0 [new-error 'decode-type "negative varint" reduce [wire-type name varint]]
 				nvalue: copy/part skip data vlen varint
 				if wire-type = 'string [
 					nvalue: to string! nvalue
@@ -588,9 +574,8 @@ proto-encode: context [
 			]
 			int64 uint64 [
 				vlen: decode-varint data
-				if block! = type? vlen [append/only error reduce ['decode-type 'Int64Error] return error]
 				len: length? varint-buffer
-				if len > 8 [append/only error reduce ['decode-type 'Int64Error varint-buffer] return error]
+				if len > 8 [new-error 'decode-type "too large" reduce [wire-type name varint-buffer]]
 				either repeated? [
 					either block! = type? ovalue [
 						put value name append ovalue copy varint-buffer
@@ -605,7 +590,6 @@ proto-encode: context [
 			]
 			int32 uint32 enum [
 				vlen: decode-varint data
-				if block! = type? vlen [append/only error reduce ['decode-type 'Int32Error] return error]
 				len: length? varint-buffer
 				varint: to integer! back back back back tail varint-buffer
 				either repeated? [
@@ -622,7 +606,6 @@ proto-encode: context [
 			]
 			bool [
 				vlen: decode-varint data
-				if block! = type? vlen [append/only error reduce ['decode-type 'BoolError] return error]
 				len: length? varint-buffer
 				varint: to integer! back back tail varint-buffer
 				either varint-buffer = #{0000} [
@@ -645,21 +628,19 @@ proto-encode: context [
 		]
 
 		sub-ctx: proto-parser/get-msg msg-ctx wire-type
-		if sub-ctx = [] [append/only error reduce ['decode-type 'NotDefined wire-type] return error]
-		if all [sub-ctx/1 <> 'message sub-ctx/1 <> 'enum] [append/only error reduce ['encode 'NotKeyWord sub-ctx/1] return error]
+		if all [sub-ctx/1 <> 'message sub-ctx/1 <> 'enum] [new-error 'decode-type "not message/enum" reduce [wire-type name sub-ctx/1]]
 		if sub-ctx/1 = 'message [
 			vlen: decode-varint data
-			if block! = type? vlen [append/only error reduce ['decode-type 'EmbeddedError] return error]
 			len: length? varint-buffer
-			if len > 5 [append/only error reduce ['decode-type 'EmbeddedError 'VarintTooLarge varint-buffer] return error]
+			if len > 5 [new-error 'decode-type "too large" reduce [wire-type name varint-buffer]]
 			varint: to integer! varint-buffer
 			;-- we don't support too large embedded message
-			if varint < 0 [append/only error reduce ['decode-type 'EmbeddedError 'VarintNeg varint] return error]
+			if varint < 0 [new-error 'decode-type "negative varint" reduce [wire-type name varint]]
 			nvalue: copy/part skip data vlen varint
 			nres: make map! []
-			len: decode true wire-type nres nvalue
-			if len < 0 [append/only error reduce ['decode-type 'EmbeddedError 'CascadeError len] return error]
-			if len <> varint [append/only error reduce ['decode-type 'EmbeddedError 'CascadeError len varint] return error]
+			len: try [decode true wire-type nres nvalue]
+			if error? len [new-error 'decode-type len reduce [wire-type name sub-ctx/1]]
+			if len <> varint [new-error 'decode-type "not equal" reduce [len varint]]
 			either repeated? [
 				either block! = type? ovalue [
 					put value name append ovalue nres
@@ -675,16 +656,15 @@ proto-encode: context [
 
 		if sub-ctx/1 = 'enum [
 				vlen: decode-varint data
-				if block! = type? vlen [append/only error reduce ['decode-type 'EnumError] return error]
 				len: length? varint-buffer
-				if len > 5 [append/only error reduce ['decode-type 'EnumError 'VarintTooLarge varint-buffer] return error]
+				if len > 5 [new-error 'decode-type "too large" reduce [wire-type name varint-buffer]]
 				varint: to integer! varint-buffer
-				if varint < 0 [append/only error reduce ['decode-type 'EnumError 'VarintNeg varint] return error]
+				if varint < 0 [new-error 'decode-type "negative varint" reduce [wire-type name varint]]
 				nvalue: none
 				foreach sub-msg sub-ctx/3 [
 					if varint = sub-msg/1 [nvalue: sub-msg/2 break]
 				]
-				if nvalue = none [append/only error reduce ['decode-type 'EnumError 'NotExist varint] return error]
+				if nvalue = none [new-error 'decode-type "not found" reduce [wire-type name varint]
 				either repeated? [
 					either block! = type? ovalue [
 						put value name append ovalue nvalue
@@ -713,7 +693,7 @@ proto-encode: context [
 			wire-type-id2	[integer!]
 			field-number	[integer!]
 			ret				[integer!]
-			len				[integer! block!]
+			len				[integer! error!]
 			pos				[binary!]
 			repeated?		[logic!]
 	][
@@ -725,14 +705,14 @@ proto-encode: context [
 			wire-type-id2: get-wire-type-id sub/3
 			if all [sub/1 = field-number wire-type-id = wire-type-id2][
 				repeated?: sub/2 = 'repeated
-				len: decode-type repeated? sub/3 sub/4 value pos
-				if block! = type? len [append/only error reduce ['decode-each 'Failure pos/1] return error]
+				len: try [decode-type repeated? sub/3 sub/4 value pos]
+				if error? len [new-error 'decode-each len reduce [pos/1 msg varint]]
 				pos: skip data len
 				ret: ret + len
 			]
 		]
 
-		if ret = 0 [append/only error reduce ['decode-each 'Unkown varint] return error]
+		if ret = 0 [new-error 'decode-each "unknown varint" reduce [pos/1 msg varint]]
 
 		ret
 	]
@@ -746,7 +726,7 @@ proto-encode: context [
 		/local
 			dlen			[integer!]
 			vlen			[integer!]
-			len				[integer! block!]
+			len				[integer!]
 			pos				[binary!]
 			varint			[integer!]
 			ret				[integer!]
@@ -755,33 +735,28 @@ proto-encode: context [
 		dlen: length? data
 		if dlen = 0 [return 0]
 
-		if ctx = [] [append/only error reduce ['decode 'CtxError msg] return error]
-		if ctx <> true [msg-ctx: ctx clear error]
+		if ctx = [] [new-error 'decode "empty ctx" msg]
+		if ctx <> true [msg-ctx: ctx]
 
 		ret: 0
 		pos: data
 		until [
 			vlen: decode-varint pos
-			if block! = type? vlen [append/only error reduce ['decode 'Failure pos/1] return error]
 			len: length? varint-buffer
-			if len > 5 [append/only error reduce ['decode 'LengthFailure varint-buffer] return error]
+			if len > 5 [new-error 'decode "too large" reduce [msg varint-buffer]]
 			pos: skip pos vlen
 			ret: ret + vlen
 			varint: to integer! varint-buffer
 			;-- print ["head varint: " varint lf]
 			;-- we don't support too large field number
-			if varint < 0 [append/only error reduce ['decode 'LengthFailure varint] return error]
+			if varint < 0 [new-error 'decode "negative varint" reduce [msg varint]]
 			sub-ctx: proto-parser/get-msg msg-ctx msg
-			if sub-ctx = [] [append/only error reduce ['decode 'NotDefined msg] return error]
-			if sub-ctx/1 <> 'message [append/only error reduce ['decode 'NotMessage msg] return error]
+			if sub-ctx/1 <> 'message [new-error 'decode "not message" reduce [msg sub-ctx/1]]
 			len: decode-each sub-ctx/3 msg varint value pos
-			if block! = type? len [append/only error reduce ['decode 'Failure msg] return error]
 			pos: skip pos len
 			ret: ret + len
 			tail? pos
 		]
-		
 		ret
 	]
-
 ]

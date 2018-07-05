@@ -6,7 +6,16 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#do [_proto-parser_red_: yes]
+
 proto-parser: context [
+
+	system/catalog/errors/user: make system/catalog/errors/user [proto-parser: ["proto-parser [" :arg1 ": (" :arg2 " " :arg3 ")]"]]
+
+	new-error: func [name [word!] arg2 arg3][
+		cause-error 'user 'proto-parser [name arg2 arg3]
+	]
+
 	syntax-version: {syntax = "proto2";}
 
 	msg-ctx: none
@@ -110,7 +119,7 @@ proto-parser: context [
 		foreach type-blk msgs [
 			if type-blk/2 = msg [return type-blk/1]
 		]
-		'NotFound
+		new-error 'get-msg-type "not found" msg
 	]
 
 	get-msg: func [
@@ -123,7 +132,7 @@ proto-parser: context [
 		foreach type-blk msgs [
 			if type-blk/2 = msg [return type-blk]
 		]
-		[]
+		new-error 'get-msg "not found" msg
 	]
 ]
 
