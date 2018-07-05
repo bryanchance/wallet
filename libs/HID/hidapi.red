@@ -38,15 +38,19 @@ hid: context [
 		cause-error 'user 'hid [name arg2 arg3]
 	]
 
-	enumerate-connected-devices: routine [
+	enum-freed?: routine [return: [logic!]][
+		hid/enum-freed?
+	]
+
+	enumerate: routine [
 		ids			[block!]
 		return:		[block!]
 	][
-		hid/enumerate-connected-devices ids
+		hid/enumerate* ids
 	]
 
-	free-enum: routine [][
-		hid/hid-free-enumeration
+	free-enumeration: routine [][
+		hid/free-enumeration
 	]
 
 	_open: routine [
@@ -67,7 +71,7 @@ hid: context [
 
 	open: func [id [integer!] index [integer!] return: [handle!] /local res][
 		unless res: _open id index [
-			either hid/enum-freed? [
+			either enum-freed? [
 				new-error 'open "no enum" reduce [id index]
 			][
 				new-error 'open "not found" reduce [id index]

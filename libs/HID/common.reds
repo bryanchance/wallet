@@ -12,7 +12,7 @@ Red/System [
 root: declare hid-device-info
 enum-freed?: true
 
-hid-free-enumeration: func [
+free-enumeration: func [
 	/local
 		d 		[hid-device-info]
 		next 	[hid-device-info]
@@ -62,14 +62,14 @@ id-filter?: func [
 	false
 ]
 
-enumerate-connected-devices: func [
+enumerate*: func [
 	ids				[red-block!]
 	return:			[red-block!]
 	/local
 		blk			[red-block!]
 		cur-dev		[hid-device-info]
 ][
-	hid-free-enumeration
+	free-enumeration
 
 	blk: block/push-only* 4
 	cur-dev: enumerate ids
@@ -122,6 +122,5 @@ open: func [
 		handle: open-path path-to-open ;--have not been defined
 	]
 
-	hid-free-enumeration
 	as int-ptr! handle
 ]

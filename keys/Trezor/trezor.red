@@ -2,6 +2,7 @@ Red [
 	Title:	"high level Driver for Trezor"
 	Author: "bitbegin"
 	File: 	%trezor.red
+	Needs:	 View
 	Tabs: 	4
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
@@ -9,7 +10,8 @@ Red [
 #do [_trezor_red_: yes]
 #if error? try [_trezor-message_red_] [#include %trezor-message.red]
 #if error? try [_trezor-driver_red_] [#include %trezor-driver.red]
-#if error? try [_proto-encode_red_] [#include %proto-encode.red]
+#if error? try [_proto-encode_red_] [#include %../../libs/proto-encode.red]
+#if error? try [_int-encode_red_] [#include %../../libs/int-encode.red]
 
 trezor: context [
 	name: "Trezor"
@@ -20,6 +22,8 @@ trezor: context [
 		cause-error 'user 'trezor [name arg2 arg3]
 	]
 
+	id: trezor-driver/id
+
 	command-buffer: make binary! 1000
 
 	pin-get: make string! 16
@@ -29,55 +33,73 @@ trezor: context [
 	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/TrezorError
 	serialized_tx: make binary! 500
 
+	filter?: func [
+		_id				[integer!]
+		_usage			[integer!]
+		return:			[logic!]
+	][
+		if _id <> id [return false]
+		if (_usage >>> 16) = FF01h [return false]		;-- skip debug integerface
+		if (_usage >>> 16) = F1D0h [return false]		;-- skip fido integerface
+		true
+	]
+
+	opened?: func [return: [logic!]] [
+		if dongle = none [return false]
+		true
+	]
+
+	connect: func [index [integer!]][
+		trezor-driver/connect index
+	]
+
+	close: does [
+		if dongle <> none [
+			hid/close dongle 
+			dongle: none
+		]
+	]
+
 	close-pin-requesting: does [
-		if request-pin-state <> 'Init [
+		if request-pin-state = 'Requesting [
 			request-pin-state: 'Init
 			unview/only pin-dlg
 		]
 	]
 
-	request-pin: does [
+	request-pin: func [mode [word!] return: [word!]] [
 		if request-pin-state <> 'Init [return request-pin-state]
 
-		pin-req: make map! reduce ['address_n reduce [8000002Ch 8000003Ch 80000000h 0 0]]
+		pin-req: make map! reduce ['address_n reduce [8000002Ch 8000003Ch 80000000h]]
 		put pin-req 'show_display false
 		pin-msg: 'EthereumGetAddress
 		clear pin-get
-		request-pin-state: 'Requesting
 
-		request-pin-cmd
+		request-pin-state: try [request-pin-cmd]
+		if error? request-pin-state [return request-pin-state: 'TrezorError]
 
-		if request-pin-state <> 'HasRequested [
-			view/no-wait/flags pin-dlg 'modal
+		if request-pin-state = 'Requesting [
+			either mode = 'modal [
+				view/no-wait/flags pin-dlg 'modal
+			][
+				view pin-dlg
+			]
 		]
 
 		request-pin-state
 	]
 
-	request-pin-cmd: func [
-		/local
-			len		[integer! error!]
-	][
-		len: try [encode-and-write pin-msg pin-req]
-		if error? len [
-			request-pin-state: 'TrezorError
-			exit
-		]
+	request-pin-cmd: func [return: [word!]][
+		encode-and-write pin-msg pin-req
+		trezor-driver/message-read clear command-buffer
 
-		clear command-buffer
-		len: try [trezor-dirver/message-read command-buffer]
-		if error? len [
-			request-pin-state: 'TrezorError
-			exit
+		if trezor-driver/msg-id = trezor-message/get-id 'EthereumAddress [ 
+			return 'HasRequested
 		]
-		if trezor-dirver/msg-id = trezor-message/get-id 'EthereumAddress [ 
-			request-pin-state: 'HasRequested
-			exit
+		if trezor-driver/msg-id <> trezor-message/get-id 'PinMatrixRequest [
+			return 'TrezorError
 		]
-		if trezor-dirver/msg-id <> trezor-message/get-id 'PinMatrixRequest [
-			request-pin-state: 'TrezorError
-			exit
-		]
+		'Requesting
 	]
 
 	get-eth-address: func [
@@ -191,9 +213,7 @@ trezor: context [
 			res2		[map!]
 	][
 		encode-and-write 'EthereumSignTx req
-
-		clear command-buffer
-		trezor-driver/message-read command-buffer
+		trezor-driver/message-read clear command-buffer
 
 		if trezor-driver/msg-id = trezor-message/get-id 'PinMatrixRequest [
 			request-pin-state: 'Requesting
@@ -505,9 +525,7 @@ trezor: context [
 		return:			[integer!]
 	][
 		encode-and-write req-msg req
-
-		clear command-buffer
-		trezor-driver/message-read command-buffer
+		trezor-driver/message-read clear command-buffer
 
 		if trezor-driver/msg-id = trezor-message/get-id 'PinMatrixRequest [
 			request-pin-state: 'Requesting
@@ -533,9 +551,7 @@ trezor: context [
 		return:			[integer!]
 	][
 		encode-and-write req-msg req
-
-		clear command-buffer
-		trezor-driver/message-read command-buffer
+		trezor-driver/message-read clear command-buffer
 
 		if trezor-driver/msg-id = trezor-message/get-id res-msg [
 			return proto-encode/decode trezor-message/messages res-msg res command-buffer
@@ -549,10 +565,9 @@ trezor: context [
 		value			[map!]
 		return:			[integer!]
 	][
-		clear command-buffer
 		;-- print ["msg: " msg]
 		;-- print ["value: " value]
-		proto-encode/encode trezor-message/messages msg value command-buffer
+		proto-encode/encode trezor-message/messages msg value clear command-buffer
 		trezor-driver/message-write command-buffer trezor-message/get-id msg
 	]
 
@@ -561,8 +576,7 @@ trezor: context [
 		value			[map!]
 		return:			[integer!]
 	][
-		clear command-buffer
-		trezor-driver/message-read command-buffer
+		trezor-driver/message-read clear command-buffer
 		proto-encode/decode trezor-message/messages msg value command-buffer
 	]
 
@@ -595,8 +609,7 @@ trezor: context [
 					unview
 					exit
 				]
-				clear command-buffer
-				pin-ret: try [trezor-driver/message-read command-buffer]
+				pin-ret: try [trezor-driver/message-read clear command-buffer]
 				if error? pin-ret [
 					request-pin-state: 'TrezorError
 					unview
@@ -605,7 +618,11 @@ trezor: context [
 				if trezor-driver/msg-id = trezor-message/get-id 'Failure [
 					clear pin-show/text
 					header/text: "Input Pin Failure! Enter Pin again."
-					request-pin-cmd
+					request-pin-state: try [request-pin-cmd]
+					if error? request-pin-state [
+						request-pin-state: 'TrezorError
+						unview
+					]
 					clear pin-get
 					exit
 				]

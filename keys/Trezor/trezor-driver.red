@@ -21,27 +21,11 @@ trezor-driver: context [
 	vendor-id:			534Ch
 	product-id:			1
 	id: product-id << 16 or vendor-id
-
 	dongle: none
+
 	hid-version: 0
 	data-frame: make binary! 65
 	msg-id: 0
-
-	filter?: func [
-		_id				[integer!]
-		_usage			[integer!]
-		return:			[logic!]
-	][
-		if _id <> id [return false]
-		if (_usage >>> 16) = FF01h [return false]		;-- skip debug integerface
-		if (_usage >>> 16) = F1D0h [return false]		;-- skip fido integerface
-		true
-	]
-
-	opened?: func [return: [logic!]] [
-		if dongle = none [return false]
-		true
-	]
 
 	connect: func [index [integer!]][
 		unless dongle [
@@ -216,7 +200,7 @@ trezor-driver: context [
 		size
 	]
 
-	get-hid-version: func [/local data sz][
+	get-hid-version: func [return: [integer!] /local data sz][
 		clear data-frame
 		loop 65 [
 			append data-frame #{ff}
@@ -235,10 +219,4 @@ trezor-driver: context [
 		0
 	]
 
-	close: does [
-		if dongle <> none [
-			hid/close dongle 
-			dongle: none
-		]
-	]
 ]
