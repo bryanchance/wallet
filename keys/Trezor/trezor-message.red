@@ -6,11 +6,16 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
-
+#do [_trezor-message_red_: yes]
 
 trezor-message: context [
 	messages: #include %messages.red
 
+	system/catalog/errors/user: make system/catalog/errors/user [trezor-message: ["trezor-message [" :arg1 ": (" :arg2 " " :arg3 ")]"]]
+
+	new-error: func [name [word!] arg2 arg3][
+		cause-error 'user 'trezor-message [name arg2 arg3]
+	]
 
 	get-id: func [
 		msg					[word!]
@@ -31,12 +36,12 @@ trezor-message: context [
 				]
 			]
 		]
-		-1
+		new-error 'get-id "not found" msg
 	]
 
 	get-type-name: func [
 		id					[integer!]
-		return:				[word! none!]
+		return:				[word!]
 		/local
 			type-blk		[block!]
 			msg-blk			[block!]
@@ -52,7 +57,7 @@ trezor-message: context [
 				]
 			]
 		]
-		none
+		new-error 'get-type-name "not found" id
 	]
 ]
 
