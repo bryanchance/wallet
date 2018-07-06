@@ -3,14 +3,21 @@ Red [
 	Author: "Xie Qingtian"
 	File: 	%ledger.red
 	Tabs: 	4
-	License: {
-		Distributed under the Boost Software License, Version 1.0.
-		See https://github.com/red/red/blob/master/BSL-License.txt
-	}
+	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
+
+#do [_ledger_red_: yes]
+#if error? try [_hidapi_red_] [#include %../../libs/HID/hidapi.red]
+#if error? try [_int-encode_red_] [#include %../../libs/int-encode.red]
 
 ledger: context [
 	name: "Ledger Nano S"
+
+	system/catalog/errors/user: make system/catalog/errors/user [ledger: ["ledger [" :arg1 ": (" :arg2 " " :arg3 ")]"]]
+
+	new-error: func [name [word!] arg2 arg3][
+		cause-error 'user 'ledger [name arg2 arg3]
+	]
 
 	vendor-id:			2C97h
 	product-id:			1
@@ -46,10 +53,6 @@ ledger: context [
 		dongle
 	]
 
-	set-init: func [][
-		return 'InitSuccess
-	]
-
 	read-apdu: func [
 		timeout [integer!]				;-- seconds
 		/local idx total msg-len data
@@ -57,9 +60,7 @@ ledger: context [
 		idx: 0
 		clear buffer
 		until [
-			if -1 = hid/read dongle clear data-frame timeout * 1000 [
-				return buffer
-			]
+			hid/read dongle clear data-frame timeout * 1000
 
 			data: data-frame
 
