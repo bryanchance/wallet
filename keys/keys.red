@@ -52,7 +52,7 @@ key: context [
 		blk: copy []
 
 		len: length? devices
-		if len = 0 [append list reduce [no-dev [none none none]] return list]
+		if len = 0 [return append list reduce [no-dev reduce [none none none]]]
 		i: 1
 		until [
 			id: devices/(i)
@@ -77,7 +77,7 @@ key: context [
 		]
 
 		len: length? blk
-		if len = 0 [append list reduce [no-dev [none none none]] return list]
+		if len = 0 [return append list reduce [no-dev reduce [none none none]]]
 		i: 1
 		until [
 			uniq: blk/(i)
@@ -107,14 +107,14 @@ key: context [
 	get-name-list: func [infos [block!] return: [block!]
 		/local len i name uniq
 	][
-		len: length? infos
-		if len = 0 [return reduce [no-dev]]
-		i: 1
 		clear _name-list
+		len: length? infos
+		if len = 0 [return append _name-list no-dev]
+		i: 1
 		until [
 			name: infos/(i)
 			uniq: infos/(i + 1)
-			either uniq/2 = 0 [
+			either any [uniq/2 = none uniq/2 = 0] [
 				append _name-list name
 			][
 				append _name-list rejoin [name ": " to string! uniq/2]
