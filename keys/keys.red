@@ -133,17 +133,19 @@ key: context [
 		count: is [length? name-list]
 		device-name: is [pick infos selected * 2 - 1]
 		device-info: is [pick infos selected * 2]
-		device-id: is [pick device-info 1]
-		device-index: is [pick device-info 2]
-		device-enum-index: is [pick device-info 3]
+		device-id: is [either device-info [pick device-info 1][none]]
+		device-index: is [either device-info [pick device-info 2][none]]
+		device-enum-index: is [either device-info [pick device-info 3][none]]
 	]
 
-	connect: does [
-		case [
+	connect: func [return: [handle!]] [
+		if any [current/device-name = none current/device-id = none current/device-enum-index = none][return dongle: none]
+		dongle: case [
 			current/device-name = ledger/name [ledger/connect current/device-id current/device-enum-index]
 			current/device-name = trezor/name [trezor/connect current/device-id current/device-enum-index]
 			true [none]
 		]
+		dongle
 	]
 
 	close: does [
