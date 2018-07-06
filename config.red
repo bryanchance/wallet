@@ -43,7 +43,7 @@ token-config: context [
 	_networks: []
 	_explorers: []
 	
-	react: make reactor! [
+	current: make reactor! [
 		token-names: extract token-table 2
 		;- base item
 		token-selected: 1
@@ -89,6 +89,6 @@ token-config: context [
 		chain-id: is [either net-block [net-block/chain-id][none]]
 	]
 
-	react/token-selected: 3
-	react/net-selected: 2
+	current/token-selected: 3
+	current/net-selected: 2
 ]
