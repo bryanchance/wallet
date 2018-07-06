@@ -20,19 +20,29 @@ trezor-driver: context [
 
 	vendor-id:			534Ch
 	product-id:			1
-	id: product-id << 16 or vendor-id
+	ids: reduce [product-id << 16 or vendor-id]
 	dongle: none
 
 	hid-version: 0
 	data-frame: make binary! 65
 	msg-id: 0
 
-	connect: func [index [integer!]][
+	connect: func [_id [integer!] index [integer!] return: [handle!]][
 		unless dongle [
-			dongle: hid/open id index
-			hid-version: get-hid-version
+			dongle: hid/open _id index
 		]
 		dongle
+	]
+
+	close: does [
+		if dongle <> none [
+			hid/close dongle 
+			dongle: none
+		]
+	]
+
+	init: does [
+		hid-version: get-hid-version
 	]
 
 	;-- high level interface for message write

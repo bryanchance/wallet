@@ -21,7 +21,7 @@ ledger: context [
 
 	vendor-id:			2C97h
 	product-id:			1
-	id: product-id << 16 or vendor-id
+	ids: reduce [product-id << 16 or vendor-id]
 
 	DEFAULT_CHANNEL:	0101h
 	TAG_APDU:			05h
@@ -37,21 +37,33 @@ ledger: context [
 		_usage			[integer!]
 		return:			[logic!]
 	][
-		if _id <> id [return false]
-		true
+		if find ids _id [return true]
+		false
 	]
 
-	opened?: func [return: [logic!]] [
-		if dongle = none [return false]
-		true
+	support?: func [
+		_id				[integer!]
+		return:			[logic!]
+	][
+		if find ids _id [return true]
+		false
 	]
 
-	connect: func [index [integer!]][
+	connect: func [_id [integer!] index [integer!] return: [handle!]][
 		unless dongle [
-			dongle: hid/open id index
+			dongle: hid/open _id index
 		]
 		dongle
 	]
+
+	close: does [
+		if dongle <> none [
+			hid/close dongle 
+			dongle: none
+		]
+	]
+
+	init: does []
 
 	read-apdu: func [
 		timeout [integer!]				;-- seconds
@@ -190,13 +202,6 @@ ledger: context [
 			]
 			rlp/encode tx
 		][signed]
-	]
-
-	close: does [
-		if dongle <> none [
-			hid/close dongle 
-			dongle: none
-		]
 	]
 ]
 

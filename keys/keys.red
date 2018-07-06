@@ -6,160 +6,69 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
-#include %Ledger/ledger.red
-#include %Trezor/trezor.red
+#do [_keys_red_: yes]
+#if error? try [_ledger_red_] [#include %Ledger/ledger.red]
+#if error? try [_trezor_red_] [#include %Trezor/trezor.red]
 
 key: context [
+
+	system/catalog/errors/user: make system/catalog/errors/user [key: ["key [" :arg1 ": (" :arg2 " " :arg3 ")]"]]
+
+	new-error: func [name [word!] arg2 arg3][
+		cause-error 'user 'key [name arg2 arg3]
+	]
+
 	no-dev: "<No Device>"
-	enumerated-devices: []
-	valid-device-names: []
-	dev-names-in-block: []
+	_name-list: []
+	dongle: none
 
 	support?: func [
 		id			[integer!]
 		return:		[logic!]
 	][
-		if id = ledger/id [return true]
-		if id = trezor/id [return true]
+		if find ledger/ids id [return true]
+		if find trezor/ids id [return true]
 		false
 	]
 
-	opened?: func [id [integer!] return: [logic!]] [
-		case [
-			id = ledger/id [ledger/opened?]
-			id = trezor/id [trezor/opened?]
-			true [false]
-		]
-	]
-
-	any-opened?: does [
-		if ledger/opened? [return true]
-		if trezor/opened? [return true]
+	opened?: func [return: [logic!]] [
+		if dongle [return true]
 		false
 	]
 
-	get-request-pin-state-by-id: func [id][
-		if id = trezor/id [return trezor/request-pin-state]
-		'HasRequested
+	enumerate: func [return: [block!] /local ids] [
+		ids: append copy ledger/ids trezor/ids
+		hid/enumerate ids
 	]
 
-	get-request-pin-state-by-name: func [name][
-		if name = trezor/name [return trezor/request-pin-state]
-		'HasRequested
-	]
+	free-enumeration: does [hid/free-enumeration]
 
-	set-request-pin-state-by-id: func [id state][
-		if id = trezor/id [trezor/request-pin-state: state]
-	]
-
-	set-request-pin-state-by-name: func [name][
-		if name = trezor/name [trezor/request-pin-state: state]
-	]
-
-	request-pin-by-id: func [id][
-		if id = trezor/id [return trezor/request-pin]
-		'HasRequested
-	]
-
-	request-pin-by-name: func [name][
-		if name = trezor/name [return trezor/request-pin]
-		'HasRequested
-	]
-
-	close-pin-requesting-by-id: func [id][
-		if id = trezor/id [trezor/close-pin-requesting]
-	]
-
-	enumerate-connected-devices: does [
-		if enumerated-devices <> [] [clear enumerated-devices]
-		enumerated-devices: hid/enumerate-connected-devices reduce [ledger/id trezor/id]
-	]
-
-	free-enum: does [hid/free-enum]
-
-	get-valid-names: func [/local len i j id usg index name index-string][
-		len: length? enumerated-devices
-		if len = 0 [return reduce [no-dev]]
-		i: 1
-		clear dev-names-in-block
-		until [
-			id: enumerated-devices/:i
-			j: i + 1
-			usg: enumerated-devices/:j
-			if any [id = none usg = none] [break]
-			case [
-				ledger/filter? id usg [
-					index: select/last dev-names-in-block ledger/name
-					either index = none [index: 0][index: index + 1]
-					append dev-names-in-block reduce [ledger/name index]
-				]
-				trezor/filter? id usg [
-					index: select/last dev-names-in-block trezor/name
-					either index = none [index: 0][index: index + 1]
-					append dev-names-in-block reduce [trezor/name index]
-				]
-			]
-			i: i + 2
-			i > len
-		]
-
-		len: length? dev-names-in-block
-		if len = 0 [return reduce [no-dev]]
-		i: 1
-		clear valid-device-names
-		until [
-			name: dev-names-in-block/:i
-			j: i + 1
-			index: dev-names-in-block/:j
-			either index = 0 [
-				append valid-device-names name
-			][
-				append valid-device-names rejoin [name ": " to string! index]
-			]
-
-			i: i + 2
-			i > len
-		]
-		valid-device-names
-	]
-
-	get-enum-index: func [
-		id				[integer!]
-		index			[integer!]
-		return:			[integer!]
-		/local
-			len i j enum-index nid usg
+	parse-devices: func [devices [block!] return: [block!]
+		/local blk list len i id usg tag uniq enum-index info info2 index
 	][
-		len: length? enumerated-devices
-		if len = 0 [return index]
+		;- item [name [id index enum-index]]
+		list: copy []
+		;- item [[name id] [usg enum-index]]
+		blk: copy []
 
-		enum-index: 0
-		count: 0
+		len: length? devices
+		if len = 0 [append list reduce [no-dev [none none none]] return list]
 		i: 1
 		until [
-			nid: enumerated-devices/:i
-			j: i + 1
-			usg: enumerated-devices/:j
+			id: devices/(i)
+			usg: devices/(i + 1)
 			case [
-				all [ledger/id = id id = nid] [
-					if ledger/filter? id usg [
-						either count = index [
-							return enum-index
-						][
-							count: count + 1
-						]
-					]
-					enum-index: enum-index + 1
+				ledger/support? id [
+					tag: reduce [ledger/name id]
+					uniq: select/only/last blk tag
+					either uniq [enum-index: uniq/2 + 1][enum-index: 0]
+					append blk reduce [tag reduce [usg enum-index]]
 				]
-				all [trezor/id = id id = nid] [
-					if trezor/filter? id usg [
-						either count = index [
-							return enum-index
-						][
-							count: count + 1
-						]
-					]
-					enum-index: enum-index + 1
+				trezor/support? id [
+					tag: reduce [trezor/name id]
+					uniq: select/only/last blk tag
+					either uniq [enum-index: uniq/2 + 1][enum-index: 0]
+					append blk reduce [tag reduce [usg enum-index]]
 				]
 			]
 
@@ -167,89 +76,144 @@ key: context [
 			i > len
 		]
 
-		index
+		len: length? blk
+		if len = 0 [append list reduce [no-dev [none none none]] return list]
+		i: 1
+		until [
+			uniq: blk/(i)
+			info: blk/(i + 1)
+			case [
+				ledger/name = uniq/1 [
+					if ledger/filter? uniq/2 info/1 [
+						info2: select/last list ledger/name
+						either info2 [index: info2/2 + 1][index: 0]
+						append list reduce [ledger/name reduce [uniq/2 index info/2]]
+					]
+				]
+				trezor/name = uniq/1 [
+					if trezor/filter? uniq/2 info/1 [
+						info2: select/last list trezor/name
+						either info2 [index: info2/2 + 1][index: 0]
+						append list reduce [trezor/name reduce [uniq/2 index info/2]]
+					]
+				]
+			]
+			i: i + 2
+			i > len
+		]
+		list
 	]
 
-	connect: func [name [string! none!] index [integer!]][
-		if name = none [return none]
+	get-name-list: func [infos [block!] return: [block!]
+		/local len i name uniq
+	][
+		len: length? infos
+		if len = 0 [return reduce [no-dev]]
+		i: 1
+		clear _name-list
+		until [
+			name: infos/(i)
+			uniq: infos/(i + 1)
+			either uniq/2 = 0 [
+				append _name-list name
+			][
+				append _name-list rejoin [name ": " to string! uniq/2]
+			]
+			i: i + 2
+			i > len
+		]
+		_name-list
+	]
+
+	current: make reactor! [
+		devices: []
+		selected: 1
+		infos: is [parse-devices devices]
+		name-list: is [get-name-list infos]
+		count: is [length? name-list]
+		device-name: is [pick infos selected * 2 - 1]
+		device-info: is [pick infos selected * 2]
+		device-id: is [pick device-info 1]
+		device-index: is [pick device-info 2]
+		device-enum-index: is [pick device-info 3]
+	]
+
+	connect: does [
 		case [
-			name = ledger/name [ledger/connect get-enum-index ledger/id index]
-			name = trezor/name [trezor/connect get-enum-index trezor/id index]
+			current/device-name = ledger/name [ledger/connect current/device-id current/device-enum-index]
+			current/device-name = trezor/name [trezor/connect current/device-id current/device-enum-index]
 			true [none]
 		]
 	]
 
-	set-init: func [name [string! none!]][
-		if name = none [return 'NoDevice]
+	close: does [
 		case [
-			name = ledger/name [ledger/set-init]
-			name = trezor/name [trezor/set-init]
+			current/device-name = ledger/name [ledger/close]
+			current/device-name = trezor/name [trezor/close]
+		]
+		dongle: none
+	]
+
+	init: does [
+		case [
+			current/device-name = ledger/name [ledger/init]
+			current/device-name = trezor/name [trezor/init]
+		]
+	]
+
+	get-request-pin-state: func [return: [word!]] [
+		case [
+			current/device-name = trezor/name [trezor/request-pin-state]
+			true ['HasRequested]
+		]
+	]
+
+	request-pin: func [mode [word!] return: [word!]][
+		case [
+			current/device-name = trezor/name [trezor/request-pin mode]
+			true ['HasRequested]
+		]
+	]
+
+	close-pin-requesting: does [
+		case [
+			current/device-name = trezor/name [trezor/close-pin-requesting]
+			true []
+		]
+	]
+
+	get-eth-address: func [bip32-path [block!]][
+		case [
+			current/device-name = ledger/name [ledger/get-eth-address bip32-path]
+			current/device-name = trezor/name [trezor/get-eth-address bip32-path]
 			true ['NotSupport]
 		]
 	]
 
-	get-eth-address: func [name [string! none!] bip32-path [block!]][
-		if name = none [return 'NoDevice]
+	get-btc-address: func [bip32-path [block!]][
 		case [
-			name = ledger/name [ledger/get-eth-address bip32-path]
-			name = trezor/name [trezor/get-eth-address bip32-path]
-			true ['NotSupport]
-		]
-	]
-
-	get-btc-address: func [name [string! none!] bip32-path [block!]][
-		if name = none [return 'NoDevice]
-		case [
-			name = trezor/name [trezor/get-btc-address bip32-path]
+			current/device-name = trezor/name [trezor/get-btc-address bip32-path]
 			true ['NotSupport]
 		]
 	]
 
 	get-eth-signed-data: func [
-		name					[string! none!]
 		bip32-path				[block!]
-		idx						[integer!]
 		tx						[block!]
-		chain-id				[integer!]
-		/local
-			bip32				[block!]
 	][
-		if name = none [return 'NoDevice]
-		bip32: append copy bip32-path idx
 		case [
-			name = ledger/name [ledger/get-eth-signed-data bip32 tx]
-			name = trezor/name [trezor/get-eth-signed-data bip32 tx chain-id]
+			current/device-name = ledger/name [ledger/get-eth-signed-data bip32-path tx]
+			current/device-name = trezor/name [trezor/get-eth-signed-data bip32-path tx]
 			true ['NotSupport]
 		]
 	]
 
 	get-btc-signed-data: func [
-		name					[string! none!]
 		tx						[block!]
 	][
-		if name = none [return 'NoDevice]
 		case [
-			name = trezor/name [trezor/get-btc-signed-data tx]
+			current/device-name = trezor/name [trezor/get-btc-signed-data tx]
 			true ['NotSupport]
-		]
-	]
-
-	close: does [
-		ledger/close
-		trezor/close
-	]
-
-	close-by-name: func [name [string!]][
-		case [
-			name = ledger/name [ledger/close]
-			name = trezor/name [trezor/close]
-		]
-	]
-
-	close-by-id: func [id [integer!]][
-		case [
-			id = ledger/id [ledger/close]
-			id = trezor/name [trezor/close]
 		]
 	]
 ]

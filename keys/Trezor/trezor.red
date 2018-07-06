@@ -22,7 +22,7 @@ trezor: context [
 		cause-error 'user 'trezor [name arg2 arg3]
 	]
 
-	id: trezor-driver/id
+	ids: does [trezor-driver/ids]
 
 	command-buffer: make binary! 1000
 
@@ -38,26 +38,29 @@ trezor: context [
 		_usage			[integer!]
 		return:			[logic!]
 	][
-		if _id <> id [return false]
+		unless find ids _id [return false]
 		if (_usage >>> 16) = FF01h [return false]		;-- skip debug integerface
 		if (_usage >>> 16) = F1D0h [return false]		;-- skip fido integerface
 		true
 	]
 
-	opened?: func [return: [logic!]] [
-		if dongle = none [return false]
-		true
+	support?: func [
+		_id				[integer!]
+		return:			[logic!]
+	][
+		if find ids _id [return true]
+		false
 	]
 
-	connect: func [index [integer!]][
-		trezor-driver/connect index
+	connect: func [_id [integer!] index [integer!] return: [handle!]][
+		trezor-driver/connect _id index
 	]
 
-	close: does [
-		if dongle <> none [
-			hid/close dongle 
-			dongle: none
-		]
+	close: does [trezor-driver/close]
+
+	init: does [
+		trezor-driver/init
+		trezor/Initialize #()
 	]
 
 	close-pin-requesting: does [
@@ -139,7 +142,6 @@ trezor: context [
 	get-eth-signed-data: func [
 		ids				[block!]
 		tx				[block!]
-		chain-id		[integer!]
 		return:			[binary!]
 		/local
 			req			[map!]
@@ -159,7 +161,7 @@ trezor: context [
 		req: make map! reduce [
 			'address_n ids
 			'nonce nonce 'gas_price gas_price 'gas_limit gas_limit
-			'to tx/4 'value amount 'chain_id chain-id
+			'to tx/4 'value amount 'chain_id tx/7
 		]
 		if data-len > 0 [
 			put req 'data_length data-len
