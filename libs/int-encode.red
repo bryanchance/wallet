@@ -76,6 +76,7 @@ form-i256: func [bigint [vector!] scalar [integer!] max-point [integer!] return:
 	if max-point < length? right [
 		right: copy/part right max-point
 	]
+	if 8 > length? left [insert/dup left #" " 8 - length? left]
 	res: rejoin [left "." right]
 	if str/1 = #"-" [insert res #"-"]
 	res
