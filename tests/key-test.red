@@ -28,3 +28,19 @@ print [key/current/device-name key/current/device-index key/current/device-enum-
 key/current/selected: 5
 print ["current will be: [ledger 2 2]"]
 print [key/current/device-name key/current/device-index key/current/device-enum-index]
+
+print "begin enumerate devices"
+devices: key/enumerate
+probe devices
+
+key/current/devices: devices
+probe key/current
+key/current/selected: 1
+probe key/current/name-list
+
+if all [key/current/device-name key/current/device-enum-index][
+	if key/connect [
+		key/init
+		key/request-pin 'any
+	]
+]
