@@ -94,21 +94,24 @@ token-config: context [
 	]
 
 	set 'token-name does [current/taken-name]
+	set 'net-name does [current/net-name]
 	set 'network does [current/network]
 	set 'explorer does [current/explorer]
 	set 'bip-path does [current/path]
 	set 'unit-name does [current/unit-name]
-	set 'contract does [current/contract]
+	set 'token-contract does [current/contract]
 	set 'chain-id does [current/chain-id]
 
 	set 'select-token func [index [integer!] return: [integer!]][
 		if index > current/token-count [index: current/token-count]
+		if index < 1 [index: 1]
 		current/token-selected: index
 		index
 	]
 
 	set 'select-net func [index [integer!] return: [integer!]][
 		if index > current/net-count [index: current/net-count]
+		if index < 1 [index: 1]
 		current/net-selected: index
 		index
 	]
