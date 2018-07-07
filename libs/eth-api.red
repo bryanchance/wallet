@@ -91,7 +91,7 @@ eth-api: context [
 		to-i256 debase/base skip amount n 16
 	]
 
-	get-balance-token: func [network [url!] contract [string!] address [string!] /local token-url params res][
+	get-token-balance: func [network [url!] contract [string!] address [string!] /local token-url params res][
 		token-url: rejoin ["0x" contract]
 		params: make map! 4
 		params/to: token-url
@@ -100,9 +100,15 @@ eth-api: context [
 		parse-balance res
 	]
 
-	get-balance: func [network [url!] address [string!] /local res][
+	get-eth-balance: func [network [url!] address [string!] /local res][
 		res: call-rpc network 'eth_getBalance reduce [address 'latest]
 		parse-balance res
+	]
+
+	get-balance: func [network [url!] contract [string! none!] address [string!]][
+		either contract [get-token-balance network contract address][
+			get-eth-balance network address
+		]
 	]
 
 	get-nonce: func [network [url!] address [string!] /local n res][
@@ -113,5 +119,24 @@ eth-api: context [
 			n: 1
 		][n: 2]
 		to integer! debase/base skip res n 16
+	]
+
+	get-url: func [url [url!] return: [map!]
+		/local res 
+	][
+		if all [not error? res: try [read url] map? res: json/decode res][return res]
+
+		wait 0.5
+		if map? res: json/decode read url [return res]
+		new-error 'get-url "server error" url
+	]
+
+	get-gas-price: func [speed [word!] return: [vector! none!] /local network res][
+		if all [speed <> 'average speed <> 'fastest speed <> 'safeLow speed <> 'fast][return none]
+		network: https://ethgasstation.info/json/ethgasAPI.json
+		either all [map? res: try [get-url network] res: select res speed][
+			res: to float! res / 10.0
+			mul256 to-i256 res to-i256 1e9
+		][none]
 	]
 ]
