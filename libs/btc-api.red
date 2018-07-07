@@ -22,19 +22,11 @@ btc-api: context [
 	get-url: func [url [url!] return: [map!]
 		/local res 
 	][
-		res: try [read url]
-		if not error? res [
-			res: json/decode res
-			if res <> [] [return res]
-		]
+		if all [not error? res: try [read url] map? res: json/decode res][return res]
 
 		wait 0.5
-		res: try [read url]
-		if error? res [new-error 'get-url "timeout" url]
-
-		res: json/decode res
-		if res = [] [new-error 'get-url "server error" url]
-		res
+		if map? res: json/decode read url [return res]
+		new-error 'get-url "server error" url
 	]
 
 	get-balance: func [network [url!] address [string!] return: [none! vector!]
@@ -138,19 +130,12 @@ btc-api: context [
 				(headers)
 				(json/encode body)
 		]
-		res: try [write url command]
-		if not error? res [
-			res: json/decode res
-			if res <> [] [return res]
-		]
+
+		if all [not error? res: try [write url command] map? res: json/decode res][return res]
 
 		wait 0.5
-		res: try [write url command]
-		if error? res [new-error 'post-url "timeout" reduce [url command]]
-
-		res: json/decode res
-		if res = [] [new-error 'post-url "server error" [url command]]
-		res
+		if map? res: json/decode write url command [return res]
+		new-error 'post-url "server error" [url command]
 	]
 
 	publish-tx: func [network [url!] tx [string!] return: [logic!]
