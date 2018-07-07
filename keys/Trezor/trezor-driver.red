@@ -27,7 +27,7 @@ trezor-driver: context [
 	data-frame: make binary! 65
 	msg-id: 0
 
-	connect: func [_id [integer!] index [integer!] return: [handle!]][
+	open: func [_id [integer!] index [integer!] return: [handle!]][
 		unless dongle [
 			dongle: hid/open _id index
 		]

@@ -49,7 +49,7 @@ ledger: context [
 		false
 	]
 
-	connect: func [_id [integer!] index [integer!] return: [handle!]][
+	open: func [_id [integer!] index [integer!] return: [handle!]][
 		unless dongle [
 			dongle: hid/open _id index
 		]

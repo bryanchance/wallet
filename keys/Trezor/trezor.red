@@ -30,7 +30,7 @@ trezor: context [
 	pin-msg: none
 	pin-req: none
 	pin-ret: -1
-	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/TrezorError
+	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/DeviceError
 	serialized_tx: make binary! 500
 
 	filter?: func [
@@ -52,13 +52,14 @@ trezor: context [
 		false
 	]
 
-	connect: func [_id [integer!] index [integer!] return: [handle!]][
-		trezor-driver/connect _id index
+	open: func [_id [integer!] index [integer!] return: [handle!]][
+		trezor-driver/open _id index
 	]
 
 	close: does [trezor-driver/close]
 
 	init: does [
+		request-pin-state: 'Init
 		trezor-driver/init
 		trezor/Initialize #()
 	]
@@ -79,10 +80,10 @@ trezor: context [
 		clear pin-get
 
 		request-pin-state: try [request-pin-cmd]
-		if error? request-pin-state [return request-pin-state: 'TrezorError]
+		if error? request-pin-state [return request-pin-state: 'DeviceError]
 
 		if request-pin-state = 'Requesting [
-			either mode = 'modal [
+			either mode = 'no-wait [
 				view/no-wait/flags pin-dlg 'modal
 			][
 				view pin-dlg
@@ -100,7 +101,7 @@ trezor: context [
 			return 'HasRequested
 		]
 		if trezor-driver/msg-id <> trezor-message/get-id 'PinMatrixRequest [
-			return 'TrezorError
+			return 'DeviceError
 		]
 		'Requesting
 	]
@@ -607,13 +608,13 @@ trezor: context [
 			if request-pin-state = 'Requesting [
 				pin-ret: try [encode-and-write 'PinMatrixAck make map! reduce ['pin pin-get]]
 				if error? pin-ret [
-					request-pin-state: 'TrezorError
+					request-pin-state: 'DeviceError
 					unview
 					exit
 				]
 				pin-ret: try [trezor-driver/message-read clear command-buffer]
 				if error? pin-ret [
-					request-pin-state: 'TrezorError
+					request-pin-state: 'DeviceError
 					unview
 					exit
 				]
@@ -622,7 +623,7 @@ trezor: context [
 					header/text: "Input Pin Failure! Enter Pin again."
 					request-pin-state: try [request-pin-cmd]
 					if error? request-pin-state [
-						request-pin-state: 'TrezorError
+						request-pin-state: 'DeviceError
 						unview
 					]
 					clear pin-get
