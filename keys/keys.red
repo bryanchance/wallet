@@ -138,63 +138,69 @@ key: context [
 		device-enum-index: is [either device-info [pick device-info 3][none]]
 	]
 
+	set 'device-name does [current/device-name]
+	set 'device-id does [current/device-id]
+	set 'device-enum-index does [current/device-enum-index]
+	set 'device-selected does [current/selected]
+
 	connect: func [return: [handle!]] [
-		if any [current/device-name = none current/device-id = none current/device-enum-index = none][return dongle: none]
+		if any [device-name = none device-id = none device-enum-index = none][return dongle: none]
 		dongle: case [
-			current/device-name = ledger/name [ledger/connect current/device-id current/device-enum-index]
-			current/device-name = trezor/name [trezor/connect current/device-id current/device-enum-index]
+			device-name = ledger/name [ledger/open device-id device-enum-index]
+			device-name = trezor/name [trezor/open device-id device-enum-index]
 			true [none]
 		]
 		dongle
 	]
 
 	close: does [
+		close-pin-requesting
 		case [
-			current/device-name = ledger/name [ledger/close]
-			current/device-name = trezor/name [trezor/close]
+			device-name = ledger/name [ledger/close]
+			device-name = trezor/name [trezor/close]
 		]
 		dongle: none
 	]
 
 	init: does [
 		case [
-			current/device-name = ledger/name [ledger/init]
-			current/device-name = trezor/name [trezor/init]
+			device-name = ledger/name [ledger/init]
+			device-name = trezor/name [trezor/init]
 		]
 	]
 
 	get-request-pin-state: func [return: [word!]] [
 		case [
-			current/device-name = trezor/name [trezor/request-pin-state]
+			device-name = trezor/name [trezor/request-pin-state]
 			true ['HasRequested]
 		]
 	]
 
 	request-pin: func [mode [word!] return: [word!]][
 		case [
-			current/device-name = trezor/name [trezor/request-pin mode]
+			device-name = trezor/name [trezor/request-pin mode]
 			true ['HasRequested]
 		]
 	]
 
 	close-pin-requesting: does [
 		case [
-			current/device-name = trezor/name [trezor/close-pin-requesting]
+			device-name = trezor/name [trezor/close-pin-requesting]
 			true []
 		]
 	]
 
 	get-eth-address: func [bip32-path [block!]][
 		case [
-			current/device-name = ledger/name [ledger/get-eth-address bip32-path]
-			current/device-name = trezor/name [trezor/get-eth-address bip32-path]
+			device-name = ledger/name [ledger/get-eth-address bip32-path]
+			device-name = trezor/name [trezor/get-eth-address bip32-path]
 			true ['NotSupport]
 		]
 	]
 
 	get-btc-address: func [bip32-path [block!]][
 		case [
-			current/device-name = trezor/name [trezor/get-btc-address bip32-path]
+			device-name = trezor/name [trezor/get-btc-address bip32-path]
 			true ['NotSupport]
 		]
 	]
@@ -204,8 +210,8 @@ key: context [
 		tx						[block!]
 	][
 		case [
-			current/device-name = ledger/name [ledger/get-eth-signed-data bip32-path tx]
-			current/device-name = trezor/name [trezor/get-eth-signed-data bip32-path tx]
+			device-name = ledger/name [ledger/get-eth-signed-data bip32-path tx]
+			device-name = trezor/name [trezor/get-eth-signed-data bip32-path tx]
 			true ['NotSupport]
 		]
 	]
@@ -214,7 +220,7 @@ key: context [
 		tx						[block!]
 	][
 		case [
-			current/device-name = trezor/name [trezor/get-btc-signed-data tx]
+			device-name = trezor/name [trezor/get-btc-signed-data tx]
 			true ['NotSupport]
 		]
 	]
