@@ -6,6 +6,8 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#do [_config_red_: yes]
+
 token-config: context [
 
 	;-- m / purpose' / coin_type' / account' / change / address_index
@@ -42,9 +44,11 @@ token-config: context [
 	_net-names: []
 	_networks: []
 	_explorers: []
+	net-blk: none
 	
 	current: make reactor! [
 		token-names: extract token-table 2
+		token-count: is [length? token-names]
 		;- base item
 		token-selected: 1
 		net-selected: 1
@@ -89,6 +93,26 @@ token-config: context [
 		chain-id: is [either net-block [net-block/chain-id][none]]
 	]
 
-	current/token-selected: 3
-	current/net-selected: 2
+	set 'token-name does [current/taken-name]
+	set 'network does [current/network]
+	set 'explorer does [current/explorer]
+	set 'bip-path does [current/path]
+	set 'unit-name does [current/unit-name]
+	set 'contract does [current/contract]
+	set 'chain-id does [current/chain-id]
+
+	set 'select-token func [index [integer!] return: [integer!]][
+		if index > current/token-count [index: current/token-count]
+		current/token-selected: index
+		index
+	]
+
+	set 'select-net func [index [integer!] return: [integer!]][
+		if index > current/net-count [index: current/net-count]
+		current/net-selected: index
+		index
+	]
+
+	select-token 3
+	select-net 2
 ]
