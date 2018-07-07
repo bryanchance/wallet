@@ -141,6 +141,12 @@ key: context [
 	set 'device-name does [current/device-name]
 	set 'device-id does [current/device-id]
 	set 'device-enum-index does [current/device-enum-index]
+	set 'select-device func [index [integer!] return: [integer!]][
+		if index > current/count [index: current/count]
+		if index < 1 [index: 1]
+		current/selected: index
+		index
+	]
 
 	connect: func [return: [handle!]] [
 		if any [device-name = none device-id = none device-enum-index = none][return dongle: none]
