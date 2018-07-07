@@ -141,14 +141,13 @@ key: context [
 	set 'device-name does [current/device-name]
 	set 'device-id does [current/device-id]
 	set 'device-enum-index does [current/device-enum-index]
-	set 'device-selected does [current/selected]
 
 	connect: func [return: [handle!]] [
 		if any [device-name = none device-id = none device-enum-index = none][return dongle: none]
 		dongle: case [
 			device-name = ledger/name [ledger/open device-id device-enum-index]
 			device-name = trezor/name [trezor/open device-id device-enum-index]
-			true [none]
+			true [new-error 'connect "not found" device-name]
 		]
 		dongle
 	]
@@ -158,6 +157,7 @@ key: context [
 		case [
 			device-name = ledger/name [ledger/close]
 			device-name = trezor/name [trezor/close]
+			true [new-error 'close "not found" device-name]
 		]
 		dongle: none
 	]
@@ -166,27 +166,31 @@ key: context [
 		case [
 			device-name = ledger/name [ledger/init]
 			device-name = trezor/name [trezor/init]
+			true [new-error 'init "not found" device-name]
 		]
 	]
 
 	get-request-pin-state: func [return: [word!]] [
 		case [
+			device-name = ledger/name ['HasRequested]
 			device-name = trezor/name [trezor/request-pin-state]
-			true ['HasRequested]
+			true [new-error 'get-request-pin-state "not found" device-name]
 		]
 	]
 
 	request-pin: func [mode [word!] return: [word!]][
 		case [
+			device-name = ledger/name ['HasRequested]
 			device-name = trezor/name [trezor/request-pin mode]
-			true ['HasRequested]
+			true [new-error 'request-pin "not found" device-name]
 		]
 	]
 
 	close-pin-requesting: does [
 		case [
+			device-name = ledger/name ['Init]
 			device-name = trezor/name [trezor/close-pin-requesting]
-			true []
+			true [new-error 'close-pin-requesting "not found" device-name]
 		]
 	]
 
@@ -194,14 +198,14 @@ key: context [
 		case [
 			device-name = ledger/name [ledger/get-eth-address bip32-path]
 			device-name = trezor/name [trezor/get-eth-address bip32-path]
-			true ['NotSupport]
+			true [new-error 'get-eth-address "not found" device-name]
 		]
 	]
 
 	get-btc-address: func [bip32-path [block!]][
 		case [
 			device-name = trezor/name [trezor/get-btc-address bip32-path]
-			true ['NotSupport]
+			true [new-error 'get-eth-address "not found" device-name]
 		]
 	]
 
@@ -212,7 +216,7 @@ key: context [
 		case [
 			device-name = ledger/name [ledger/get-eth-signed-data bip32-path tx]
 			device-name = trezor/name [trezor/get-eth-signed-data bip32-path tx]
-			true ['NotSupport]
+			true [new-error 'get-eth-address "not found" device-name]
 		]
 	]
 
@@ -221,7 +225,7 @@ key: context [
 	][
 		case [
 			device-name = trezor/name [trezor/get-btc-signed-data tx]
-			true ['NotSupport]
+			true [new-error 'get-eth-address "not found" device-name]
 		]
 	]
 ]
