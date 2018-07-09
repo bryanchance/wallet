@@ -96,7 +96,7 @@ eth-ui: context [
 			network-to/text: net-name
 			addr-from/text: current/addr
 			gas-limit/text: either token-contract ["79510"]["21000"]
-			if all [not error? gas-price-wei: try [eth/get-gas-price 'average] gas-price-wei][
+			if all [not error? gas-price-wei: try [eth-api/get-gas-price 'average] gas-price-wei][
 				gas-price/text: i256-to-float div256 gas-price-wei eth-api/gwei-to-wei
 			]
 			reset-sign-button

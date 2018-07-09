@@ -70,29 +70,24 @@ wallet: context [
 
 	connect: has [res][
 		update-ui no
-print 1
 		if device-name = key/no-dev [
 			info-msg/text: "Please plug in your key..."
 			exit
 		]
-print 2
 		if any [error? res: try [key/connect] res = none][
 			info-msg/text: "Connect the key failed..."
 			exit
 		]
-print 2
 
 		if error? try [key/init][
 			info-msg/text: "Initialize the key failed..."
 			exit
 		]
-print 3
 		if 'DeviceError = key/request-pin [
 			info-msg/text: "Unlock the key failed..."
 			exit
 		]
 		usb-device/rate: 0:0:1
-print 4
 		connected?: yes
 	]
 
@@ -105,16 +100,13 @@ print 4
 		update-ui no
 
 		if connected? [
-print 10
 			if 'DeviceError = key/get-request-pin-state [
 				info-msg/text: "Unlock the key failed..."
 				exit
 			]
-print 11
 			if 'HasRequested <> key/get-request-pin-state [
 				exit
 			]
-print 12
 
 			info-msg/text: "Please wait while loading addresses..."
 
@@ -267,18 +259,18 @@ print 12
 				on-up: func [face [object!] event [event!] /local id [integer!] len [integer!]][
 					id: face/data/2 << 16 or face/data/1
 					if key/support? id [
-						print "on-up"
+						;-- print "on-up"
 						enumerate
 						len: length? dev-list/data
 						either len > 1 [								;-- if we have multi devices, just reset all
-							print [len " devices"]
+							;-- print [len " devices"]
 							if key/opened? [key/close]
 							connected?: no
 							connect
 							list-addresses
 						][
 							if not key/opened? [
-								print "not opened"
+								;-- print "not opened"
 								connected?: no
 								connect
 								list-addresses
@@ -289,7 +281,7 @@ print 12
 				on-down: func [face [object!] event [event!] /local id [integer!]][
 					id: face/data/2 << 16 or face/data/1
 					if key/support? id [
-						print "on-down"
+						;-- print "on-down"
 						face/rate: 0:0:1
 						if key/opened? [key/close]
 						connected?: no
@@ -299,7 +291,7 @@ print 12
 					]
 				]
 				on-time: func [face event][
-					print "on-time"
+					;-- print "on-time"
 					if key/opened? [
 						if 'Requesting = key/get-request-pin-state [list-addresses exit]
 						if 'HasRequested = key/get-request-pin-state [face/rate: none list-addresses exit]
