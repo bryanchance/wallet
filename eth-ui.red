@@ -18,7 +18,6 @@ eth-ui: context [
 
 	addr-infos: []
 	addresses: []
-	selected: none
 
 	;- layout item defined as local
 	network-to: none

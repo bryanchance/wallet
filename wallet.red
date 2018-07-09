@@ -22,6 +22,7 @@ Red [
 #if error? try [_int-encode_red_] [#include %libs/int-encode.red]
 #if error? try [_ui-base_red_] [#include %ui-base.red]
 #if error? try [_eth-ui_red_] [#include %eth-ui.red]
+#if error? try [_btc-ui_red_] [#include %btc-ui.red]
 
 
 
@@ -130,7 +131,20 @@ wallet: context [
 					n: n + 1
 				]
 			][
-
+				clear btc-ui/addr-infos
+				clear btc-ui/addresses
+				addr-list/data: btc-ui/addresses
+				loop addr-per-page [
+					res: btc-ui/enum-address n
+					info-msg/text: case [
+						res = 'success [""]
+						res = 'error [rejoin ["access " n " failed"]]
+						res = 'browser-support-on [{Please set "Browser support" to "No"}]
+						res = 'locked ["Please unlock your key"]]
+					if res <> 'success [exit]
+					process-events
+					n: n + 1
+				]
 			]
 
 			if any [token-name = "ETH" token-name = "RED"][
@@ -326,7 +340,11 @@ wallet: context [
 			]
 			on-change: func [face event][
 				btn-send/enabled?: to-logic face/selected
-				eth-ui/current/selected: face/selected
+				either any [token-name = "ETH" token-name = "RED"][
+					eth-ui/current/selected: face/selected
+				][
+					btc-ui/current/selected: face/selected
+				]
 			]
 		]
 

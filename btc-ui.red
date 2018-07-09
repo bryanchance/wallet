@@ -6,105 +6,56 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#do [_btc-ui_red_: yes]
+#if error? try [_config_red_] [#include %config.red]
+#if error? try [_keys_red_] [#include %keys/keys.red]
+#if error? try [_eth-api_red_] [#include %libs/eth-api.red]
+#if error? try [_int256_red_] [#include %libs/int256.red]
+#if error? try [_int-encode_red_] [#include %libs/int-encode.red]
+#if error? try [_ui-base_red_] [#include %ui-base.red]
+
 btc-ui: context [
-	ctx: none
 
-	init: func [new-ctx][
-		ctx: new-ctx
-	]
-
-	get-signed-data: does [
-		get in ctx 'signed-data
-	]
-
-	get-addr-list: does [
-		get in ctx 'addr-list
-	]
-
-	update-ui: func [value /local f][
-		f: get in ctx 'update-ui
-		do [f value]
-	]
-
-	form-amount: func [value /local f][
-		f: get in ctx 'form-amount
-		do [f value]
-	]
-
-	token-name: does [
-		get in ctx 'token-name
-	]
-	net-name: does [
-		get in ctx 'net-name
-	]
-	coin-name: does [
-		get in ctx 'coin-name
-	]
-	network: does [
-		get in ctx 'network
-	]
-	explorer: does [
-		get in ctx 'explorer
-	]
-	token-contract: does [
-		get in ctx 'token-contract
-	]
-	bip32-path: does [
-		get in ctx 'bip32-path
-	]
-
-	process-events: has [f][
-		f: get in ctx 'process-events
-		do [f]
-	]
-
-	get-device-name: has [f][
-		f: get in ctx 'get-device-name
-		do [f]
-	]
-
-	get-chain-id: has [f][
-		f: get in ctx 'get-chain-id
-		do [f]
-	]
-
-	address-index: does [
-		get in ctx 'address-index
-	]
-
-	unlock-dev-dlg: does [
-		get in ctx 'unlock-dev-dlg
-	]
-
-	contract-data-dlg: does [
-		get in ctx 'contract-data-dlg
-	]
-
-	nonce-error-dlg: does [
-		get in ctx 'nonce-error-dlg
-	]
-
-	tx-error-dlg: does [
-		get in ctx 'tx-error-dlg
-	]
-
-	addr-balances: []
+	addr-infos: []
+	addresses: []
 
 	input-amount: none
 	input-fee: none
 	input-addr: none
 
-	;-- change/orgin: [puk-hash utx balance bip32-path]
-	get-account-balance: func [
-		name			[string!]
-		bip32-path		[block!]
+	;- layout item defined as local
+	network-to: none
+	addr-from: none
+	addr-to: none
+	amount-field: none
+	tx-fee: none
+	btn-sign: none
+	info-from: none
+	info-to: none
+	info-amount: none
+	info-network: none
+	info-fee: none
+	info-rate: none
+	info-fee: none
+
+	current: make reactor! [
+		infos: []
+		selected: none
+		count: is [length? infos]
+		info: is [either selected [pick infos selected][none]]
+		addr: is [either info [select last info/origin 'addr][none]]
+		balance: is [either info [select info 'balance][none]]
+	]
+
+	enum-address-info: func [
+		path			[block!]
 		account			[integer!]
-		return:			[block! string!]
+		return:			[block! map!]
 		/local
 			ids
 			list c-list o-list len i addr utxs balance total
 	][
-		ids: copy bip32-path
+		ids: copy path
 		poke ids 3 (80000000h + account)
 		append ids 0
 
@@ -120,21 +71,18 @@ btc-ui: context [
 		forever [
 			process-events
 			ids/5: i
-			addr: key/get-btc-address name ids
-			if block? addr [return rejoin ["get-account-balance error: " form addr]]
+			addr: key/get-btc-address ids
 
-			balance: btc/get-balance network addr
+			balance: btc-api/get-balance network addr
 			process-events
-			if string? balance [return balance]
 			if balance = none [
 				append/only c-list reduce ['addr addr 'path copy ids]
 				append list reduce ['change c-list]
 				break
 			]
 
-			utxs: btc/get-utxs network addr
+			utxs: btc-api/get-unspent network addr
 			process-events
-			if string? utxs [return utxs]
 			if utxs = none [
 				append/only c-list reduce ['addr addr 'balance to-i256 0 'path copy ids]
 				i: i + 1
@@ -153,23 +101,20 @@ btc-ui: context [
 		ids/4: 0
 		i: 0
 		forever [
-			process-events
+			ui/process-events
 			ids/5: i
-			addr: key/get-btc-address name ids
-			if block? addr [return rejoin ["get-account-balance error: " form addr]]
+			addr: key/get-btc-address ids
 
-			balance: btc/get-balance network addr
+			balance: btc-api/get-balance network addr
 			process-events
-			if string? balance [return balance]
 			if balance = none [
 				append/only o-list reduce ['addr addr 'path copy ids]
 				append list reduce ['origin o-list]
 				break
 			]
 
-			utxs: btc/get-utxs network addr
+			utxs: btc-api/get-unspent network addr
 			process-events
-			if string? utxs [return utxs]
 			if utxs = none [
 				append/only o-list reduce ['addr addr 'balance to-i256 0 'path copy ids]
 				i: i + 1
@@ -186,43 +131,14 @@ btc-ui: context [
 		list
 	]
 
-	show-address: func [
-		name			[string!]
-		n				[integer!]
-		addresses		[block!]
-		/local
-			addr		[string!]
-			balance
-			addr-list
-			res
-	][
-		res: get-account-balance name bip32-path n
-		probe res
-		either string? res [
-			addr: 'error
-		][
-			addr: select last res/origin 'addr
+	enum-address: func [n [integer!] /local res][
+		if error? res: enum-address-info bip-path n [
+			return 'error
 		]
-		if not string? addr [
-			info-msg/text: case [
-				addr = 'browser-support-on [{Please set "Browser support" to "No"}]
-				addr = 'locked [
-					usb-device/rate: 0:0:3
-					"Please unlock your key"
-				]
-				addr = 'error [rejoin ["Get Address Failed: " res]]
-				true ["Get Address Failed!"]
-			]
-			update-ui yes
-			return false
-		]
-		balance: i256-to-float res/balance
-		balance: balance / 1e8
-		append/only addr-balances res
-		append addresses rejoin [addr "      " form-amount balance]
-		addr-list: get-addr-list
-		addr-list/data: addresses
-		return true
+
+		append/only addr-infos res
+		append addresses rejoin [select last res/origin 'addr form-i256 res/balance 8 8]
+		return 'success
 	]
 
 	reset-sign-button: does [
@@ -232,24 +148,21 @@ btc-ui: context [
 		btn-sign/text: "Sign"
 	]
 
-	do-send: func [face [object!] event [event!] /local from dlg addr-list][
-		addr-list: get-addr-list
-		if addr-list/data [
-			if addr-list/selected = -1 [addr-list/selected: 1]
-			dlg: send-dialog
+	do-send: func [face [object!] event [event!]][
+		if addresses [
+			if current/selected = none [current/selected: 1]
 			network-to/text: net-name
-			from: pick addr-list/data addr-list/selected
-			addr-from/text: copy/part from find from space
+			addr-from/text: current/addr
 			reset-sign-button
-			label-unit/text: coin-name
-			fee-unit/text: coin-name
+			label-unit/text: unit-name
+			fee-unit/text: unit-name
 			clear addr-to/text
 			clear amount-field/text
-			view/flags dlg 'modal
+			view/flags send-dialog 'modal
 		]
 	]
 
-	check-data: func [/local addr-list balance][
+	check-data: does [
 		input-addr: trim any [addr-to/text ""]
 		unless all [
 			26 <= length? input-addr
@@ -272,9 +185,7 @@ btc-ui: context [
 			return no
 		]
 
-		addr-list: get-addr-list
-		balance: select pick addr-balances addr-list/selected 'balance
-		if not lesser-or-equal256? (add256 input-amount input-fee) balance [
+		if not lesser-or-equal256? (add256 input-amount input-fee) current/balance [
 			amount-field/text: copy "Insufficient Balance"
 			return no
 		]
@@ -317,7 +228,7 @@ btc-ui: context [
 
 			foreach utx item/utxs [
 				if lesser-or-equal256? total utx/value [
-					info: btc/get-tx-info network utx/tx-hash
+					info: btc-api/get-tx-info network utx/tx-hash
 					append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
 					append/only outputs reduce ['addr addr-to 'value amount]
 					rest: sub256 utx/value total
@@ -337,7 +248,7 @@ btc-ui: context [
 
 			foreach utx item/utxs [
 				if lesser-or-equal256? total utx/value [
-					info: btc/get-tx-info network utx/tx-hash
+					info: btc-api/get-tx-info network utx/tx-hash
 					append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
 					append/only outputs reduce ['addr addr-to 'value amount]
 					rest: sub256 utx/value total
@@ -373,7 +284,7 @@ btc-ui: context [
 			if item/utxs = none [continue]
 
 			foreach utx item/utxs [
-				info: btc/get-tx-info network utx/tx-hash
+				info: btc-api/get-tx-info network utx/tx-hash
 				append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
 				sum: add256 sum utx/value
 				if lesser-or-equal256? total sum [
@@ -394,7 +305,7 @@ btc-ui: context [
 			if item/utxs = none [continue]
 
 			foreach utx item/utxs [
-				info: btc/get-tx-info network utx/tx-hash
+				info: btc-api/get-tx-info network utx/tx-hash
 				append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
 				sum: add256 sum utx/value
 				if lesser-or-equal256? total sum [
@@ -414,26 +325,24 @@ btc-ui: context [
 
 	notify-user: does [
 		btn-sign/enabled?: no
-		process-events
+		ui/process-events
 		btn-sign/offset/x: 133
 		btn-sign/size/x: 225
 		btn-sign/text: "Confirm the transaction on your device"
-		process-events
+		ui/process-events
 	]
 
-	do-sign-tx: func [face [object!] event [event!] /local name addr-list utx rate][
+	do-sign-tx: func [face [object!] event [event!] /local utx rate][
 		unless check-data [exit]
 
-		name: get-device-name
 		;-- Edge case: key may locked in this moment
-		unless string? key/get-btc-address name append copy bip32-path 0 [
+		unless string? key/get-btc-address append copy bip-path 0 [
 			reset-sign-button
 			view/flags unlock-dev-dlg 'modal
 			exit
 		]
 
-		addr-list: get-addr-list
-		utx: calc-balance pick addr-balances addr-list/selected input-amount input-fee input-addr
+		utx: calc-balance current/info input-amount input-fee input-addr
 		if utx = none [
 			amount-field/text: copy "NYI.!"
 			return no
@@ -441,21 +350,20 @@ btc-ui: context [
 
 		notify-user
 
-		signed-data: key/get-btc-signed-data name utx
+		signed-data: key/get-btc-signed-data utx
 		either all [
 			signed-data
 			binary? signed-data
 		][
-			dlg: confirm-sheet
 			info-from/text:		addr-from/text
 			info-to/text:		copy addr-to/text
-			info-amount/text:	rejoin [amount-field/text " " coin-name]
+			info-amount/text:	rejoin [amount-field/text " " unit-name]
 			info-network/text:	net-name
-			info-fee/text:		rejoin [tx-fee/text " " coin-name]
+			info-fee/text:		rejoin [tx-fee/text " " unit-name]
 			rate: to integer! ((to float! tx-fee/text)  * 1e9 / length? signed-data)
 			info-rate/text:		rejoin [form rate / 10.0 " sat/B"]
 			unview
-			view/flags dlg 'modal
+			view/flags confirm-sheet 'modal
 		][
 			if block? signed-data [
 				unview
@@ -467,23 +375,22 @@ btc-ui: context [
 
 	do-confirm: func [face [object!] event [event!] /local datas txid result][
 		datas: lowercase enbase/base signed-data 16
-		txid: btc/decode-tx network datas
-		if string? txid [
-			tx-error/text: rejoin ["Error! Please try again^/^/" form txid]
-			view/flags tx-error-dlg 'modal
+		if error? txid: try [btc-api/decode-tx network datas][
+			ui-base/tx-error/text: rejoin ["Error! Please try again^/^/" form txid]
+			view/flags ui-base/tx-error-dlg 'modal
 			exit
 		]
-		result: btc/publish-tx network datas
-		unview
-		either string? result [
-			tx-error/text: rejoin ["Error! Please try again^/^/" form result]
-			view/flags tx-error-dlg 'modal
+		either error? result: try [btc-api/publish-tx network datas][
+			unview
+			ui-base/tx-error/text: rejoin ["Error! Please try again^/^/" form result]
+			view/flags ui-base/tx-error-dlg 'modal
 		][
+			unview
 			browse rejoin [explorer txid/1]
 		]
 	]
 
-	send-dialog: does [layout [
+	send-dialog: layout [
 		title "Send Bitcoin"
 		style label: text  100 middle
 		style lbl:   text  360 middle font [name: font-fixed size: 10]
@@ -494,9 +401,9 @@ btc-ui: context [
 		label "Amount to Send:" amount-field: field 120 label-unit: label 50 return
 		label "Fee:"			tx-fee:		  field 120 "0.0001" fee-unit: label 50 return
 		pad 215x10 btn-sign: button 60 "Sign" :do-sign-tx
-	]]
+	]
 
-	confirm-sheet: does [layout [
+	confirm-sheet: layout [
 		title "Confirm Transaction"
 		style label: text 120 right bold 
 		style info: text 330 middle font [name: font-fixed size: 10]
@@ -507,6 +414,6 @@ btc-ui: context [
 		label "Fee:" 			info-fee:	  info return
 		label "FeeRate:"		info-rate:	  info return
 		pad 164x10 button "Cancel" [signed-data: none unview] button "Send" :do-confirm
-	]]
+	]
 ]
 
