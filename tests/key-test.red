@@ -41,6 +41,20 @@ probe key/current/name-list
 if all [key/current/device-name key/current/device-enum-index][
 	if key/connect [
 		key/init
-		key/request-pin 'any
+		view layout [
+			t: text "" rate 0:0:1 on-time [
+				if 'Init = key/get-request-pin-state [
+					key/request-pin
+				]
+				t/text: form key/get-request-pin-state
+				if 'HasRequested = key/get-request-pin-state [
+					unview
+					exit
+				]
+				if 'Requesting <> key/get-request-pin-state [
+					t/rate: none
+				]
+			]
+		]
 	]
 ]
