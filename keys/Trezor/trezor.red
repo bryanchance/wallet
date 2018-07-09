@@ -71,7 +71,7 @@ trezor: context [
 		]
 	]
 
-	request-pin: func [mode [word!] return: [word!]] [
+	request-pin: func [return: [word!]] [
 		if request-pin-state <> 'Init [return request-pin-state]
 
 		pin-req: make map! reduce ['address_n reduce [8000002Ch 8000003Ch 80000000h]]
@@ -83,11 +83,7 @@ trezor: context [
 		if error? request-pin-state [return request-pin-state: 'DeviceError]
 
 		if request-pin-state = 'Requesting [
-			either mode = 'no-wait [
-				view/no-wait/flags pin-dlg 'modal
-			][
-				view pin-dlg
-			]
+			view/flags pin-dlg 'modal
 		]
 
 		request-pin-state
