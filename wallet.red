@@ -55,7 +55,7 @@ wallet: context [
 		key/current/selected: dev-list/selected
 		dev-list/data: key/current/name-list
 
-		clear addr-list/data
+		addr-list/data: []
 	]
 
 
@@ -70,28 +70,29 @@ wallet: context [
 
 	connect: has [res][
 		update-ui no
-
+print 1
 		if device-name = key/no-dev [
 			info-msg/text: "Please plug in your key..."
 			exit
 		]
-
+print 2
 		if any [error? res: try [key/connect] res = none][
 			info-msg/text: "Connect the key failed..."
 			exit
 		]
+print 2
 
 		if error? try [key/init][
 			info-msg/text: "Initialize the key failed..."
 			exit
 		]
-
+print 3
 		if 'DeviceError = key/request-pin [
 			info-msg/text: "Unlock the key failed..."
 			exit
 		]
-
-		usb-device/rate: none
+		usb-device/rate: 0:0:1
+print 4
 		connected?: yes
 	]
 
@@ -104,10 +105,16 @@ wallet: context [
 		update-ui no
 
 		if connected? [
+print 10
 			if 'DeviceError = key/get-request-pin-state [
 				info-msg/text: "Unlock the key failed..."
 				exit
 			]
+print 11
+			if 'HasRequested <> key/get-request-pin-state [
+				exit
+			]
+print 12
 
 			info-msg/text: "Please wait while loading addresses..."
 
@@ -125,10 +132,7 @@ wallet: context [
 						res = 'success [""]
 						res = 'error [rejoin ["access " n " failed"]]
 						res = 'browser-support-on [{Please set "Browser support" to "No"}]
-						res = 'locked [
-							usb-device/rate: 0:0:3
-							"Please unlock your key"]
-					]
+						res = 'locked ["Please unlock your key"]]
 					if res <> 'success [exit]
 					process-events
 					n: n + 1
@@ -267,21 +271,15 @@ wallet: context [
 						enumerate
 						len: length? dev-list/data
 						either len > 1 [								;-- if we have multi devices, just reset all
-							;-- print [len " devices"]
-							face/rate: none
+							print [len " devices"]
+							if key/opened? [key/close]
 							connected?: no
-							info-msg/text: ""
-							key/close
 							connect
 							list-addresses
 						][
-							if any [
-								device-id <> id
-								'Init = key/get-request-pin-state
-							][
-								;-- print "need unlock key"
+							if not key/opened? [
+								print "not opened"
 								connected?: no
-								key/close
 								connect
 								list-addresses
 							]
@@ -292,26 +290,24 @@ wallet: context [
 					id: face/data/2 << 16 or face/data/1
 					if key/support? id [
 						print "on-down"
-						face/rate: none
+						face/rate: 0:0:1
+						if key/opened? [key/close]
 						connected?: no
-						info-msg/text: ""
-						clear addr-list/data
-						key/close
+						enumerate
 						connect
 						list-addresses
 					]
 				]
 				on-time: func [face event][
-					if all [
-						connected?
-						'Requesting <> key/get-request-pin-state
-					][face/rate: none]
 					print "on-time"
-					if not key/opened? [
-						print "need to enumerate"
-						enumerate
-						connect
+					if key/opened? [
+						if 'Requesting = key/get-request-pin-state [list-addresses exit]
+						if 'HasRequested = key/get-request-pin-state [face/rate: none list-addresses exit]
 					]
+					if key/opened? [key/close]
+					connected?: no
+					enumerate
+					connect
 					list-addresses
 				]
 			]
@@ -321,7 +317,7 @@ wallet: context [
 	setup-actors: does [
 		ui/actors: context [
 			on-close: func [face event][
-				if key/opened? [key/close]
+				if key/opened? [key/close] connected?: no
 			]
 			on-resizing: function [face event] [
 				if any [event/offset/x < min-size/x event/offset/y < min-size/y][exit]
@@ -338,7 +334,7 @@ wallet: context [
 			]
 			on-change: func [face event][
 				btn-send/enabled?: to-logic face/selected
-				ui-base/current/selected: face/selected
+				eth-ui/current/selected: face/selected
 			]
 		]
 
@@ -348,8 +344,6 @@ wallet: context [
 	]
 
 	run: does [
-		select-token 1
-		select-net 2
 		min-size: ui/extra: ui/size
 		setup-actors
 		monitor-devices

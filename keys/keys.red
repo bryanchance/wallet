@@ -178,7 +178,7 @@ key: context [
 
 	get-request-pin-state: func [return: [word!]] [
 		case [
-			device-name = ledger/name ['HasRequested]
+			device-name = ledger/name [ledger/request-pin-state]
 			device-name = trezor/name [trezor/request-pin-state]
 			true [new-error 'get-request-pin-state "not found" device-name]
 		]
@@ -186,7 +186,7 @@ key: context [
 
 	request-pin: func [return: [word!]][
 		case [
-			device-name = ledger/name ['HasRequested]
+			device-name = ledger/name [ledger/request-pin]
 			device-name = trezor/name [trezor/request-pin]
 			true [new-error 'request-pin "not found" device-name]
 		]
@@ -194,7 +194,7 @@ key: context [
 
 	close-pin-requesting: does [
 		case [
-			device-name = ledger/name ['Init]
+			device-name = ledger/name [ledger/close-pin-requesting]
 			device-name = trezor/name [trezor/close-pin-requesting]
 			true [new-error 'close-pin-requesting "not found" device-name]
 		]

@@ -116,4 +116,6 @@ token-config: context [
 		index
 	]
 
+	select-token 1
+	select-net 2
 ]

@@ -32,6 +32,9 @@ ledger: context [
 	buffer:		make binary! MAX_APDU_SIZE
 	data-frame: make binary! PACKET_SIZE
 
+	pin-ret: none
+	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/DeviceError
+
 	filter?: func [
 		_id				[integer!]
 		_usage			[integer!]
@@ -63,7 +66,39 @@ ledger: context [
 		]
 	]
 
-	init: does []
+	init: does [
+		request-pin-state: 'Init
+	]
+
+	close-pin-requesting: does [
+		if request-pin-state = 'Requesting [
+			request-pin-state: 'Init
+			unview/only unlock-dev-dlg
+		]
+	]
+
+	request-pin: func [return: [word!]] [
+		if request-pin-state <> 'Init [return request-pin-state]
+		request-pin-state: 'Requesting
+		view/no-wait/flags pin-dlg 'modal
+		request-pin-state
+	]
+
+	unlock-dev-dlg: layout [
+		title "Unlock your key"
+		text font-size 12 {Unlock your Ledger key, open the Ethereum app, ensure "Browser support" is "No".} rate 0:0:3 on-time [
+			if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 80000000h 0 0] [
+				request-pin-state: HasRequested
+				unview
+				exit
+			]
+			if 'locked <> pin-ret [
+				request-pin-state: DeviceError
+				unview
+				exit
+			]
+		]
+	]
 
 	read-apdu: func [
 		timeout [integer!]				;-- seconds

@@ -29,7 +29,7 @@ trezor: context [
 	pin-get: make string! 16
 	pin-msg: none
 	pin-req: none
-	pin-ret: -1
+	pin-ret: none
 	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/DeviceError
 	serialized_tx: make binary! 500
 
@@ -83,7 +83,7 @@ trezor: context [
 		if error? request-pin-state [return request-pin-state: 'DeviceError]
 
 		if request-pin-state = 'Requesting [
-			view/flags pin-dlg 'modal
+			view/no-wait/flags pin-dlg 'modal
 		]
 
 		request-pin-state
