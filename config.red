@@ -93,7 +93,7 @@ token-config: context [
 		chain-id: is [either net-block [net-block/chain-id][none]]
 	]
 
-	set 'token-name does [current/taken-name]
+	set 'token-name does [current/token-name]
 	set 'net-name does [current/net-name]
 	set 'network does [current/network]
 	set 'explorer does [current/explorer]
@@ -116,6 +116,4 @@ token-config: context [
 		index
 	]
 
-	select-token 3
-	select-net 2
 ]
