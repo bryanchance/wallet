@@ -50,7 +50,7 @@ btc-ui: context [
 	enum-address-info: func [
 		path			[block!]
 		account			[integer!]
-		return:			[block! map!]
+		return:			[block!]
 		/local
 			ids
 			list c-list o-list len i addr utxs balance total
@@ -64,7 +64,6 @@ btc-ui: context [
 		o-list: copy []
 
 		total: to-i256 0
-
 		;-- change address
 		ids/4: 1
 		i: 0
@@ -72,7 +71,6 @@ btc-ui: context [
 			process-events
 			ids/5: i
 			addr: key/get-btc-address ids
-
 			balance: btc-api/get-balance network addr
 			process-events
 			if balance = none [
@@ -95,16 +93,13 @@ btc-ui: context [
 			i: i + 1
 		]
 
-		process-events
-
 		;-- origin address
 		ids/4: 0
 		i: 0
 		forever [
-			ui/process-events
+			process-events
 			ids/5: i
 			addr: key/get-btc-address ids
-
 			balance: btc-api/get-balance network addr
 			process-events
 			if balance = none [
@@ -132,7 +127,7 @@ btc-ui: context [
 	]
 
 	enum-address: func [n [integer!] /local res][
-		if error? res: enum-address-info bip-path n [
+		if error? res: try [enum-address-info bip-path n] [
 			return 'error
 		]
 

@@ -108,6 +108,7 @@ wallet: context [
 			if 'HasRequested <> key/get-request-pin-state [
 				exit
 			]
+			usb-device/rate: none
 
 			info-msg/text: "Please wait while loading addresses..."
 
@@ -307,8 +308,8 @@ wallet: context [
 				on-time: func [face event][
 					;-- print "on-time"
 					if key/opened? [
-						if 'Requesting = key/get-request-pin-state [list-addresses exit]
-						if 'HasRequested = key/get-request-pin-state [face/rate: none list-addresses exit]
+						if 'Requesting = key/get-request-pin-state [exit]
+						if 'HasRequested = key/get-request-pin-state [list-addresses exit]
 					]
 					if key/opened? [key/close]
 					connected?: no
