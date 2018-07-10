@@ -202,7 +202,7 @@ btc-ui: context [
 		if utx = none [
 			utx: calc-balance-by-order account amount fee addr-to
 		]
-		probe utx
+		;probe utx
 		utx
 	]
 
@@ -323,11 +323,11 @@ btc-ui: context [
 
 	notify-user: does [
 		btn-sign/enabled?: no
-		ui/process-events
+		process-events
 		btn-sign/offset/x: 133
 		btn-sign/size/x: 225
 		btn-sign/text: "Confirm the transaction on your device"
-		ui/process-events
+		process-events
 	]
 
 	do-sign-tx: func [face [object!] event [event!] /local utx rate][
@@ -336,7 +336,7 @@ btc-ui: context [
 		;-- Edge case: key may locked in this moment
 		unless string? key/get-btc-address append copy bip-path 0 [
 			reset-sign-button
-			view/flags unlock-dev-dlg 'modal
+			view/flags ui-base/unlock-dev-dlg 'modal
 			exit
 		]
 
@@ -348,11 +348,9 @@ btc-ui: context [
 
 		notify-user
 
-		signed-data: key/get-btc-signed-data utx
-		either all [
-			signed-data
-			binary? signed-data
-		][
+		signed-data: try [key/get-btc-signed-data utx]
+		;probe signed-data
+		either binary? signed-data [
 			info-from/text:		addr-from/text
 			info-to/text:		copy addr-to/text
 			info-amount/text:	rejoin [amount-field/text " " unit-name]
@@ -363,9 +361,10 @@ btc-ui: context [
 			unview
 			view/flags confirm-sheet 'modal
 		][
-			if block? signed-data [
+			if error? signed-data [
 				unview
-				view/flags contract-data-dlg 'modal
+				ui-base/tx-error/text: rejoin ["Error! Please try again^/^/" form signed-data]
+				view/flags ui-base/tx-error-dlg 'modal
 			]
 			reset-sign-button
 		]
@@ -384,7 +383,7 @@ btc-ui: context [
 			view/flags ui-base/tx-error-dlg 'modal
 		][
 			unview
-			browse rejoin [explorer txid/1]
+			browse rejoin [explorer txid]
 		]
 	]
 
