@@ -282,7 +282,7 @@ trezor: context [
 								'sequence -1
 								'script_type script_type]
 					if pre-output/2 = "P2SH" [
-						put sub-req 'amount trim/head i256-to-bin to-i256 pre-output/3
+						put sub-req 'amount trim/head i256-to-bin pre-output/3
 					]
 					req: make map! []
 					put req 'inputs reduce [sub-req]
@@ -341,7 +341,7 @@ trezor: context [
 					tx-input: FindInputByTxid tx/inputs tx_hash
 					pre-output: tx-input/info/outputs/(request_index + 1)
 					sub-req: make map! reduce [
-								'amount trim/head i256-to-bin to-i256 pre-output/value
+								'amount trim/head i256-to-bin pre-output/value
 								'script_pubkey debase/base pre-output/script-hex 16]
 					req: make map! []
 					put req 'bin_outputs reduce [sub-req]
@@ -389,16 +389,12 @@ trezor: context [
 					req: make map! reduce ['tx req]
 					probe req
 					clear res-in
-					WriteAndRead 'TxAck 'TxRequest req res-in
-					if msg-id = trezor-message/get-id 'ButtonRequest [
-						clear res-in
-						proto-encode/decode trezor-message/messages 'ButtonRequest res-in command-buffer
-
-						encode-and-write 'ButtonAck make map! []
-
-						clear res-in
-						read-and-decode 'TxRequest res-in
-						if trezor-driver/msg-id = trezor-message/get-id 'ButtonRequest [
+					encode-and-write 'TxAck req
+					trezor-driver/message-read clear command-buffer
+					either trezor-driver/msg-id = trezor-message/get-id 'TxRequest [
+						proto-encode/decode trezor-message/messages 'TxRequest res-in command-buffer
+					][
+						either trezor-driver/msg-id = trezor-message/get-id 'ButtonRequest [
 							clear res-in
 							proto-encode/decode trezor-message/messages 'ButtonRequest res-in command-buffer
 
@@ -406,6 +402,17 @@ trezor: context [
 
 							clear res-in
 							read-and-decode 'TxRequest res-in
+							if trezor-driver/msg-id = trezor-message/get-id 'ButtonRequest [
+								clear res-in
+								proto-encode/decode trezor-message/messages 'ButtonRequest res-in command-buffer
+
+								encode-and-write 'ButtonAck make map! []
+
+								clear res-in
+								read-and-decode 'TxRequest res-in
+							]
+						][
+							new-error 'SignTxSequence "not support" 'trezor-driver/msg-id
 						]
 					]
 				]
