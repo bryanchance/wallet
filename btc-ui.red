@@ -126,13 +126,16 @@ btc-ui: context [
 		list
 	]
 
-	enum-address: func [n [integer!] /local res][
+	enum-address: func [n [integer!] /local res addr][
 		if error? res: try [enum-address-info bip-path n] [
 			return 'error
 		]
 
 		append/only addr-infos res
-		append addresses rejoin [select last res/origin 'addr form-i256 res/balance 8 8]
+		addr: select last res/origin 'addr
+		append/dup addr #" " 42 - length? addr
+		append addresses rejoin [addr form-i256 res/balance 8 8]
+		current/infos: addr-infos
 		return 'success
 	]
 
