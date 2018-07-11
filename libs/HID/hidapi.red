@@ -9,6 +9,7 @@ Red [
 	}
 ]
 
+#if error? try [_hidapi_red_][
 #do [_hidapi_red_: yes]
 
 #system [
@@ -127,4 +128,6 @@ hid: context [
 	][
 		if dev/value <> 0 [hid/close as int-ptr! dev/value]
 	]
+]
+
 ]

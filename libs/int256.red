@@ -10,6 +10,7 @@ Red [
 	}
 ]
 
+#if error? try [_int256_red_][
 #do [_int256_red_: yes]
 
 int256: context [
@@ -554,4 +555,6 @@ int256: context [
 	set 'mod256 func [l [vector!] r [vector!] return: [vector!]][
 		second div256/rem l r
 	]
+]
+
 ]

@@ -6,8 +6,9 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#if error? try [_proto-encode_red_][
 #do [_proto-encode_red_: yes]
-#if error? try [_proto-parser_red_] [#include %proto-parser.red]
+#include %proto-parser.red
 
 proto-encode: context [
 
@@ -759,4 +760,6 @@ proto-encode: context [
 		]
 		ret
 	]
+]
+
 ]

@@ -6,9 +6,10 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#if error? try [_ui-base_red_][
 #do [_ui-base_red_: yes]
-#if error? try [_config_red_] [#include %config.red]
-#if error? try [_keys_red_] [#include %keys/keys.red]
+#include %config.red
+#include %keys/keys.red
 
 ui-base: context [
 	set 'process-events does [loop 10 [do-events/no-wait]]
@@ -26,5 +27,7 @@ ui-base: context [
 		title "Send Transaction Error"
 		tx-error: area 400x200
 	]
+
+]
 
 ]

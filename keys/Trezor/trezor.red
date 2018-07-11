@@ -7,11 +7,12 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#if error? try [_trezor_red_][
 #do [_trezor_red_: yes]
-#if error? try [_trezor-message_red_] [#include %trezor-message.red]
-#if error? try [_trezor-driver_red_] [#include %trezor-driver.red]
-#if error? try [_proto-encode_red_] [#include %../../libs/proto-encode.red]
-#if error? try [_int-encode_red_] [#include %../../libs/int-encode.red]
+#include %trezor-message.red
+#include %trezor-driver.red
+#include %../../libs/proto-encode.red
+#include %../../libs/int-encode.red
 
 trezor: context [
 	name: "Trezor"
@@ -643,3 +644,4 @@ trezor: context [
 
 ]
 
+]

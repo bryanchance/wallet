@@ -6,6 +6,7 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#if error? try [_config_red_][
 #do [_config_red_: yes]
 
 token-config: context [
@@ -118,4 +119,6 @@ token-config: context [
 
 	select-token 1
 	select-net 2
+]
+
 ]

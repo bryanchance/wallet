@@ -1,7 +1,7 @@
 Red []
-#if error? try [_int256_red_] [#include %../libs/int256.red]
-#if error? try [_eth-api_red_] [#include %../libs/eth-api.red]
-#if error? try [_int-encode_red_] [#include %../libs/int-encode.red]
+#include %../libs/int256.red
+#include %../libs/eth-api.red
+#include %../libs/int-encode.red
 
 
 network: https://eth.red-lang.org/rinkeby

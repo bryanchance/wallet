@@ -1,10 +1,10 @@
 Red [Needs: View]
 
-#if error? try [_int256_red_] [#include %../libs/int256.red]
-#if error? try [_btc-api_red_] [#include %../libs/btc-api.red]
-#if error? try [_int-encode_red_] [#include %../libs/int-encode.red]
-#if error? try [_hidapi_red_] [#include %../libs/HID/hidapi.red]
-#if error? try [_keys_red_] [#include %../keys/keys.red]
+#include %../libs/int256.red
+#include %../libs/btc-api.red
+#include %../libs/int-encode.red
+#include %../libs/HID/hidapi.red
+#include %../keys/keys.red
 
 trezor-id: 1 << 16 or 534Ch
 ledger-id: 1 << 16 or 2C97h

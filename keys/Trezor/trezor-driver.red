@@ -6,9 +6,10 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#if error? try [_trezor-driver_red_][
 #do [_trezor-driver_red_: yes]
-#if error? try [_hidapi_red_] [#include %../../libs/HID/hidapi.red]
-#if error? try [_int-encode_red_] [#include %../../libs/int-encode.red]
+#include %../../libs/HID/hidapi.red
+#include %../../libs/int-encode.red
 
 trezor-driver: context [
 
@@ -228,5 +229,7 @@ trezor-driver: context [
 
 		0
 	]
+
+]
 
 ]

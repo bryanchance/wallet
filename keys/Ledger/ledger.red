@@ -6,9 +6,10 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#if error? try [_ledger_red_][
 #do [_ledger_red_: yes]
-#if error? try [_hidapi_red_] [#include %../../libs/HID/hidapi.red]
-#if error? try [_int-encode_red_] [#include %../../libs/int-encode.red]
+#include %../../libs/HID/hidapi.red
+#include %../../libs/int-encode.red
 
 ledger: context [
 	name: "Ledger Nano S"
@@ -240,8 +241,4 @@ ledger: context [
 	]
 ]
 
-;ledger/connect
-
-;probe ledger/get-address 0
-
-;ledger/close
+]

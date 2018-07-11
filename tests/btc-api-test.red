@@ -1,7 +1,7 @@
 Red []
-#if error? try [_int256_red_] [#include %../libs/int256.red]
-#if error? try [_btc-api_red_] [#include %../libs/btc-api.red]
-#if error? try [_int-encode_red_] [#include %../libs/int-encode.red]
+#include %../libs/int256.red
+#include %../libs/btc-api.red
+#include %../libs/int-encode.red
 
 network: https://chain.api.btc.com/v3
 

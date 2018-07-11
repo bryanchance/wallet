@@ -13,16 +13,17 @@ Red [
 	}
 ]
 
+#if error? try [_wallet_red_][
 #do [_wallet_red_: yes]
-#if error? try [_config_red_] [#include %config.red]
-#if error? try [_keys_red_] [#include %keys/keys.red]
-#if error? try [_eth-api_red_] [#include %libs/eth-api.red]
-#if error? try [_btc-api_red_] [#include %libs/btc-api.red]
-#if error? try [_int256_red_] [#include %libs/int256.red]
-#if error? try [_int-encode_red_] [#include %libs/int-encode.red]
-#if error? try [_ui-base_red_] [#include %ui-base.red]
-#if error? try [_eth-ui_red_] [#include %eth-ui.red]
-#if error? try [_btc-ui_red_] [#include %btc-ui.red]
+#include %config.red
+#include %keys/keys.red
+#include %libs/eth-api.red
+#include %libs/btc-api.red
+#include %libs/int256.red
+#include %libs/int-encode.red
+#include %ui-base.red
+#include %eth-ui.red
+#include %btc-ui.red
 
 
 
@@ -366,3 +367,5 @@ wallet: context [
 ]
 
 wallet/run
+
+]

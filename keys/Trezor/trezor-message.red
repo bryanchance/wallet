@@ -6,6 +6,7 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#if error? try [_trezor-message_red_][
 #do [_trezor-message_red_: yes]
 
 trezor-message: context [
@@ -61,3 +62,4 @@ trezor-message: context [
 	]
 ]
 
+]

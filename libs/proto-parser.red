@@ -6,6 +6,7 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#if error? try [_proto-parser_red_][
 #do [_proto-parser_red_: yes]
 
 proto-parser: context [
@@ -136,3 +137,4 @@ proto-parser: context [
 	]
 ]
 
+]

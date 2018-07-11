@@ -7,9 +7,10 @@ Red [
 	License: "BSD-3 - https://github.com/red/red/blob/master/BSD-3-License.txt"
 ]
 
+#if error? try [_btc-api_red_][
 #do [_btc-api_red_: yes]
-#if error? try [_json_red_] [#include %JSON.red]
-#if error? try [_int256_red_] [#include %int256.red]
+#include %JSON.red
+#include %int256.red
 
 btc-api: context [
 
@@ -172,3 +173,4 @@ btc-api: context [
 
 ]
 
+]
