@@ -22,23 +22,29 @@ token-config: context [
 
 	token-table: compose/deep [
 		;token name
+		"infura" [
+			['ui "ETH" 'net-name "mainnet"	'network https://mainnet.infura.io/								'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1		'unit-name "ETH"]
+			['ui "ETH" 'net-name "Rinkeby"	'network https://rinkeby.infura.io/								'explorer https://rinkeby.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 4		'unit-name "ETH"]
+			['ui "ETH" 'net-name "Kovan"	'network https://kovan.infura.io/								'explorer https://kovan.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 42	'unit-name "ETH"]
+			['ui "ETH" 'net-name "Ropsten"	'network https://ropsten.infura.io/								'explorer https://ropsten.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 3		'unit-name "ETH"]
+		]
 		"ETH" [
-			['net-name "mainnet"	'network https://eth.red-lang.org/mainnet		'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1]
-			['net-name "Rinkeby"	'network https://eth.red-lang.org/rinkeby		'explorer https://rinkeby.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 4]
-			['net-name "Kovan"		'network https://eth.red-lang.org/kovan			'explorer https://kovan.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 42]
-			['net-name "Ropsten"	'network https://eth.red-lang.org/ropsten		'explorer https://ropsten.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 3]
+			['ui "ETH" 'net-name "mainnet"	'network https://eth.red-lang.org/mainnet						'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1]
+			['ui "ETH" 'net-name "Rinkeby"	'network https://eth.red-lang.org/rinkeby						'explorer https://rinkeby.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 4]
+			['ui "ETH" 'net-name "Kovan"	'network https://eth.red-lang.org/kovan							'explorer https://kovan.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 42]
+			['ui "ETH" 'net-name "Ropsten"	'network https://eth.red-lang.org/ropsten						'explorer https://ropsten.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 3]
 		]
 		"RED" [
-			['net-name "mainnet"	'network https://eth.red-lang.org/mainnet		'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1 'contract "76960Dccd5a1fe799F7c29bE9F19ceB4627aEb2f"]
-			['net-name "Rinkeby"	'network https://eth.red-lang.org/rinkeby		'explorer https://rinkeby.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 4 'contract "43df37f66b8b9fececcc3031c9c1d2511db17c42"]
+			['ui "ETH" 'net-name "mainnet"	'network https://eth.red-lang.org/mainnet						'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1 'contract "76960Dccd5a1fe799F7c29bE9F19ceB4627aEb2f"]
+			['ui "ETH" 'net-name "Rinkeby"	'network https://eth.red-lang.org/rinkeby						'explorer https://rinkeby.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 4 'contract "43df37f66b8b9fececcc3031c9c1d2511db17c42"]
 		]
 		"BTC" [
-			['net-name "BTC.COM"	'network https://chain.api.btc.com/v3			'explorer https://blockchain.info/tx/			'path [(segwit-purpose) (btc-coin) (default-account) (default-change)]]
-			['net-name "Testnet3"	'network https://tchain.api.btc.com/v3			'explorer https://testnet.blockchain.info/tx/	'path [(segwit-purpose) (btc-test-coin) (default-account) (default-change)] 'unit-name "TEST"]
+			['ui "BTC" 'net-name "BTC.COM"	'network https://chain.api.btc.com/v3							'explorer https://blockchain.info/tx/			'path [(segwit-purpose) (btc-coin) (default-account) (default-change)]]
+			['ui "BTC" 'net-name "Testnet3"	'network https://tchain.api.btc.com/v3							'explorer https://testnet.blockchain.info/tx/	'path [(segwit-purpose) (btc-test-coin) (default-account) (default-change)] 'unit-name "TEST"]
 		]
 		"BTC-old" [
-			['net-name "BTC.COM"	'network https://chain.api.btc.com/v3			'explorer https://blockchain.info/tx/			'path [(default-purpose) (btc-coin) (default-account) (default-change)] 'unit-name "BTC"]
-			['net-name "Testnet3"	'network https://tchain.api.btc.com/v3			'explorer https://testnet.blockchain.info/tx/	'path [(default-purpose) (btc-test-coin) (default-account) (default-change)] 'unit-name "TEST"]
+			['ui "BTC" 'net-name "BTC.COM"	'network https://chain.api.btc.com/v3							'explorer https://blockchain.info/tx/			'path [(default-purpose) (btc-coin) (default-account) (default-change)] 'unit-name "BTC"]
+			['ui "BTC" 'net-name "Testnet3"	'network https://tchain.api.btc.com/v3							'explorer https://testnet.blockchain.info/tx/	'path [(default-purpose) (btc-test-coin) (default-account) (default-change)] 'unit-name "TEST"]
 		]
 	]
 
@@ -92,6 +98,7 @@ token-config: context [
 		]
 		contract: is [either net-block [net-block/contract][none]]
 		chain-id: is [either net-block [net-block/chain-id][none]]
+		ui: is [either net-block [net-block/ui][none]]
 	]
 
 	set 'token-name does [current/token-name]
@@ -102,6 +109,7 @@ token-config: context [
 	set 'unit-name does [current/unit-name]
 	set 'token-contract does [current/contract]
 	set 'chain-id does [current/chain-id]
+	set 'ui-type does [current/ui]
 
 	set 'select-token func [index [integer!] return: [integer!]][
 		if index > current/token-count [index: current/token-count]
@@ -117,7 +125,7 @@ token-config: context [
 		index
 	]
 
-	select-token 1
+	select-token 2
 	select-net 2
 ]
 
