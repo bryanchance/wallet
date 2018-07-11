@@ -148,12 +148,12 @@ key: context [
 		index
 	]
 
-	connect: func [return: [handle!]] [
+	open: func [return: [handle!]] [
 		if any [device-name = none device-id = none device-enum-index = none][return dongle: none]
 		dongle: case [
 			device-name = ledger/name [ledger/open device-id device-enum-index]
 			device-name = trezor/name [trezor/open device-id device-enum-index]
-			true [new-error 'connect "not found" device-name]
+			true [new-error 'open "not found" device-name]
 		]
 		dongle
 	]

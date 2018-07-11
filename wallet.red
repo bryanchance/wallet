@@ -75,8 +75,8 @@ wallet: context [
 			info-msg/text: "Please plug in your key..."
 			exit
 		]
-		if any [error? res: try [key/connect] res = none][
-			info-msg/text: "Connect the key failed..."
+		if any [error? res: try [key/open] res = none][
+			info-msg/text: "open the key failed..."
 			exit
 		]
 
