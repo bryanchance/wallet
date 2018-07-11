@@ -28,6 +28,11 @@ ui-base: context [
 		tx-error: area 400x200
 	]
 
+
+	show-error-dlg: func [e [error!]][
+		tx-error/text: form e
+		view/flags tx-error-dlg 'modal
+	]
 ]
 
 ]
