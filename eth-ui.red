@@ -52,10 +52,10 @@ eth-ui: context [
 		balance: is [either info [select info 'balance][none]]
 	]
 
-	enum-address: func [n [integer!] return: [word!] /local ids addr][
+	enum-address: func [n [integer!] /local ids addr][
 		ids: append copy bip-path n
 		if error? addr: try [key/get-eth-address ids][
-			return 'error
+			return addr
 		]
 
 		if string? addr [
@@ -66,13 +66,13 @@ eth-ui: context [
 		addr
 	]
 
-	enum-address-info: func [return: [logic!] /local i len info][
+	enum-address-info: func [/local i len info][
 		i: 1
 		len: length? addr-infos
 		until [
 			info: pick addr-infos i
 			if error? balance: try [eth-api/get-balance network token-contract info/addr][
-				return false
+				return balance
 			]
 			poke addresses i rejoin [info/addr form-i256 balance 18 18]
 			poke addr-infos i reduce ['addr info/addr 'path info/path 'balance balance]
@@ -80,7 +80,7 @@ eth-ui: context [
 			i: i + 1
 			i > len
 		]
-		true
+		'success
 	]
 
 	reset-sign-button: does [

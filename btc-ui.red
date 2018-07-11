@@ -129,7 +129,7 @@ btc-ui: context [
 
 	enum-address: func [n [integer!] /local res addr][
 		if error? res: try [enum-address-info bip-path n] [
-			return 'error
+			return res
 		]
 
 		append/only addr-infos res

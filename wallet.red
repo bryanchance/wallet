@@ -116,49 +116,68 @@ wallet: context [
 			if next [page: page + 1]
 			if prev [page: page - 1]
 			n: page * addr-per-page
-			
-			either any [token-name = "ETH" token-name = "RED"][
-				clear eth-ui/addr-infos
-				clear eth-ui/addresses
-				addr-list/data: eth-ui/addresses
-				loop addr-per-page [
-					res: eth-ui/enum-address n
-					case [
-						res = 'error [info-msg/text: rejoin ["access " n " failed"]]
-						res = 'browser-support-on [info-msg/text: {Please set "Browser support" to "No"}]
-						res = 'locked [info-msg/text: "Please unlock your key"]
+
+			case [
+				ui-type = "ETH" [
+					clear eth-ui/addr-infos
+					clear eth-ui/addresses
+					addr-list/data: eth-ui/addresses
+					loop addr-per-page [
+						res: eth-ui/enum-address n
+						case [
+							error? res [
+								info-msg/text: rejoin ["get address for " n " failed"]
+								update-ui yes
+								ui-base/show-error-dlg res
+							]
+							res = 'browser-support-on [info-msg/text: {Please set "Browser support" to "No"}]
+							res = 'locked [info-msg/text: "Please unlock your key"]
+						]
+						if res <> 'success [exit]
+						process-events
+						n: n + 1
 					]
-					if res <> 'success [exit]
-					process-events
-					n: n + 1
 				]
-			][
-				clear btc-ui/addr-infos
-				clear btc-ui/addresses
-				addr-list/data: btc-ui/addresses
-				loop addr-per-page [
-					res: btc-ui/enum-address n
-					case [
-						res = 'error [info-msg/text: rejoin ["access " n " failed"]]
-						res = 'browser-support-on [info-msg/text: {Please set "Browser support" to "No"}]
-						res = 'locked [info-msg/text: "Please unlock your key"]
+				ui-type = "BTC" [
+					clear btc-ui/addr-infos
+					clear btc-ui/addresses
+					addr-list/data: btc-ui/addresses
+					loop addr-per-page [
+						res: btc-ui/enum-address n
+						case [
+							error? res [
+								info-msg/text: rejoin ["get address for " n " failed"]
+								update-ui yes
+								ui-base/show-error-dlg res
+							]
+							res = 'browser-support-on [info-msg/text: {Please set "Browser support" to "No"}]
+							res = 'locked [info-msg/text: "Please unlock your key"]
+						]
+						if res <> 'success [exit]
+						process-events
+						n: n + 1
 					]
-					if res <> 'success [exit]
-					process-events
-					n: n + 1
 				]
 			]
 
-			either any [token-name = "ETH" token-name = "RED"][
-				info-msg/text: "Please wait while loading balances..."
-				eth-ui/current/infos: eth-ui/addr-infos
-				either eth-ui/enum-address-info [
-					info-msg/text: ""
-				][
-					info-msg/text: {Fetch balance: Timeout. Please try "Reload" again}
+			case [
+				ui-type = "ETH" [
+					info-msg/text: "Please wait while loading balances..."
+					eth-ui/current/infos: eth-ui/addr-infos
+					res: eth-ui/enum-address-info
+					case [
+						error? res [
+							info-msg/text: {Fetch balance: Timeout. Please try "Reload" again}
+							update-ui yes
+							ui-base/show-error-dlg res
+							exit
+						]
+						res = 'success [info-msg/text: ""]
+					]
 				]
-			][
-				info-msg/text: ""
+				ui-type = "BTC" [
+					info-msg/text: ""
+				]
 			]
 			update-ui yes
 			do-auto-size addr-list
@@ -238,10 +257,9 @@ wallet: context [
 	]
 
 	do-send: func [face [object!] event [event!]][
-		either any [token-name = "ETH" token-name = "RED"][
-			eth-ui/do-send face event
-		][
-			btc-ui/do-send face event
+		case [
+			ui-type = "ETH" [eth-ui/do-send face event]
+			ui-type = "BTC" [btc-ui/do-send face event]
 		]
 	]
 
@@ -344,10 +362,9 @@ wallet: context [
 			]
 			on-change: func [face event][
 				btn-send/enabled?: to-logic face/selected
-				either any [token-name = "ETH" token-name = "RED"][
-					eth-ui/current/selected: face/selected
-				][
-					btc-ui/current/selected: face/selected
+				case [
+					ui-type = "ETH" [eth-ui/current/selected: face/selected]
+					ui-type = "BTC" [btc-ui/current/selected: face/selected]
 				]
 			]
 		]
