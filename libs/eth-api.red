@@ -20,9 +20,18 @@ eth-api: context [
 		cause-error 'user 'eth-api [name arg2 arg3]
 	]
 
-	gwei-to-wei: to-i256 1e9
-	eth-to-gwei: to-i256 1e9
-	eth-to-wei: mul256 eth-to-gwei gwei-to-wei
+	half-scalar: to-i256 1e9
+	top-scalar: mul256 half-scalar half-scalar
+	gwei-to-wei: func [num [vector!] return: [vector!]][
+		mul256 num half-scalar
+	]
+	eth-to-gwei: func [num [vector!] return: [vector!]][
+		mul256 num half-scalar
+	]
+	eth-to-wei: func [num [vector!] return: [vector!]][
+		mul256 num top-scalar
+	]
+
 
 	pad64: function [data [string! binary!]][
 		n: length? data
@@ -128,7 +137,7 @@ eth-api: context [
 		network: https://ethgasstation.info/json/ethgasAPI.json
 		either all [map? res: try [get-url network] res: select res speed][
 			res: to float! res / 10.0
-			mul256 to-i256 res gwei-to-wei
+			gwei-to-wei to-i256 res
 		][none]
 	]
 ]
