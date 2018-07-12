@@ -219,10 +219,11 @@ key: context [
 	get-eth-signed-data: func [
 		bip32-path				[block!]
 		tx						[block!]
+		chain-id				[integer!]
 	][
 		case [
 			device-name = ledger/name [ledger/get-eth-signed-data bip32-path tx]
-			device-name = trezor/name [trezor/get-eth-signed-data bip32-path tx]
+			device-name = trezor/name [trezor/get-eth-signed-data bip32-path tx chain-id]
 			true [new-error 'get-eth-address "not found" device-name]
 		]
 	]

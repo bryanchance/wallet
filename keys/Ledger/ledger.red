@@ -10,6 +10,7 @@ Red [
 #do [_ledger_red_: yes]
 #include %../../libs/HID/hidapi.red
 #include %../../libs/int-encode.red
+#include %../../libs/rlp.red
 
 ledger: context [
 	name: "Ledger Nano S"

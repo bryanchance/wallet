@@ -96,9 +96,9 @@ eth-ui: context [
 			network-to/text: net-name
 			addr-from/text: current/addr
 			gas-limit/text: either token-contract ["79510"]["21000"]
-			if all [not error? gas-price-wei: try [eth-api/get-gas-price 'average] gas-price-wei][
-				gas-price/text: i256-to-float div256 gas-price-wei eth-api/gwei-to-wei
-			]
+			;if all [not error? gas-price-wei: try [eth-api/get-gas-price 'average] gas-price-wei][
+			;	gas-price/text: i256-to-float div256 gas-price-wei eth-api/gwei-to-wei
+			;]
 			reset-sign-button
 			label-unit/text: unit-name
 			clear addr-to/text
@@ -119,6 +119,8 @@ eth-ui: context [
 			return no
 		]
 		either all [
+			vector? gas-price-wei: try [string-to-i256 gas-price/text 9]
+			not negative256? gas-price-wei
 			vector? amount-wei: try [string-to-i256 amount-field/text 18]
 			not negative256? amount-wei
 		][
@@ -178,7 +180,6 @@ eth-ui: context [
 					debase/base eth-api/pad64 copy skip addr-to/text 2 16
 					eth-api/pad64 i256-to-bin amount-wei
 				]
-				chain-id
 			]
 		][
 			tx: reduce [
@@ -188,11 +189,10 @@ eth-ui: context [
 				debase/base skip addr-to/text 2 16		;-- to address
 				amount-wei
 				#{}										;-- data
-				chain-id
 			]
 		]
 
-		signed-data: key/get-eth-signed-data current/path tx
+		signed-data: key/get-eth-signed-data current/path tx chain-id
 
 		either all [
 			signed-data
@@ -221,15 +221,16 @@ eth-ui: context [
 	]
 
 	do-confirm: func [face [object!] event [event!] /local result][
-		result: eth/call-rpc network 'eth_sendRawTransaction reduce [
-			rejoin ["0x" enbase/base signed-data 16]
+		result: try [
+			eth-api/call-rpc network 'eth_sendRawTransaction reduce [
+				rejoin ["0x" enbase/base signed-data 16]
+			]
 		]
 		unview
 		either string? result [
 			browse rejoin [explorer result]
-		][							;-- error
-			ui-base/tx-error/text: rejoin ["Error! Please try again^/^/" form result]
-			view/flags ui-base/tx-error-dlg 'modal
+		][
+			ui-base/show-error-dlg result
 		]
 	]
 

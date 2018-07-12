@@ -13,6 +13,8 @@ Red [
 #include %trezor-driver.red
 #include %../../libs/proto-encode.red
 #include %../../libs/int-encode.red
+#include %../../libs/rlp.red
+
 
 trezor: context [
 	name: "Trezor"
@@ -140,6 +142,7 @@ trezor: context [
 	get-eth-signed-data: func [
 		ids				[block!]
 		tx				[block!]
+		chain-id		[integer!]
 		return:			[binary!]
 		/local
 			req			[map!]
@@ -159,7 +162,7 @@ trezor: context [
 		req: make map! reduce [
 			'address_n ids
 			'nonce nonce 'gas_price gas_price 'gas_limit gas_limit
-			'to tx/4 'value amount 'chain_id tx/7
+			'to tx/4 'value amount 'chain_id chain-id
 		]
 		if data-len > 0 [
 			put req 'data_length data-len
