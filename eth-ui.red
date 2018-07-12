@@ -205,7 +205,7 @@ eth-ui: context [
 			info-price/text:	rejoin [gas-price/text " Gwei"]
 			info-limit/text:	gas-limit/text
 			info-fee/text:		rejoin [
-				form-i256 mul256 gas-price-wei to-i256 limit 18 8
+				form-i256/nopad mul256 gas-price-wei to-i256 limit 18 8
 				" Ether"
 			]
 			info-nonce/text: mold tx/1
