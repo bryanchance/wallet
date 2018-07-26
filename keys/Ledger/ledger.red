@@ -82,7 +82,11 @@ ledger: context [
 	request-pin: func [return: [word!]] [
 		if request-pin-state <> 'Init [return request-pin-state]
 		request-pin-state: 'Requesting
-		view/no-wait/flags pin-dlg 'modal
+		if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 80000000h 0 0] [
+			request-pin-state: 'HasRequested
+			return request-pin-state
+		]
+		view/no-wait/flags unlock-dev-dlg 'modal
 		request-pin-state
 	]
 
@@ -90,12 +94,12 @@ ledger: context [
 		title "Unlock your key"
 		text font-size 12 {Unlock your Ledger key, open the Ethereum app, ensure "Browser support" is "No".} rate 0:0:3 on-time [
 			if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 80000000h 0 0] [
-				request-pin-state: HasRequested
+				request-pin-state: 'HasRequested
 				unview
 				exit
 			]
 			if 'locked <> pin-ret [
-				request-pin-state: DeviceError
+				request-pin-state: 'DeviceError
 				unview
 				exit
 			]
@@ -179,7 +183,7 @@ ledger: context [
 			to-bin32 idx/1
 			to-bin32 idx/2
 			to-bin32 idx/3
-			to-bin32 idx/4
+			to-bin32 idx/5
 		]
 		write-apdu data
 		data: read-apdu 1
