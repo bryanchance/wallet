@@ -174,7 +174,7 @@ eth-ui: context [
 				gas-price-wei
 				limit
 				debase/base token-contract 16			;-- to address
-				eth-api/eth-to-wei 0					;-- value
+				eth-api/eth-to-wei to-i256 0			;-- value
 				rejoin [								;-- data
 					#{a9059cbb}							;-- method ID
 					debase/base eth-api/pad64 copy skip addr-to/text 2 16
