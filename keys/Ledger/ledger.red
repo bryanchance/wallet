@@ -178,11 +178,12 @@ ledger: context [
 			02h
 			0
 			0
-			4 * 4 + 1
-			4
+			4 * 5 + 1
+			5
 			to-bin32 idx/1
 			to-bin32 idx/2
 			to-bin32 idx/3
+			to-bin32 idx/4
 			to-bin32 idx/5
 		]
 		write-apdu data
