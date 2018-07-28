@@ -59,7 +59,7 @@ form-i256: func [bigint [vector!] scalar [integer!] max-point [integer!] /nopad 
 
 	len: length? abs
 	either scalar >= len [
-		left: "0"
+		left: copy "0"
 		insert/dup right: copy abs #"0" (scalar - len)
 	][
 		left: copy/part abs len - scalar
@@ -80,7 +80,12 @@ form-i256: func [bigint [vector!] scalar [integer!] max-point [integer!] /nopad 
 	unless nopad [
 		if 8 > length? left [insert/dup left #" " 8 - length? left]
 	]
-	res: rejoin [left "." right]
+	either max-point > 0 [
+		res: rejoin [left "." right]
+	][
+		res: left
+	]
+	
 	if str/1 = #"-" [insert res #"-"]
 	res
 ]

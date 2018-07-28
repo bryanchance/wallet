@@ -74,7 +74,7 @@ eth-ui: context [
 			if error? balance: try [eth-api/get-balance net-type network token-contract info/addr][
 				return balance
 			]
-			poke addresses i rejoin [info/addr form-i256 balance 18 18]
+			poke addresses i rejoin [info/addr "   " form-i256 balance 18 18]
 			;poke addr-infos i reduce ['addr info/addr 'path info/path 'balance balance]
 			append info reduce ['balance balance]
 			process-events
@@ -97,9 +97,9 @@ eth-ui: context [
 			network-to/text: net-name
 			addr-from/text: current/addr
 			gas-limit/text: either token-contract ["79510"]["21000"]
-			;if all [not error? gas-price-wei: try [eth-api/get-gas-price 'average] gas-price-wei][
-			;	gas-price/text: i256-to-float div256 gas-price-wei eth-api/gwei-to-wei
-			;]
+			if all [not error? gas-price-wei: try [eth-api/get-gas-price 'standard] gas-price-wei][
+				gas-price/text: form-i256/nopad gas-price-wei 9 0
+			]
 			reset-sign-button
 			label-unit/text: unit-name
 			clear addr-to/text
