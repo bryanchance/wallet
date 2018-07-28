@@ -171,20 +171,18 @@ ledger: context [
 		]
 	]
 
-	get-eth-address: func [idx [block!] /local data pub-key-len addr-len][
+	get-eth-address: func [ids [block!] /local data pub-key-len addr-len][
 		data: make binary! 20
 		append data reduce [
 			E0h
 			02h
 			0
 			0
-			4 * 5 + 1
-			5
-			to-bin32 idx/1
-			to-bin32 idx/2
-			to-bin32 idx/3
-			to-bin32 idx/4
-			to-bin32 idx/5
+			4 * (length? ids) + 1
+		]
+		append data collect [
+			keep length? ids
+			forall ids [keep to-bin32 ids/1]
 		]
 		write-apdu data
 		data: read-apdu 1
@@ -202,7 +200,7 @@ ledger: context [
 		]
 	]
 
-	sign-eth-tx: func [addr-idx [block!] tx [block!] /local data max-sz sz signed][
+	sign-eth-tx: func [ids [block!] tx [block!] /local data max-sz sz signed][
 		;-- tx: [nonce, gasprice, startgas, to, value, data]
 		tx-bin: rlp/encode tx
 		chunk: make binary! 200
@@ -215,14 +213,11 @@ ledger: context [
 			chunk/2: 04h
 			chunk/3: either head? tx-bin [0][80h]
 			chunk/4: 0
-			chunk/5: either head? tx-bin [sz + 17][sz]
+			chunk/5: either head? tx-bin [sz + (4 * (length? ids) + 1)][sz]
 			if head? tx-bin [
-				append chunk reduce [
-					4
-					to-bin32 addr-idx/1
-					to-bin32 addr-idx/2
-					to-bin32 addr-idx/3
-					to-bin32 addr-idx/4
+				append chunk collect [
+					keep length? ids
+					forall ids [keep to-bin32 ids/1]
 				]
 			]
 			append/part chunk tx-bin sz
@@ -234,8 +229,8 @@ ledger: context [
 		either 4 > length? signed [none][signed]
 	]
 
-	get-eth-signed-data: func [idx tx /local signed][
-		signed: sign-eth-tx idx tx
+	get-eth-signed-data: func [ids tx /local signed][
+		signed: sign-eth-tx ids tx
 		either all [signed binary? signed][
 			append tx reduce [
 				copy/part signed 1
