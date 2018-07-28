@@ -59,7 +59,7 @@ eth-ui: context [
 		]
 
 		if string? addr [
-			append/only addr-infos reduce ['addr addr 'path ids]
+			append/only addr-infos reduce ['addr copy addr 'path ids]
 			append addresses rejoin [addr "      <loading>"]
 			return 'success
 		]
@@ -71,11 +71,12 @@ eth-ui: context [
 		len: length? addr-infos
 		until [
 			info: pick addr-infos i
-			if error? balance: try [eth-api/get-balance network token-contract info/addr][
+			if error? balance: try [eth-api/get-balance net-type network token-contract info/addr][
 				return balance
 			]
 			poke addresses i rejoin [info/addr form-i256 balance 18 18]
-			poke addr-infos i reduce ['addr info/addr 'path info/path 'balance balance]
+			;poke addr-infos i reduce ['addr info/addr 'path info/path 'balance balance]
+			append info reduce ['balance balance]
 			process-events
 			i: i + 1
 			i > len
@@ -152,8 +153,8 @@ eth-ui: context [
 
 		notify-user
 
-		limit: to-integer gas-limit/text							;-- gas limit
-		nonce: try [eth-api/get-nonce network addr-from/text]		;-- nonce
+		limit: to-integer gas-limit/text										;-- gas limit
+		nonce: try [eth-api/get-nonce net-type network addr-from/text]		;-- nonce
 		if error? nonce [
 			unview
 			view/flags nonce-error-dlg 'modal
@@ -222,9 +223,7 @@ eth-ui: context [
 
 	do-confirm: func [face [object!] event [event!] /local result][
 		result: try [
-			eth-api/call-rpc network 'eth_sendRawTransaction reduce [
-				rejoin ["0x" enbase/base signed-data 16]
-			]
+			eth-api/publish-tx net-type network signed-data
 		]
 		unview
 		either string? result [

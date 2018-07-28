@@ -119,6 +119,8 @@ wallet: context [
 
 			case [
 				ui-type = "ETH" [
+					eth-ui/current/infos: []
+					eth-ui/current/selected: none
 					clear eth-ui/addr-infos
 					clear eth-ui/addresses
 					addr-list/data: eth-ui/addresses
@@ -163,7 +165,6 @@ wallet: context [
 			case [
 				ui-type = "ETH" [
 					info-msg/text: "Please wait while loading balances..."
-					eth-ui/current/infos: eth-ui/addr-infos
 					res: eth-ui/enum-address-info
 					case [
 						error? res [
@@ -174,6 +175,7 @@ wallet: context [
 						]
 						res = 'success [info-msg/text: ""]
 					]
+					eth-ui/current/infos: eth-ui/addr-infos
 				]
 				ui-type = "BTC" [
 					info-msg/text: ""

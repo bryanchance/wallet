@@ -24,7 +24,10 @@ token-config: context [
 		;token name
 		"ETH" [
 			['ui "ETH" 'net-name "mainnet"				'network https://eth.red-lang.org/mainnet			'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1]
+			['ui "ETH" 'net-name "mainnet(mycrypto)"	'network https://api.mycryptoapi.com/eth			'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1]
+			['ui "ETH" 'net-name "mainnet(ethscan)"		'network https://api.etherscan.io/api				'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1 'net-type ethscan]
 			['ui "ETH" 'net-name "mainnet(infura)"		'network https://mainnet.infura.io/					'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1]
+			['ui "ETH" 'net-name "mainnet(blockscale)"	'network https://api.dev.blockscale.net/dev/parity	'explorer https://etherscan.io/tx/				'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 1]
 			['ui "ETH" 'net-name "Rinkeby"				'network https://eth.red-lang.org/rinkeby			'explorer https://rinkeby.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 4]
 			['ui "ETH" 'net-name "Rinkeby(infura)"		'network https://rinkeby.infura.io/					'explorer https://rinkeby.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 4]
 			['ui "ETH" 'net-name "Kovan"				'network https://eth.red-lang.org/kovan				'explorer https://kovan.etherscan.io/tx/		'path [(default-purpose) (eth-coin) (default-account) (default-change)] 'chain-id 42]
@@ -96,6 +99,11 @@ token-config: context [
 				either name: net-block/unit-name [name][token-name]
 			][none]
 		]
+		net-type: is [
+			either net-block [
+				either type: net-block/net-type [type]['rpc]
+			][none]
+		]
 		contract: is [either net-block [net-block/contract][none]]
 		chain-id: is [either net-block [net-block/chain-id][none]]
 		ui: is [either net-block [net-block/ui][none]]
@@ -104,6 +112,7 @@ token-config: context [
 	set 'token-name does [current/token-name]
 	set 'net-name does [current/net-name]
 	set 'network does [current/network]
+	set 'net-type does [current/net-type]
 	set 'explorer does [current/explorer]
 	set 'bip-path does [current/path]
 	set 'unit-name does [current/unit-name]

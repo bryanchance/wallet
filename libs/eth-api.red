@@ -84,44 +84,6 @@ eth-api: context [
 		data
 	]
 
-	parse-balance: function [amount][
-		either (length? amount) % 2 <> 0 [
-			poke amount 2 #"0"
-			n: 1
-		][n: 2]
-		to-i256 debase/base skip amount n 16
-	]
-
-	get-token-balance: func [network [url!] contract [string!] address [string!] /local token-url params res][
-		token-url: rejoin ["0x" contract]
-		params: make map! 4
-		params/to: token-url
-		params/data: rejoin ["0x70a08231" pad64 copy skip address 2]
-		res: call-rpc network 'eth_call reduce [params 'latest]
-		parse-balance res
-	]
-
-	get-eth-balance: func [network [url!] address [string!] /local res][
-		res: call-rpc network 'eth_getBalance reduce [address 'latest]
-		parse-balance res
-	]
-
-	get-balance: func [network [url!] contract [string! none!] address [string!]][
-		either contract [get-token-balance network contract address][
-			get-eth-balance network address
-		]
-	]
-
-	get-nonce: func [network [url!] address [string!] /local n res][
-		res: call-rpc network 'eth_getTransactionCount reduce [address 'pending]
-
-		either (length? res) % 2 <> 0 [
-			poke res 2 #"0"
-			n: 1
-		][n: 2]
-		to integer! debase/base skip res n 16
-	]
-
 	get-url: func [url [url!] return: [map!]
 		/local res 
 	][
@@ -132,11 +94,77 @@ eth-api: context [
 		new-error 'get-url "server error" url
 	]
 
+	parse-balance: function [amount][
+		either (length? amount) % 2 <> 0 [
+			poke amount 2 #"0"
+			n: 1
+		][n: 2]
+		to-i256 debase/base skip amount n 16
+	]
+
+	rpc-net: context [
+		get-token-balance: func [network [url!] contract [string!] address [string!] return: [vector!] /local token-url params res][
+			token-url: rejoin ["0x" contract]
+			params: make map! 4
+			params/to: token-url
+			params/data: rejoin ["0x70a08231" pad64 copy skip address 2]
+			res: call-rpc network 'eth_call reduce [params 'latest]
+			parse-balance res
+		]
+
+		get-eth-balance: func [network [url!] address [string!] return: [vector!] /local res][
+			res: call-rpc network 'eth_getBalance reduce [address 'latest]
+			parse-balance res
+		]
+
+		get-balance: func [network [url!] contract [string! none!] address [string!] return: [vector!]][
+			either contract [get-token-balance network contract address][
+				get-eth-balance network address
+			]
+		]
+
+		get-nonce: func [network [url!] address [string!] return: [integer!] /local n res][
+			res: call-rpc network 'eth_getTransactionCount reduce [address 'pending]
+
+			either (length? res) % 2 <> 0 [
+				poke res 2 #"0"
+				n: 1
+			][n: 2]
+			to integer! debase/base skip res n 16
+		]
+
+		publish-tx: func [network [url!] data [binary!] return: [string!]][
+			call-rpc network 'eth_sendRawTransaction reduce [
+				rejoin ["0x" enbase/base data 16]
+			]
+		]
+	]
+
+	get-balance: func [nettype [word!] network [url!] contract [string! none!] address [string!] return: [vector!]][
+		case [
+			nettype = 'rpc [rpc-net/get-balance network contract copy address]
+			true [new-error 'get-balance "type error" nettype]
+		]
+	]
+
+	get-nonce: func [nettype [word!] network [url!] address [string!] return: [integer!]][
+		case [
+			nettype = 'rpc [rpc-net/get-nonce network copy address]
+			true [new-error 'get-nonce "type error" nettype]
+		]
+	]
+
+	publish-tx: func [nettype [word!] network [url!] data [binary!]][
+		case [
+			nettype = 'rpc [rpc-net/publish-tx network data]
+			true [new-error 'publish-tx "type error" nettype]
+		]
+	]
+
 	get-gas-price: func [speed [word!] return: [vector! none!] /local network res][
-		if all [speed <> 'average speed <> 'fastest speed <> 'safeLow speed <> 'fast][return none]
-		network: https://ethgasstation.info/json/ethgasAPI.json
+		if all [speed <> 'standard speed <> 'fastest speed <> 'safeLow speed <> 'fast][return none]
+		network: https://dev.blockscale.net/api/gasexpress.json
 		either all [map? res: try [get-url network] res: select res speed][
-			res: to float! res / 10.0
 			gwei-to-wei to-i256 res
 		][none]
 	]
