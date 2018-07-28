@@ -66,7 +66,7 @@ eth-api: context [
 		lowercase take/part enbase/base checksum str 'sha256 16 16
 	]
 
-	call-rpc: func [network [url!] method [word!] params [none! block!] /local data blk res err-msg error][
+	call-rpc: func [network [url!] method [word!] params [none! block!] /local data blk res][
 		body/method: method
 		body/params: params
 		data: json/encode body
@@ -78,8 +78,7 @@ eth-api: context [
 		]
 		res: json/decode write network blk
 		unless data: select res 'result [			;-- error
-			err-msg: select res 'error
-			new-error 'call-rpc "server error" reduce [network err-msg]
+			new-error 'call-rpc "server error" reduce [network res]
 		]
 		data
 	]
