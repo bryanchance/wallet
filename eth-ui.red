@@ -152,9 +152,9 @@ eth-ui: context [
 
 		notify-user
 
-		limit: to-integer gas-limit/text				;-- gas limit
-		nonce: eth-api/get-nonce network addr-from/text		;-- nonce
-		if nonce = -1 [
+		limit: to-integer gas-limit/text							;-- gas limit
+		nonce: try [eth-api/get-nonce network addr-from/text]		;-- nonce
+		if error? nonce [
 			unview
 			view/flags nonce-error-dlg 'modal
 			reset-sign-button
