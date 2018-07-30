@@ -92,14 +92,10 @@ ledger: context [
 
 	unlock-dev-dlg: layout [
 		title "Unlock your key"
+		on-close [request-pin-state: 'DeviceError]
 		text font-size 12 {Unlock your Ledger key, open the Ethereum app, ensure "Browser support" is "No".} rate 0:0:3 on-time [
 			if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 0 0] [
 				request-pin-state: 'HasRequested
-				unview
-				exit
-			]
-			if 'locked <> pin-ret [
-				request-pin-state: 'DeviceError
 				unview
 				exit
 			]
@@ -197,6 +193,7 @@ ledger: context [
 			#{BF00018D} = data ['browser-support-on]
 			#{6804} = data ['locked]
 			#{6700} = data ['plug]
+			true ['no-device]
 		]
 	]
 
