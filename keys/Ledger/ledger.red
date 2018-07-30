@@ -197,6 +197,41 @@ ledger: context [
 		]
 	]
 
+	get-btc-address: func [ids [block!] /local segwit? data pub-key-len addr-len][
+		segwit?: false
+		if ids/1 = (80000000h + 49) [
+			segwit?: true
+		]
+
+		data: make binary! 20
+		append data reduce [
+			E0h
+			40h
+			0
+			either segwit? [1][0]
+			4 * (length? ids) + 1
+		]
+		append data collect [
+			keep length? ids
+			forall ids [keep to-bin32 ids/1]
+		]
+		write-apdu data
+		data: read-apdu 1
+
+		case [
+			40 < length? data [
+				;-- parse reply data
+				pub-key-len: to-integer data/1
+				addr-len: to-integer pick skip data pub-key-len + 1 1
+				rejoin ["0x" to-string copy/part skip data pub-key-len + 2 addr-len]
+			]
+			#{BF00018D} = data ['browser-support-on]
+			#{6804} = data ['locked]
+			#{6700} = data ['plug]
+			true ['no-device]
+		]
+	]
+
 	sign-eth-tx: func [ids [block!] tx [block!] /local data max-sz sz signed][
 		;-- tx: [nonce, gasprice, startgas, to, value, data]
 		tx-bin: rlp/encode tx

@@ -211,6 +211,7 @@ key: context [
 
 	get-btc-address: func [bip32-path [block!]][
 		case [
+			device-name = ledger/name [ledger/get-btc-address bip32-path]
 			device-name = trezor/name [trezor/get-btc-address bip32-path]
 			true [new-error 'get-eth-address "not found" device-name]
 		]
