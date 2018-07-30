@@ -62,7 +62,7 @@ wallet: context [
 
 
 	update-ui: func [enabled? [logic!]][
-		btn-send/enabled?: to-logic all [enabled? addr-list/selected > 0]
+		btn-send/enabled?: to-logic all [enabled? addr-list/selected addr-list/selected > 0]
 		if page > 0 [btn-prev/enabled?: enabled?]
 		foreach f [btn-more net-list token-list page-info btn-reload][
 			set in get f 'enabled? enabled?
