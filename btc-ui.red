@@ -334,13 +334,6 @@ btc-ui: context [
 	do-sign-tx: func [face [object!] event [event!] /local utx rate][
 		unless check-data [exit]
 
-		;-- Edge case: key may locked in this moment
-		unless string? key/get-btc-address append copy bip-path 0 [
-			reset-sign-button
-			view/flags ui-base/unlock-dev-dlg 'modal
-			exit
-		]
-
 		utx: calc-balance current/info input-amount input-fee input-addr
 		if utx = none [
 			amount-field/text: copy "NYI.!"

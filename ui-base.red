@@ -16,18 +16,10 @@ ui-base: context [
 
 	tx-error: none
 
-	unlock-dev-dlg: layout [
-		title "Unlock your key"
-		text font-size 12 {Unlock your Ledger key, open the Ethereum app, ensure "Browser support" is "No".}
-		return
-		pad 262x10 button "OK" [unview]
-	]
-
 	tx-error-dlg: layout [
 		title "Send Transaction Error"
 		tx-error: area 400x200
 	]
-
 
 	show-error-dlg: func [e [error!]][
 		tx-error/text: form e

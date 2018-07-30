@@ -162,13 +162,6 @@ eth-ui: context [
 			exit
 		]
 
-		;-- Edge case: key may locked in this moment
-		unless string? key/get-eth-address append copy bip-path 0 [
-			reset-sign-button
-			view/flags ui-base/unlock-dev-dlg 'modal
-			exit
-		]
-
 		either token-contract [
 			tx: reduce [
 				nonce
