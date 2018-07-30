@@ -82,7 +82,7 @@ ledger: context [
 	request-pin: func [return: [word!]] [
 		if request-pin-state <> 'Init [return request-pin-state]
 		request-pin-state: 'Requesting
-		if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 80000000h 0 0] [
+		if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 0 0] [
 			request-pin-state: 'HasRequested
 			return request-pin-state
 		]
@@ -93,7 +93,7 @@ ledger: context [
 	unlock-dev-dlg: layout [
 		title "Unlock your key"
 		text font-size 12 {Unlock your Ledger key, open the Ethereum app, ensure "Browser support" is "No".} rate 0:0:3 on-time [
-			if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 80000000h 0 0] [
+			if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 0 0] [
 				request-pin-state: 'HasRequested
 				unview
 				exit
