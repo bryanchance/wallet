@@ -51,8 +51,10 @@ wallet: context [
 	btn-more: none
 
 
-	enumerate: func [/local len] [
-		key/current/devices: key/enumerate
+	enumerate: func [/list devs [block!] /local len] [
+		either list [key/current/devices: devs][
+			key/current/devices: key/enumerate
+		]
 		if dev-list/selected > key/current/count [dev-list/selected: key/current/count]
 		key/current/selected: dev-list/selected
 		dev-list/data: key/current/name-list
@@ -294,38 +296,30 @@ wallet: context [
 		append ui/pane usb-device: make face! [
 			type: 'usb-device offset: 0x0 size: 10x10 rate: 0:0:1
 			actors: object [
-				on-up: func [face [object!] event [event!] /local id [integer!] len [integer!]][
+				on-up: func [face [object!] event [event!] /local id [integer!] devs [block!]][
 					id: face/data/2 << 16 or face/data/1
 					if key/support? id [
 						;-- print "on-up"
-						enumerate
-						len: length? dev-list/data
-						either len > 1 [								;-- if we have multi devices, just reset all
-							;-- print [len " devices"]
+						if key/current/devices <> devs: key/enumerate [
+							enumerate/list devs
 							if key/opened? [key/close]
 							connected?: no
 							connect
 							list-addresses
-						][
-							if not key/opened? [
-								;-- print "not opened"
-								connected?: no
-								connect
-								list-addresses
-							]
 						]
 					]
 				]
-				on-down: func [face [object!] event [event!] /local id [integer!]][
+				on-down: func [face [object!] event [event!] /local id [integer!] devs [block!]][
 					id: face/data/2 << 16 or face/data/1
 					if key/support? id [
 						;-- print "on-down"
-						face/rate: 0:0:1
-						if key/opened? [key/close]
-						connected?: no
-						enumerate
-						connect
-						list-addresses
+						if key/current/devices <> devs: key/enumerate [
+							enumerate/list devs
+							if key/opened? [key/close]
+							connected?: no
+							connect
+							list-addresses
+						]
 					]
 				]
 				on-time: func [face event][
