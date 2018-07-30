@@ -85,14 +85,14 @@ key: context [
 			info: blk/(i + 1)
 			case [
 				ledger/name = uniq/1 [
-					if ledger/filter? uniq/2 info/1 [
+					if ledger/filter? ui-type uniq/2 info/1 [
 						info2: select/last list ledger/name
 						either info2 [index: info2/2 + 1][index: 0]
 						append list reduce [ledger/name reduce [uniq/2 index info/2]]
 					]
 				]
 				trezor/name = uniq/1 [
-					if trezor/filter? uniq/2 info/1 [
+					if trezor/filter? ui-type uniq/2 info/1 [
 						info2: select/last list trezor/name
 						either info2 [index: info2/2 + 1][index: 0]
 						append list reduce [trezor/name reduce [uniq/2 index info/2]]
@@ -161,11 +161,8 @@ key: context [
 
 	close: does [
 		close-pin-requesting
-		case [
-			device-name = ledger/name [ledger/close]
-			device-name = trezor/name [trezor/close]
-			true [new-error 'close "not found" device-name]
-		]
+		ledger/close
+		trezor/close
 		dongle: none
 	]
 
@@ -185,20 +182,17 @@ key: context [
 		]
 	]
 
-	request-pin: func [return: [word!]][
+	request-pin: func [ui-type [string!] return: [word!]][
 		case [
-			device-name = ledger/name [ledger/request-pin]
-			device-name = trezor/name [trezor/request-pin]
+			device-name = ledger/name [ledger/request-pin ui-type]
+			device-name = trezor/name [trezor/request-pin ui-type]
 			true [new-error 'request-pin "not found" device-name]
 		]
 	]
 
 	close-pin-requesting: does [
-		case [
-			device-name = ledger/name [ledger/close-pin-requesting]
-			device-name = trezor/name [trezor/close-pin-requesting]
-			true [new-error 'close-pin-requesting "not found" device-name]
-		]
+		ledger/close-pin-requesting
+		trezor/close-pin-requesting
 	]
 
 	get-eth-address: func [bip32-path [block!]][

@@ -34,9 +34,11 @@ trezor: context [
 	pin-req: none
 	pin-ret: none
 	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/DeviceError
+	req-ui-type: none
 	serialized_tx: make binary! 500
 
 	filter?: func [
+		ui-type			[string!]
 		_id				[integer!]
 		_usage			[integer!]
 		return:			[logic!]
@@ -74,9 +76,10 @@ trezor: context [
 		]
 	]
 
-	request-pin: func [return: [word!]] [
-		if request-pin-state <> 'Init [return request-pin-state]
+	request-pin: func [ui-type [string!] return: [word!]] [
+		;if request-pin-state <> 'Init [return request-pin-state]
 
+		req-ui-type: ui-type
 		pin-req: make map! reduce ['address_n reduce [8000002Ch 8000003Ch 80000000h]]
 		put pin-req 'show_display false
 		pin-msg: 'EthereumGetAddress

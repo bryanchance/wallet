@@ -87,7 +87,7 @@ wallet: context [
 			info-msg/text: "Initialize the key failed..."
 			exit
 		]
-		if 'DeviceError = key/request-pin [
+		if 'DeviceError = key/request-pin ui-type [
 			info-msg/text: "Unlock the key failed..."
 			exit
 		]
@@ -189,7 +189,7 @@ wallet: context [
 	]
 
 	do-select-dev: func [face [object!] event [event!]][
-		key/close
+		if key/opened? [key/close]
 		connected?: no
 		face/selected: select-device face/selected
 		connect
@@ -201,9 +201,15 @@ wallet: context [
 		do-reload
 	]
 
-	do-select-token: func [face [object!] event [event!]][
+	do-select-token: func [face [object!] event [event!] /local last-ui][
+		last-ui: ui-type
 		face/selected: select-token face/selected
 		net-list/selected: select-net net-list/selected
+		if last-ui <> ui-type [
+			if key/opened? [key/close]
+			connected?: no
+			connect
+		]
 		do-reload
 	]
 	

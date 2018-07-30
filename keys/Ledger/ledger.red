@@ -36,14 +36,19 @@ ledger: context [
 
 	pin-ret: none
 	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/DeviceError
+	req-reason: none
+	req-ui-type: none
 
 	filter?: func [
+		ui-type			[string!]
 		_id				[integer!]
 		_usage			[integer!]
 		return:			[logic!]
 	][
-		if find ids _id [return true]
-		false
+		unless find ids _id [return false]
+		if (_usage >>> 16) = FF01h [return false]		;-- skip debug integerface
+		if (_usage >>> 16) = F1D0h [return false]		;-- skip fido integerface
+		true
 	]
 
 	support?: func [
@@ -79,22 +84,71 @@ ledger: context [
 		]
 	]
 
-	request-pin: func [return: [word!]] [
-		if request-pin-state <> 'Init [return request-pin-state]
-		request-pin-state: 'Requesting
-		if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 0 0] [
-			request-pin-state: 'HasRequested
-			return request-pin-state
+	request-pin: func [ui-type [string!] return: [word!]] [
+		;if request-pin-state <> 'Init [return request-pin-state]
+
+		req-ui-type: ui-type
+		request-pin-state: try [request-pin-cmd]
+		if error? request-pin-state [return request-pin-state: 'DeviceError]
+
+		if request-pin-state = 'Requesting [
+			view/no-wait/flags unlock-dev-dlg 'modal
 		]
-		view/no-wait/flags unlock-dev-dlg 'modal
+
 		request-pin-state
+	]
+
+	request-pin-cmd: func [return: [word!] /local res] [
+		case [
+			req-ui-type = "ETH" [
+				if string? res: try [get-eth-public-address [8000002Ch 8000003Ch 80000000h 0 0]] [return 'HasRequested]
+				if all [res/id = 'ledger res/arg1 = 'get-eth-public-address][
+					req-reason/text: case [
+						res/arg2 = 'browser-support-on [{Open the Ethereum app, ensure "Browser support" is "No".}]
+						res/arg2 = 'locked [{Please unlock your Ledger key}]
+						res/arg2 = 'plug [{plug?}]
+						any [
+							res/arg2 = 'app 
+							res/arg2 = 'unknown
+							true
+						] [{Please open the Ethereum app}]
+					]
+					return 'Requesting
+				]
+				req-reason/text: {device driver error}
+				res
+			]
+			req-ui-type = "BTC" [
+				if string? res: try [get-btc-public-address [80000031h 80000000h 80000000h 0 0]] [return 'HasRequested]
+				if all [res/id = 'ledger res/arg1 = 'get-btc-public-address][
+					req-reason/text: case [
+						res/arg2 = 'browser-support-on [{Open the Bitcoin app, ensure "Browser support" is "No".}]
+						res/arg2 = 'locked [{Please unlock your Ledger key}]
+						res/arg2 = 'plug [{plug?}]
+						any [
+							res/arg2 = 'app
+							res/arg2 = 'unknown
+							true
+						] [{Please open the Bitcoin app}]
+					]
+					return 'Requesting
+				]
+				req-reason/text: {device driver error}
+				res
+			]
+			true [
+				req-reason/text: rejoin ["unknown ui-type: " req-ui-type]
+				new-error 'request-pin-cmd 'unknown req-ui-type
+			]
+		]
 	]
 
 	unlock-dev-dlg: layout [
 		title "Unlock your key"
 		on-close [request-pin-state: 'DeviceError]
-		text font-size 12 {Unlock your Ledger key, open the Ethereum app, ensure "Browser support" is "No".} rate 0:0:3 on-time [
-			if string? pin-ret: get-eth-address [8000002Ch 8000003Ch 80000000h 0 0] [
+		req-reason: text font-size 12 {Open the Ethereum app, ensure "Browser support" is "No".} rate 0:0:3 on-time [
+			request-pin-state: try [request-pin-cmd]
+			unless error? request-pin-state [return request-pin-state: 'DeviceError][
 				request-pin-state: 'HasRequested
 				unview
 				exit
@@ -167,7 +221,7 @@ ledger: context [
 		]
 	]
 
-	get-eth-address: func [ids [block!] /local data pub-key-len addr-len][
+	get-eth-public-address: func [ids [block!] return: [string!] /local data pub-key-len addr-len][
 		data: make binary! 20
 		append data reduce [
 			E0h
@@ -190,14 +244,19 @@ ledger: context [
 				addr-len: to-integer pick skip data pub-key-len + 1 1
 				rejoin ["0x" to-string copy/part skip data pub-key-len + 2 addr-len]
 			]
-			#{BF00018D} = data ['browser-support-on]
-			#{6804} = data ['locked]
-			#{6700} = data ['plug]
-			true ['no-device]
+			#{BF00018D} = data [new-error 'get-eth-public-address 'browser-support-on data]
+			#{6804} = data [new-error 'get-eth-public-address 'locked data]
+			#{6700} = data [new-error 'get-eth-public-address 'plug data]
+			#{6D00} = data [new-error 'get-eth-public-address 'app data]
+			true [new-error 'get-eth-public-address 'unknown data]
 		]
 	]
 
-	get-btc-address: func [ids [block!] /local segwit? data pub-key-len addr-len][
+	get-eth-address: func [ids [block!] return: [string!]][
+		get-eth-public-address ids
+	]
+
+	get-btc-public-address: func [ids [block!] return: [string!] /local segwit? data pub-key-len addr-len][
 		segwit?: false
 		if ids/1 = (80000000h + 49) [
 			segwit?: true
@@ -223,13 +282,18 @@ ledger: context [
 				;-- parse reply data
 				pub-key-len: to-integer data/1
 				addr-len: to-integer pick skip data pub-key-len + 1 1
-				rejoin ["0x" to-string copy/part skip data pub-key-len + 2 addr-len]
+				to-string copy/part skip data pub-key-len + 2 addr-len
 			]
-			#{BF00018D} = data ['browser-support-on]
-			#{6804} = data ['locked]
-			#{6700} = data ['plug]
-			true ['no-device]
+			#{BF00018D} = data [new-error 'get-btc-public-address 'browser-support-on data]
+			#{6804} = data [new-error 'get-btc-public-address 'locked data]
+			#{6700} = data [new-error 'get-btc-public-address 'plug data]
+			#{6D00} = data [new-error 'get-btc-public-address 'app data]
+			true [new-error 'get-btc-public-address 'unknown data]
 		]
+	]
+
+	get-btc-address: func [ids [block!] return: [string!]][
+		get-btc-public-address ids
 	]
 
 	sign-eth-tx: func [ids [block!] tx [block!] /local data max-sz sz signed][
