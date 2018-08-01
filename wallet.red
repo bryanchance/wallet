@@ -200,7 +200,10 @@ wallet: context [
 	do-select-network: func [face [object!] event [event!] /local last-unit][
 		last-unit: unit-name
 		face/selected: select-net face/selected
-		if all [ui-type = "BTC" last-unit <> unit-name][
+		unless any [
+			all [last-unit = "RED" unit-name = "ETH"]
+			all [last-unit = "ETH" unit-name = "RED"]
+		][
 			key/close
 			connected?: no
 			enumerate
@@ -209,10 +212,14 @@ wallet: context [
 		do-reload
 	]
 
-	do-select-token: func [face [object!] event [event!]][
+	do-select-token: func [face [object!] event [event!] /local last-unit][
+		last-unit: unit-name
 		face/selected: select-token face/selected
 		net-list/selected: select-net net-list/selected
-		if any [unit-name = "TEST" unit-name = "BTC"][
+		unless any [
+			all [last-unit = "RED" unit-name = "ETH"]
+			all [last-unit = "ETH" unit-name = "RED"]
+		][
 			key/close
 			connected?: no
 			enumerate
