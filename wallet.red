@@ -196,17 +196,23 @@ wallet: context [
 		list-addresses
 	]
 
-	do-select-network: func [face [object!] event [event!]][
+	do-select-network: func [face [object!] event [event!] /local last-unit][
+		last-unit: unit-name
 		face/selected: select-net face/selected
+		if all [ui-type = "BTC" last-unit <> unit-name][
+			key/close
+			connected?: no
+			enumerate
+			connect
+		]
 		do-reload
 	]
 
-	do-select-token: func [face [object!] event [event!] /local last-ui][
-		last-ui: ui-type
+	do-select-token: func [face [object!] event [event!]][
 		face/selected: select-token face/selected
 		net-list/selected: select-net net-list/selected
-		if last-ui <> ui-type [
-			if key/opened? [key/close]
+		if any [unit-name = "TEST" unit-name = "BTC"][
+			key/close
 			connected?: no
 			enumerate
 			connect
