@@ -112,8 +112,8 @@ ledger: context [
 				req-reason/text: case [
 					res = 'browser-support-on [{Open the Ethereum app, ensure "Browser support" is "No".}]
 					res = 'locked [{Please unlock your Ledger key}]
-					res = 'plug [{plug?}]
 					any [
+						res = 'plug
 						res = 'app
 						res = 'unknown
 						true
@@ -133,8 +133,8 @@ ledger: context [
 				req-reason/text: case [
 					res = 'browser-support-on [{Open the Bitcoin app, ensure "Browser support" is "No".}]
 					res = 'locked [{Please unlock your Ledger key}]
-					res = 'plug [{plug?}]
 					any [
+						res = 'plug
 						res = 'app
 						res = 'unknown
 						true
@@ -154,8 +154,8 @@ ledger: context [
 				req-reason/text: case [
 					res = 'browser-support-on [{Open the Bitcoin Test app, ensure "Browser support" is "No".}]
 					res = 'locked [{Please unlock your Ledger key}]
-					res = 'plug [{plug?}]
 					any [
+						res = 'plug
 						res = 'app
 						res = 'unknown
 						true
