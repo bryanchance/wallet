@@ -73,6 +73,7 @@ wallet: context [
 	]
 
 	connect: has [res][
+		usb-device/rate: none
 		update-ui no
 		if device-name = key/no-dev [
 			info-msg/text: "Please plug in your key..."
