@@ -173,8 +173,8 @@ ledger: context [
 		on-close [request-pin-state: 'DeviceError]
 		req-reason: text font-size 12 {Open the Ethereum app, ensure "Browser support" is "No".} rate 0:0:3 on-time [
 			request-pin-state: try [request-pin-cmd]
-			unless error? request-pin-state [return request-pin-state: 'DeviceError][
-				request-pin-state: 'HasRequested
+			if error? request-pin-state [request-pin-state: 'DeviceError exit]
+			if request-pin-state = 'HasRequested [
 				unview
 				exit
 			]
