@@ -182,10 +182,10 @@ key: context [
 		]
 	]
 
-	request-pin: func [unit-name [string!] return: [word!]][
+	request-pin: func [unitname [string!] return: [word!]][
 		case [
-			device-name = ledger/name [ledger/request-pin unit-name]
-			device-name = trezor/name [trezor/request-pin unit-name]
+			device-name = ledger/name [ledger/request-pin unitname]
+			device-name = trezor/name [trezor/request-pin unitname]
 			true [new-error 'request-pin "not found" device-name]
 		]
 	]

@@ -86,15 +86,15 @@ ledger: context [
 
 	close-pin-requesting: does [
 		if request-pin-state = 'Requesting [
-			request-pin-state: 'Init
 			unview/only unlock-dev-dlg
 		]
+		request-pin-state: 'Init
 	]
 
-	request-pin: func [unit-name [string!] return: [word!]] [
+	request-pin: func [unitname [string!] return: [word!]] [
 		;if request-pin-state <> 'Init [return request-pin-state]
 
-		req-unit-name: unit-name
+		req-unit-name: unitname
 		request-pin-state: try [request-pin-cmd]
 		if error? request-pin-state [return request-pin-state: 'DeviceError]
 
@@ -263,7 +263,7 @@ ledger: context [
 		btc-coin-version/shortCoinId: to string! copy/part skip data 7 + full-name-len short-name-len
 	]
 
-	get-eth-public-address: func [ids [block!] return: [string!] /local data pub-key-len addr-len][
+	get-eth-public-address: func [ids [block!] return: [string! word!] /local data pub-key-len addr-len][
 		data: make binary! 20
 		append data reduce [
 			E0h
@@ -298,8 +298,7 @@ ledger: context [
 		get-eth-public-address ids
 	]
 
-	get-btc-public-address: func [ids [block!] return: [string!] /local segwit? data pub-key-len addr-len][
-		btc-get-coin-version
+	get-btc-public-address: func [ids [block!] return: [string! word!] /local segwit? data pub-key-len addr-len][
 		segwit?: false
 		if ids/1 = (80000000h + 49) [
 			segwit?: true

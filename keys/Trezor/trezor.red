@@ -70,15 +70,15 @@ trezor: context [
 
 	close-pin-requesting: does [
 		if request-pin-state = 'Requesting [
-			request-pin-state: 'Init
 			unview/only pin-dlg
 		]
+		request-pin-state: 'Init
 	]
 
-	request-pin: func [unit-name [string!] return: [word!]] [
+	request-pin: func [unitname [string!] return: [word!]] [
 		;if request-pin-state <> 'Init [return request-pin-state]
 
-		req-unit-name: unit-name
+		req-unit-name: unitname
 		pin-req: make map! reduce ['address_n reduce [8000002Ch 8000003Ch 80000000h]]
 		put pin-req 'show_display false
 		pin-msg: 'EthereumGetAddress
