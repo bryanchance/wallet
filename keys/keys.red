@@ -85,14 +85,14 @@ key: context [
 			info: blk/(i + 1)
 			case [
 				ledger/name = uniq/1 [
-					if ledger/filter? ui-type uniq/2 info/1 [
+					if ledger/filter? uniq/2 info/1 [
 						info2: select/last list ledger/name
 						either info2 [index: info2/2 + 1][index: 0]
 						append list reduce [ledger/name reduce [uniq/2 index info/2]]
 					]
 				]
 				trezor/name = uniq/1 [
-					if trezor/filter? ui-type uniq/2 info/1 [
+					if trezor/filter? uniq/2 info/1 [
 						info2: select/last list trezor/name
 						either info2 [index: info2/2 + 1][index: 0]
 						append list reduce [trezor/name reduce [uniq/2 index info/2]]
@@ -178,14 +178,14 @@ key: context [
 		case [
 			device-name = ledger/name [ledger/request-pin-state]
 			device-name = trezor/name [trezor/request-pin-state]
-			true [new-error 'get-request-pin-state "not found" device-name]
+			true ['Init]
 		]
 	]
 
-	request-pin: func [ui-type [string!] return: [word!]][
+	request-pin: func [unit-name [string!] return: [word!]][
 		case [
-			device-name = ledger/name [ledger/request-pin ui-type]
-			device-name = trezor/name [trezor/request-pin ui-type]
+			device-name = ledger/name [ledger/request-pin unit-name]
+			device-name = trezor/name [trezor/request-pin unit-name]
 			true [new-error 'request-pin "not found" device-name]
 		]
 	]

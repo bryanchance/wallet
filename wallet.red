@@ -87,7 +87,7 @@ wallet: context [
 			info-msg/text: "Initialize the key failed..."
 			exit
 		]
-		if 'DeviceError = key/request-pin ui-type [
+		if 'DeviceError = key/request-pin unit-name [
 			info-msg/text: "Unlock the key failed..."
 			exit
 		]
@@ -208,6 +208,7 @@ wallet: context [
 		if last-ui <> ui-type [
 			if key/opened? [key/close]
 			connected?: no
+			enumerate
 			connect
 		]
 		do-reload

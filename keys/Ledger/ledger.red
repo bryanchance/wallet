@@ -37,10 +37,17 @@ ledger: context [
 	pin-ret: none
 	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/DeviceError
 	req-reason: none
-	req-ui-type: none
+	req-unit-name: none
+
+	btc-coin-version: context [
+		payToAddressVersion: none
+		payToScriptHashVersion: none
+		coinFamily: none
+		coinId: none
+		shortCoinId: none
+	]
 
 	filter?: func [
-		ui-type			[string!]
 		_id				[integer!]
 		_usage			[integer!]
 		return:			[logic!]
@@ -84,10 +91,10 @@ ledger: context [
 		]
 	]
 
-	request-pin: func [ui-type [string!] return: [word!]] [
+	request-pin: func [unit-name [string!] return: [word!]] [
 		;if request-pin-state <> 'Init [return request-pin-state]
 
-		req-ui-type: ui-type
+		req-unit-name: unit-name
 		request-pin-state: try [request-pin-cmd]
 		if error? request-pin-state [return request-pin-state: 'DeviceError]
 
@@ -100,45 +107,65 @@ ledger: context [
 
 	request-pin-cmd: func [return: [word!] /local res] [
 		case [
-			req-ui-type = "ETH" [
-				if string? res: try [get-eth-public-address [8000002Ch 8000003Ch 80000000h 0 0]] [return 'HasRequested]
-				if all [res/id = 'ledger res/arg1 = 'get-eth-public-address][
-					req-reason/text: case [
-						res/arg2 = 'browser-support-on [{Open the Ethereum app, ensure "Browser support" is "No".}]
-						res/arg2 = 'locked [{Please unlock your Ledger key}]
-						res/arg2 = 'plug [{plug?}]
-						any [
-							res/arg2 = 'app 
-							res/arg2 = 'unknown
-							true
-						] [{Please open the Ethereum app}]
-					]
-					return 'Requesting
+			any [req-unit-name = "ETH" req-unit-name = "RED"] [
+				if string? res: get-eth-public-address [8000002Ch 8000003Ch 80000000h 0 0] [return 'HasRequested]
+				req-reason/text: case [
+					res = 'browser-support-on [{Open the Ethereum app, ensure "Browser support" is "No".}]
+					res = 'locked [{Please unlock your Ledger key}]
+					res = 'plug [{plug?}]
+					any [
+						res = 'app
+						res = 'unknown
+						true
+					] [{Please open the Ethereum app}]
 				]
-				req-reason/text: {device driver error}
-				res
+				return 'Requesting
 			]
-			req-ui-type = "BTC" [
-				if string? res: try [get-btc-public-address [80000031h 80000000h 80000000h 0 0]] [return 'HasRequested]
-				if all [res/id = 'ledger res/arg1 = 'get-btc-public-address][
-					req-reason/text: case [
-						res/arg2 = 'browser-support-on [{Open the Bitcoin app, ensure "Browser support" is "No".}]
-						res/arg2 = 'locked [{Please unlock your Ledger key}]
-						res/arg2 = 'plug [{plug?}]
-						any [
-							res/arg2 = 'app
-							res/arg2 = 'unknown
-							true
-						] [{Please open the Bitcoin app}]
+			req-unit-name = "BTC" [
+				if string? res: get-btc-public-address [80000031h 80000000h 80000000h 0 0] [
+					btc-get-coin-version
+					if btc-coin-version/shortCoinId <> req-unit-name [
+						req-reason/text: {Please open the Bitcoin app}
+						return 'Requesting
 					]
-					return 'Requesting
+					return 'HasRequested
 				]
-				req-reason/text: {device driver error}
-				res
+				req-reason/text: case [
+					res = 'browser-support-on [{Open the Bitcoin app, ensure "Browser support" is "No".}]
+					res = 'locked [{Please unlock your Ledger key}]
+					res = 'plug [{plug?}]
+					any [
+						res = 'app
+						res = 'unknown
+						true
+					] [{Please open the Bitcoin app}]
+				]
+				return 'Requesting
+			]
+			req-unit-name = "TEST" [
+				if string? res: get-btc-public-address [80000031h 80000001h 80000000h 0 0] [
+					btc-get-coin-version
+					if btc-coin-version/shortCoinId <> req-unit-name [
+						req-reason/text: {Please open the Bitcoin Test app}
+						return 'Requesting
+					]
+					return 'HasRequested
+				]
+				req-reason/text: case [
+					res = 'browser-support-on [{Open the Bitcoin Test app, ensure "Browser support" is "No".}]
+					res = 'locked [{Please unlock your Ledger key}]
+					res = 'plug [{plug?}]
+					any [
+						res = 'app
+						res = 'unknown
+						true
+					] [{Please open the Bitcoin Test app}]
+				]
+				return 'Requesting
 			]
 			true [
-				req-reason/text: rejoin ["unknown ui-type: " req-ui-type]
-				new-error 'request-pin-cmd 'unknown req-ui-type
+				req-reason/text: rejoin ["unknown unit-name: " req-unit-name]
+				new-error 'request-pin-cmd 'unknown req-unit-name
 			]
 		]
 	]
@@ -221,6 +248,23 @@ ledger: context [
 		]
 	]
 
+	btc-get-coin-version: has [data full-name-len short-name-len][
+		data: copy #{E0 16 00 00 00}
+		write-apdu data
+		data: read-apdu 1
+		if 7 >= length? data [
+			new-error 'btc-get-coin-version 'unknown data
+		]
+
+		btc-coin-version/payToAddressVersion: data/1 << 8 + data/2
+		btc-coin-version/payToScriptHashVersion: data/3 << 8 + data/4
+		btc-coin-version/coinFamily: data/5
+		full-name-len: data/6
+		btc-coin-version/coinId: to string! copy/part skip data 6 full-name-len
+		short-name-len: pick skip data 6 + full-name-len 1
+		btc-coin-version/shortCoinId: to string! copy/part skip data 7 + full-name-len short-name-len
+	]
+
 	get-eth-public-address: func [ids [block!] return: [string!] /local data pub-key-len addr-len][
 		data: make binary! 20
 		append data reduce [
@@ -244,11 +288,11 @@ ledger: context [
 				addr-len: to-integer pick skip data pub-key-len + 1 1
 				rejoin ["0x" to-string copy/part skip data pub-key-len + 2 addr-len]
 			]
-			#{BF00018D} = data [new-error 'get-eth-public-address 'browser-support-on data]
-			#{6804} = data [new-error 'get-eth-public-address 'locked data]
-			#{6700} = data [new-error 'get-eth-public-address 'plug data]
-			#{6D00} = data [new-error 'get-eth-public-address 'app data]
-			true [new-error 'get-eth-public-address 'unknown data]
+			#{BF00018D} = data ['browser-support-on]
+			#{6804} = data ['locked]
+			#{6700} = data ['plug]
+			#{6D00} = data ['app]
+			true ['unknown]
 		]
 	]
 
@@ -257,6 +301,7 @@ ledger: context [
 	]
 
 	get-btc-public-address: func [ids [block!] return: [string!] /local segwit? data pub-key-len addr-len][
+		btc-get-coin-version
 		segwit?: false
 		if ids/1 = (80000000h + 49) [
 			segwit?: true
@@ -284,11 +329,11 @@ ledger: context [
 				addr-len: to-integer pick skip data pub-key-len + 1 1
 				to-string copy/part skip data pub-key-len + 2 addr-len
 			]
-			#{BF00018D} = data [new-error 'get-btc-public-address 'browser-support-on data]
-			#{6804} = data [new-error 'get-btc-public-address 'locked data]
-			#{6700} = data [new-error 'get-btc-public-address 'plug data]
-			#{6D00} = data [new-error 'get-btc-public-address 'app data]
-			true [new-error 'get-btc-public-address 'unknown data]
+			#{BF00018D} = data ['browser-support-on]
+			#{6804} = data ['locked]
+			#{6700} = data ['plug]
+			#{6D00} = data ['app]
+			true ['unknown]
 		]
 	]
 
