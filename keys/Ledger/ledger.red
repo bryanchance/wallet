@@ -131,7 +131,6 @@ ledger: context [
 					return 'HasRequested
 				]
 				req-reason/text: case [
-					res = 'browser-support-on [{Open the Bitcoin app, ensure "Browser support" is "No".}]
 					res = 'locked [{Please unlock your Ledger key}]
 					any [
 						res = 'plug
@@ -152,7 +151,6 @@ ledger: context [
 					return 'HasRequested
 				]
 				req-reason/text: case [
-					res = 'browser-support-on [{Open the Bitcoin Test app, ensure "Browser support" is "No".}]
 					res = 'locked [{Please unlock your Ledger key}]
 					any [
 						res = 'plug
@@ -329,7 +327,6 @@ ledger: context [
 				addr-len: to-integer pick skip data pub-key-len + 1 1
 				to-string copy/part skip data pub-key-len + 2 addr-len
 			]
-			#{BF00018D} = data ['browser-support-on]
 			#{6804} = data ['locked]
 			#{6700} = data ['plug]
 			#{6D00} = data ['app]
