@@ -11,6 +11,7 @@ Red [
 #include %../../libs/HID/hidapi.red
 #include %../../libs/int-encode.red
 #include %../../libs/rlp.red
+#include %../../libs/base58.red
 
 ledger: context [
 	name: "Ledger Nano S"
@@ -337,7 +338,7 @@ ledger: context [
 		get-btc-public-address ids
 	]
 
-	sign-eth-tx: func [ids [block!] tx [block!] /local data max-sz sz signed][
+	sign-eth-tx: func [ids [block!] tx [block!] /local chunk max-sz sz signed][
 		;-- tx: [nonce, gasprice, startgas, to, value, data]
 		tx-bin: rlp/encode tx
 		chunk: make binary! 200
@@ -376,6 +377,118 @@ ledger: context [
 			]
 			rlp/encode tx
 		][signed]
+	]
+
+	sign-btc-tx: func [
+		tx				[block!]
+		return:			[block! binary!]
+		/local
+			coin_name input-segwit? data type trust-type
+			input-count tx-input tx-output pre-input pre-output ids output-count
+	][
+		coin_name: "Bitcoin"
+		if tx/inputs/1/path/2 = (80000000h + 1) [
+			coin_name: "Testnet"
+		]
+		input-segwit?: false
+		if tx/inputs/1/path/1 = (80000000h + 49) [
+			input-segwit?: true
+		]
+
+		data: make binary! 100
+		input-count: length? tx/inputs
+		tx-input: pick tx/inputs 1
+		probe tx-input
+		append data to-bin32/little tx-input/info/version
+		append data input-count
+		type: either input-segwit? [2][0]
+		start-hash-input/first type data
+
+		repeat i input-count [
+			tx-input: pick tx/inputs i
+			trust-type: either input-segwit? [2][0]
+			clear data
+			append data trust-type
+			append data reverse debase/base tx-input/tx-hash 16
+			repeat j length? tx-input/info/outputs [
+				pre-output: pick tx-input/info/outputs j
+				if tx-input/addr = pick pre-output/addresses 1 [break]
+			]
+			append data to-bin32/little j - 1
+			append data reverse skip i256-to-bin pre-output/value 24
+			if input-segwit? [append data #{00}]
+			start-hash-input type data
+
+			clear data
+			append data #{FFFFFF00}
+			start-hash-input type data
+		]
+
+		clear data
+		ids: tx-input/path
+		append data collect [
+			keep length? ids
+			forall ids [keep to-bin32 pick ids 1]
+		]
+		final-hash-input FFh data
+
+		probe tx/outputs
+		clear data
+		output-count: length? tx/outputs
+		append data output-count
+		repeat i output-count [
+			tx-output: pick tx/outputs i
+			append data reverse skip i256-to-bin tx-output/value 24
+			append data #{17 A9 14}
+			append data copy/part skip base58/decode tx-output/addr 1 20
+			append data #{87}
+		]
+		probe data
+		final-hash-input 0 data
+
+	]
+
+	get-btc-signed-data: func [
+		tx			[block!]
+	][
+		sign-btc-tx tx
+	]
+
+	start-hash-input: func [type [integer!] data [binary!] /first
+		/local chunk
+	][
+		chunk: make binary! 200
+		append chunk reduce [
+			E0h
+			44h
+			either first [0][80h]
+			type
+			length? data
+		]
+		append chunk data
+		write-apdu chunk
+		chunk: read-apdu 50
+		if chunk <> #{9000} [new-error 'start-hash-input "unknown" chunk]
+	]
+
+	final-hash-input: func [type [integer!] data [binary!] return: [binary!]
+		/local chunk
+	][
+		chunk: make binary! 200
+		append chunk reduce [
+			E0h
+			4Ah
+			type
+			0
+			length? data
+		]
+		append chunk data
+		write-apdu chunk
+		chunk: read-apdu 50
+		case [
+			type = FFh [if chunk <> #{9000} [new-error 'final-hash-input "unknown" chunk]]
+			true [chunk]
+		]
 	]
 ]
 

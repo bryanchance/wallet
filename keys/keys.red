@@ -227,6 +227,7 @@ key: context [
 		tx						[block!]
 	][
 		case [
+			device-name = ledger/name [ledger/get-btc-signed-data tx]
 			device-name = trezor/name [trezor/get-btc-signed-data tx]
 			true [new-error 'get-eth-address "not found" device-name]
 		]
