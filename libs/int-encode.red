@@ -14,12 +14,18 @@ to-bin8: func [v [integer! char!]][
 	to binary! to char! 256 + v and 255
 ]
 
-to-bin16: func [v [integer! char!]][	;-- big-endian encoding
-	skip to-binary to-integer v 2
+;-- default: big-endian encoding
+to-bin16: func [v [integer! char!] /little /local res][
+	res: skip to-binary to-integer v 2
+	if little [reverse res]
+	res
 ]
 
-to-bin32: func [v [integer! char!]][	;-- big-endian encoding
-	to-binary to-integer v
+;-- default: big-endian encoding
+to-bin32: func [v [integer! char!] /little /local res][
+	res: to-binary to-integer v
+	if little [reverse res]
+	res
 ]
 
 to-int16: func [b [binary!]][
