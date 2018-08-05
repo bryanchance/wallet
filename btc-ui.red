@@ -213,9 +213,10 @@ btc-ui: context [
 		fee					[vector!]
 		addr-to				[string!]
 		return:				[none! block!]
-		/local change-addr-path ret inputs outputs total item utx info rest
+		/local change-addr-path change-addr ret inputs outputs total item utx info rest
 	][
 		change-addr-path: select last account/change 'path
+		change-addr: select last account/change 'addr
 		ret: copy []
 		inputs: copy []
 		outputs: copy []
@@ -232,7 +233,7 @@ btc-ui: context [
 					append/only outputs reduce ['addr addr-to 'value amount]
 					rest: sub256 utx/value total
 					if #{} <> trim/head i256-to-bin rest [
-						append/only outputs reduce ['path change-addr-path 'value rest]
+						append/only outputs reduce ['addr change-addr 'path change-addr-path 'value rest]
 					]
 					append ret reduce ['inputs inputs]
 					append ret reduce ['outputs outputs]
@@ -252,7 +253,7 @@ btc-ui: context [
 					append/only outputs reduce ['addr addr-to 'value amount]
 					rest: sub256 utx/value total
 					if #{} <> trim/head i256-to-bin rest [
-						append/only outputs reduce ['path change-addr-path 'value rest]
+						append/only outputs reduce ['addr change-addr 'path change-addr-path 'value rest]
 					]
 					append ret reduce ['inputs inputs]
 					append ret reduce ['outputs outputs]
@@ -269,9 +270,10 @@ btc-ui: context [
 		fee					[vector!]
 		addr-to				[string!]
 		return:				[none! block!]
-		/local change-addr-path ret inputs outputs total sum item utx info rest
+		/local change-addr-path change-addr ret inputs outputs total sum item utx info rest
 	][
 		change-addr-path: select last account/change 'path
+		change-addr: select last account/change 'addr
 		ret: copy []
 		inputs: copy []
 		outputs: copy []
@@ -290,7 +292,7 @@ btc-ui: context [
 					append/only outputs reduce ['addr addr-to 'value amount]
 					rest: sub256 sum total
 					if #{} <> trim/head i256-to-bin rest [
-						append/only outputs reduce ['path change-addr-path 'value rest]
+						append/only outputs reduce ['addr change-addr 'path change-addr-path 'value rest]
 					]
 					append ret reduce ['inputs inputs]
 					append ret reduce ['outputs outputs]
@@ -311,7 +313,7 @@ btc-ui: context [
 					append/only outputs reduce ['addr addr-to 'value amount]
 					rest: sub256 sum total
 					if #{} <> trim/head i256-to-bin rest [
-						append/only outputs reduce ['path change-addr-path 'value rest]
+						append/only outputs reduce ['addr change-addr 'path change-addr-path 'value rest]
 					]
 					append ret reduce ['inputs inputs]
 					append ret reduce ['outputs outputs]
