@@ -384,7 +384,8 @@ ledger: context [
 		return:			[block! binary!]
 		/local
 			coin_name input-segwit? data type trust-type
-			input-count tx-input tx-output pre-input pre-output ids output-count
+			input-count tx-input tx-output pre-input pre-output ids output-count preout-script
+			serialized
 	][
 		coin_name: "Bitcoin"
 		if tx/inputs/1/path/2 = (80000000h + 1) [
@@ -446,6 +447,49 @@ ledger: context [
 		probe data
 		final-hash-input 0 data
 
+		type: 80h
+		print ["num: " input-count]
+		repeat i input-count [
+			print i
+			tx-input: pick tx/inputs i
+			trust-type: either input-segwit? [2][0]
+			clear data
+			append data to-bin32/little tx-input/info/version
+			append data 1
+			start-hash-input/first type data
+
+			clear data
+			append data trust-type
+			append data reverse debase/base tx-input/tx-hash 16
+			repeat j length? tx-input/info/outputs [
+				pre-output: pick tx-input/info/outputs j
+				if tx-input/addr = pick pre-output/addresses 1 [break]
+			]
+			append data to-bin32/little j - 1
+			append data reverse skip i256-to-bin pre-output/value 24
+			preout-script: debase/base pre-output/script-hex 16
+			append data length? preout-script
+
+			start-hash-input type data
+			clear data
+			append data preout-script
+			append data #{FFFFFF00}
+			start-hash-input type data
+
+			clear data
+			ids: tx-input/path
+			append data collect [
+				keep length? ids
+				forall ids [keep to-bin32 pick ids 1]
+			]
+			append data 0
+			append data to-bin32 tx-input/info/lock_time
+			append data 1
+			serialized: sign-untrusted-hash data
+			probe serialized
+		]
+
+
 	]
 
 	get-btc-signed-data: func [
@@ -489,6 +533,25 @@ ledger: context [
 			type = FFh [if chunk <> #{9000} [new-error 'final-hash-input "unknown" chunk]]
 			true [chunk]
 		]
+	]
+
+	sign-untrusted-hash: func [data [binary!]
+		/local chunk sw
+	][
+		chunk: make binary! 200
+		append chunk reduce [
+			E0h
+			48h
+			0
+			0
+			length? data
+		]
+		append chunk data
+		write-apdu chunk
+		chunk: read-apdu 50
+		if 2 > length? chunk [new-error 'sign-untrusted-hash "too short" chunk]
+		if #{9000} <> back back tail chunk [new-error 'sign-untrusted-hash "unknown" chunk]
+		copy/part chunk (length? chunk) - 2
 	]
 ]
 
