@@ -11,7 +11,6 @@ Red [
 #include %../../libs/HID/hidapi.red
 #include %../../libs/int-encode.red
 #include %../../libs/rlp.red
-#include %../../libs/base58.red
 
 ledger: context [
 	name: "Ledger Nano S"
@@ -441,7 +440,7 @@ ledger: context [
 			tx-output: pick tx/outputs i
 			append data reverse skip i256-to-bin tx-output/value 24
 			append data #{17 A9 14}
-			append data copy/part skip base58/decode tx-output/addr 1 20
+			append data copy/part skip debase/base tx-output/addr 58 1 20
 			append data #{87}
 		]
 		probe data
