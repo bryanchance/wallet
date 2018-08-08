@@ -106,7 +106,7 @@ btc-api: context [
 				'prev-tx-hash select item 'prev_tx_hash
 				'script-hex select item 'script_hex
 				'prev-type select item 'prev_type
-				'sequence select item 'sequence
+				'sequence to integer! skip i256-to-bin to-i256 select item 'sequence 28
 			]
 		]
 		append ret reduce ['inputs info]

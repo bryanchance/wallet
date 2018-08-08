@@ -285,7 +285,7 @@ trezor: context [
 								'address_n tx-input/path
 								'prev_hash debase/base tx-input/tx-hash 16
 								'prev_index pre-output/1
-								'sequence -1
+								'sequence select tx-input/info/inputs/1 'sequence
 								'script_type script_type]
 					if pre-output/2 = "P2SH" [
 						put sub-req 'amount trim/head i256-to-bin pre-output/3
@@ -304,7 +304,7 @@ trezor: context [
 								'prev_hash debase/base pre-input/prev-tx-hash 16
 								'prev_index pre-input/prev-position
 								'script_sig debase/base pre-input/script-hex 16
-								'sequence -1]
+								'sequence select tx-input/info/inputs/1 'sequence]
 					req: make map! []
 					put req 'inputs reduce [sub-req]
 					req: make map! reduce ['tx req]
