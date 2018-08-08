@@ -20,7 +20,7 @@ btc-api: context [
 		cause-error 'user 'btc-api [name arg2 arg3]
 	]
 
-	top-scalar: to-i256 1e9
+	top-scalar: to-i256 1e8
 	btc-to-sat: func [num [vector!] return: [vector!]][
 		mul256 num top-scalar
 	]
