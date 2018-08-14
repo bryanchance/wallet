@@ -457,7 +457,7 @@ ledger: context [
 			start-hash-input type data
 
 			clear data
-			append data temp: to binary! select tx-input/info/inputs/1 'sequence
+			append data temp: to-bin32/little select tx-input/info/inputs/1 'sequence
 			append signed temp
 			start-hash-input type data
 		]
@@ -511,7 +511,7 @@ ledger: context [
 			start-hash-input type data
 			clear data
 			append data preout-script
-			append data to binary! select tx-input/info/inputs/1 'sequence
+			append data to-bin32/little select tx-input/info/inputs/1 'sequence
 			start-hash-input type data
 
 			clear data
