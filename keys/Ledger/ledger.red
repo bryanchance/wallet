@@ -298,7 +298,7 @@ ledger: context [
 		get-eth-public-address ids
 	]
 
-	get-btc-public-address: func [ids [block!] return: [string! word!] /local segwit? data pub-key-len addr-len][
+	get-btc-public-address: func [ids [block!] return: [block! string! word!] /all /local segwit? data pub-key-len pub-key addr-len ret][
 		segwit?: false
 		if ids/1 = (80000000h + 49) [
 			segwit?: true
@@ -323,8 +323,10 @@ ledger: context [
 			40 < length? data [
 				;-- parse reply data
 				pub-key-len: to-integer data/1
+				pub-key: copy/part skip data 1 pub-key-len
 				addr-len: to-integer pick skip data pub-key-len + 1 1
-				to-string copy/part skip data pub-key-len + 2 addr-len
+				ret: to-string copy/part skip data pub-key-len + 2 addr-len
+				either all [reduce [ret pub-key]][ret]
 			]
 			#{6804} = data ['locked]
 			#{6700} = data ['plug]
@@ -333,8 +335,8 @@ ledger: context [
 		]
 	]
 
-	get-btc-address: func [ids [block!] return: [string!]][
-		get-btc-public-address ids
+	get-btc-address: func [ids [block!]][
+		get-btc-public-address/all ids
 	]
 
 	sign-eth-tx: func [ids [block!] tx [block!] /local chunk max-sz sz signed][
@@ -384,8 +386,10 @@ ledger: context [
 		/local
 			coin_name input-segwit? data type trust-type
 			input-count tx-input tx-output pre-input pre-output ids output-count preout-script
-			serialized
+			signed signs temp
 	][
+		signed: make binary! 800
+
 		coin_name: "Bitcoin"
 		if tx/inputs/1/path/2 = (80000000h + 1) [
 			coin_name: "Testnet"
@@ -395,12 +399,15 @@ ledger: context [
 			input-segwit?: true
 		]
 
-		data: make binary! 100
+		data: make binary! 200
 		input-count: length? tx/inputs
 		tx-input: pick tx/inputs 1
 		probe tx-input
-		append data to-bin32/little tx-input/info/version
+		append data temp: to-bin32/little tx-input/info/version
 		append data input-count
+		append signed temp
+		append signed #{0001}
+		append signed input-count
 		type: either input-segwit? [2][0]
 		start-hash-input/first type data
 
@@ -409,18 +416,20 @@ ledger: context [
 			trust-type: either input-segwit? [2][0]
 			clear data
 			append data trust-type
-			append data reverse debase/base tx-input/tx-hash 16
+			append data temp: reverse debase/base tx-input/tx-hash 16
+			append signed temp
 			repeat j length? tx-input/info/outputs [
 				pre-output: pick tx-input/info/outputs j
 				if tx-input/addr = pick pre-output/addresses 1 [break]
 			]
-			append data to-bin32/little j - 1
+			append data temp: to-bin32/little j - 1
+			append signed temp
 			append data reverse skip i256-to-bin pre-output/value 24
 			if input-segwit? [append data #{00}]
 			start-hash-input type data
 
 			clear data
-			append data #{FFFFFF00}
+			append data to binary! select tx-input/info/inputs/1 'sequence
 			start-hash-input type data
 		]
 
@@ -446,6 +455,7 @@ ledger: context [
 		probe data
 		final-hash-input 0 data
 
+		signs: copy []
 		type: 80h
 		print ["num: " input-count]
 		repeat i input-count [
@@ -472,7 +482,7 @@ ledger: context [
 			start-hash-input type data
 			clear data
 			append data preout-script
-			append data #{FFFFFF00}
+			append data to binary! select tx-input/info/inputs/1 'sequence
 			start-hash-input type data
 
 			clear data
@@ -484,11 +494,9 @@ ledger: context [
 			append data 0
 			append data to-bin32 tx-input/info/lock_time
 			append data 1
-			serialized: sign-untrusted-hash data
-			probe serialized
+			append signs sign-untrusted-hash data
 		]
-
-
+		signed
 	]
 
 	get-btc-signed-data: func [

@@ -54,7 +54,7 @@ btc-ui: context [
 		return:			[block!]
 		/local
 			ids
-			list c-list o-list len i addr utxs balance total
+			list c-list o-list len i addr-key addr pubkey utxs balance total
 	][
 		ids: copy path
 		poke ids 3 (80000000h + account)
@@ -71,11 +71,13 @@ btc-ui: context [
 		forever [
 			process-events
 			ids/5: i
-			addr: key/get-btc-address ids
+			addr-key: key/get-btc-address ids
+			addr: either block? addr-key [addr-key/1][addr-key]
+			pubkey: either block? addr-key [addr-key/2][none]
 			balance: btc-api/get-balance network addr
 			process-events
 			if balance = none [
-				append/only c-list reduce ['addr addr 'path copy ids]
+				append/only c-list reduce ['addr addr 'path copy ids 'pubkey pubkey]
 				append list reduce ['change c-list]
 				break
 			]
@@ -83,12 +85,12 @@ btc-ui: context [
 			utxs: btc-api/get-unspent network addr
 			process-events
 			if utxs = none [
-				append/only c-list reduce ['addr addr 'balance to-i256 0 'path copy ids]
+				append/only c-list reduce ['addr addr 'balance to-i256 0 'path copy ids 'pubkey pubkey]
 				i: i + 1
 				continue
 			]
 
-			append/only c-list reduce ['addr addr 'utxs utxs 'balance balance 'path copy ids]
+			append/only c-list reduce ['addr addr 'utxs utxs 'balance balance 'path copy ids 'pubkey pubkey]
 			total: add256 total balance
 
 			i: i + 1
@@ -100,11 +102,13 @@ btc-ui: context [
 		forever [
 			process-events
 			ids/5: i
-			addr: key/get-btc-address ids
+			addr-key: key/get-btc-address ids
+			addr: either block? addr-key [addr-key/1][addr-key]
+			pubkey: either block? addr-key [addr-key/2][none]
 			balance: btc-api/get-balance network addr
 			process-events
 			if balance = none [
-				append/only o-list reduce ['addr addr 'path copy ids]
+				append/only o-list reduce ['addr addr 'path copy ids 'pubkey pubkey]
 				append list reduce ['origin o-list]
 				break
 			]
@@ -112,12 +116,12 @@ btc-ui: context [
 			utxs: btc-api/get-unspent network addr
 			process-events
 			if utxs = none [
-				append/only o-list reduce ['addr addr 'balance to-i256 0 'path copy ids]
+				append/only o-list reduce ['addr addr 'balance to-i256 0 'path copy ids 'pubkey pubkey]
 				i: i + 1
 				continue
 			]
 
-			append/only o-list reduce ['addr addr 'utxs utxs 'balance balance 'path copy ids]
+			append/only o-list reduce ['addr addr 'utxs utxs 'balance balance 'path copy ids 'pubkey pubkey]
 			total: add256 total balance
 
 			i: i + 1
@@ -229,7 +233,7 @@ btc-ui: context [
 			foreach utx item/utxs [
 				if lesser-or-equal256? total utx/value [
 					info: btc-api/get-tx-info network utx/tx-hash
-					append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
+					append/only inputs reduce ['addr item/addr 'pubkey item/pubkey 'tx-hash utx/tx-hash 'path item/path 'info info]
 					append/only outputs reduce ['addr addr-to 'value amount]
 					rest: sub256 utx/value total
 					if #{} <> trim/head i256-to-bin rest [
@@ -249,7 +253,7 @@ btc-ui: context [
 			foreach utx item/utxs [
 				if lesser-or-equal256? total utx/value [
 					info: btc-api/get-tx-info network utx/tx-hash
-					append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
+					append/only inputs reduce ['addr item/addr 'pubkey item/pubkey 'tx-hash utx/tx-hash 'path item/path 'info info]
 					append/only outputs reduce ['addr addr-to 'value amount]
 					rest: sub256 utx/value total
 					if #{} <> trim/head i256-to-bin rest [
@@ -286,7 +290,7 @@ btc-ui: context [
 
 			foreach utx item/utxs [
 				info: btc-api/get-tx-info network utx/tx-hash
-				append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
+				append/only inputs reduce ['addr item/addr 'pubkey item/pubkey 'tx-hash utx/tx-hash 'path item/path 'info info]
 				sum: add256 sum utx/value
 				if lesser-or-equal256? total sum [
 					append/only outputs reduce ['addr addr-to 'value amount]
@@ -307,7 +311,7 @@ btc-ui: context [
 
 			foreach utx item/utxs [
 				info: btc-api/get-tx-info network utx/tx-hash
-				append/only inputs reduce ['addr item/addr 'tx-hash utx/tx-hash 'path item/path 'info info]
+				append/only inputs reduce ['addr item/addr 'pubkey item/pubkey 'tx-hash utx/tx-hash 'path item/path 'info info]
 				sum: add256 sum utx/value
 				if lesser-or-equal256? total sum [
 					append/only outputs reduce ['addr addr-to 'value amount]
