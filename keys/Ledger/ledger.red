@@ -11,6 +11,7 @@ Red [
 #include %../../libs/HID/hidapi.red
 #include %../../libs/int-encode.red
 #include %../../libs/rlp.red
+#include %../../libs/btc-addr.red
 
 ledger: context [
 	name: "Ledger Nano S"
@@ -378,6 +379,24 @@ ledger: context [
 			]
 			rlp/encode tx
 		][signed]
+	]
+
+	get-real-pubkey: func [pubkey [binary!] addr [string!] type [word!] return: [binary!]
+		/local xkey
+	][
+		either pubkey/1 = #{04} [
+			xkey: head insert copy/part skip pubkey 1 32 2
+			if addr = btc-addr/pubkey-to-addr xkey type [
+				return xkey
+			]
+			xkey: head insert copy/part skip pubkey 1 32 3
+			if addr = btc-addr/pubkey-to-addr xkey type [
+				return xkey
+			]
+			none
+		][
+			pubkey
+		]
 	]
 
 	sign-btc-tx: func [
