@@ -33,23 +33,29 @@ btc-addr: context [
 		ripemd160 checksum pubkey 'sha256
 	]
 
-	pubkey-to-addr: func [pubkey [binary!] type [word!] return: [string!]
+	pubkey-to-legacy-addr: func [pubkey [binary!] type [word!] return: [string!]
 		/local hash
 	][
-		hash: hash160 pubkey
-		insert hash select prefix type
+		insert hash: hash160 pubkey select prefix type
 		encode58-check hash
 	]
 
+	pubkey-to-addr: func [pubkey [binary!] type [word!] return: [string!]][
+		case [
+			any [type = 'P2PKH type = 'TEST-P2PKH][pubkey-to-legacy-addr pubkey type]
+			any [type = 'P2SH type = 'TEST-P2SH][pubkey-to-segwit-addr pubkey type]
+			true [none]
+		]
+	]
+
 	pubkey-to-segwit-addr: func [pubkey [binary!] type [word!] return: [string!]][
-		pubkey-to-addr pubkey-to-script pubkey type
+		pubkey-to-legacy-addr pubkey-to-script pubkey type
 	]
 
 	pubkey-to-script: func [pubkey [binary!] return: [binary!]
 		/local hash
 	][
-		hash: hash160 pubkey
-		insert hash #{0014}
+		insert hash: hash160 pubkey #{0014}
 		hash
 	]
 ]
