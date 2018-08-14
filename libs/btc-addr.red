@@ -24,21 +24,21 @@ btc-addr: context [
 		'TEST-BIP32-PRIKEY	04358394h
 	]
 
-	base58check: func [data [binary!] return: [string!]][
+	encode58-check: func [data [binary!] return: [string!]][
 		append data copy/part checksum checksum data 'sha256 'sha256 4
 		enbase/base data 58
 	]
 
-	pubkey-to-hash: func [pubkey [binary!] return: [binary!]][
+	hash160: func [pubkey [binary!] return: [binary!]][
 		ripemd160 checksum pubkey 'sha256
 	]
 
 	pubkey-to-addr: func [pubkey [binary!] type [word!] return: [string!]
 		/local hash
 	][
-		hash: pubkey-to-hash pubkey
+		hash: hash160 pubkey
 		insert hash select prefix type
-		base58check hash
+		encode58-check hash
 	]
 
 	pubkey-to-segwit-addr: func [pubkey [binary!] type [word!] return: [string!]][
@@ -48,7 +48,7 @@ btc-addr: context [
 	pubkey-to-script: func [pubkey [binary!] return: [binary!]
 		/local hash
 	][
-		hash: pubkey-to-hash pubkey
+		hash: hash160 pubkey
 		insert hash #{0014}
 		hash
 	]
