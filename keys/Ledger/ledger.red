@@ -403,9 +403,9 @@ ledger: context [
 		tx				[block!]
 		return:			[block! binary!]
 		/local
-			coin_name input-segwit? data type trust-type
+			coin_name input-segwit? addr-type data type trust-type
 			input-count tx-input tx-output pre-input pre-output ids output-count preout-script
-			signed signs temp
+			signed signs temp pubkey
 	][
 		signed: make binary! 800
 
@@ -416,6 +416,12 @@ ledger: context [
 		input-segwit?: false
 		if tx/inputs/1/path/1 = (80000000h + 49) [
 			input-segwit?: true
+		]
+
+		addr-type: either coin_name = "Bitcoin" [
+			either input-segwit? ['P2SH]['P2PKH]
+		][
+			either input-segwit? ['TEST-P2SH]['TEST-P2PKH]
 		]
 
 		data: make binary! 200
@@ -443,12 +449,16 @@ ledger: context [
 			]
 			append data temp: to-bin32/little j - 1
 			append signed temp
+			append signed #{1716}
+			pubkey: get-real-pubkey tx-input/pubkey tx-input/addr addr-type
+			append signed btc-addr/pubkey-to-script pubkey
 			append data reverse skip i256-to-bin pre-output/value 24
 			if input-segwit? [append data #{00}]
 			start-hash-input type data
 
 			clear data
-			append data to binary! select tx-input/info/inputs/1 'sequence
+			append data temp: to binary! select tx-input/info/inputs/1 'sequence
+			append signed temp
 			start-hash-input type data
 		]
 
@@ -515,6 +525,7 @@ ledger: context [
 			append data 1
 			append signs sign-untrusted-hash data
 		]
+		probe signed
 		signed
 	]
 
