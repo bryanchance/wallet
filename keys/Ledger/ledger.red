@@ -405,7 +405,7 @@ ledger: context [
 		/local
 			coin_name input-segwit? addr-type data type trust-type
 			input-count tx-input tx-output pre-input pre-output ids output-count preout-script
-			signed signs temp pubkey
+			signed temp pubkey
 	][
 		signed: make binary! 800
 
@@ -486,7 +486,6 @@ ledger: context [
 		probe data
 		final-hash-input 0 data
 
-		signs: copy []
 		type: 80h
 		print ["num: " input-count]
 		repeat i input-count [
@@ -525,9 +524,16 @@ ledger: context [
 			append data 0
 			append data to-bin32 tx-input/info/lock_time
 			append data 1
-			append signs sign-untrusted-hash data
+			append signed 2
+			temp: sign-untrusted-hash data
+			append signed length? temp
+			append signed temp
+			pubkey: get-real-pubkey tx-input/pubkey tx-input/addr addr-type
+			append signed length? pubkey
+			append signed pubkey
 		]
-		probe signs
+
+		append signed #{00000000}
 		probe signed
 		signed
 	]
