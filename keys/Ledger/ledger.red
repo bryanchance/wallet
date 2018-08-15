@@ -462,13 +462,14 @@ ledger: context [
 			start-hash-input type data
 		]
 
-		clear data
-		ids: tx-input/path
-		append data collect [
-			keep length? ids
-			forall ids [keep to-bin32 pick ids 1]
-		]
-		final-hash-input FFh data
+		;-- the change address is treated as output data
+		;clear data
+		;ids: tx-input/path
+		;append data collect [
+		;	keep length? ids
+		;	forall ids [keep to-bin32 pick ids 1]
+		;]
+		;final-hash-input FFh data
 
 		probe tx/outputs
 		clear data
@@ -525,6 +526,7 @@ ledger: context [
 			append data 1
 			append signs sign-untrusted-hash data
 		]
+		probe signs
 		probe signed
 		signed
 	]
