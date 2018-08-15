@@ -482,6 +482,7 @@ ledger: context [
 			append data copy/part skip debase/base tx-output/addr 58 1 20
 			append data #{87}
 		]
+		append signed data
 		probe data
 		final-hash-input 0 data
 
