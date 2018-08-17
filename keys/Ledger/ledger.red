@@ -384,7 +384,7 @@ ledger: context [
 	get-real-pubkey: func [pubkey [binary!] addr [string!] type [word!] return: [binary!]
 		/local xkey
 	][
-		either pubkey/1 = #{04} [
+		either pubkey/1 = 4 [
 			xkey: head insert copy/part skip pubkey 1 32 2
 			if addr = btc-addr/pubkey-to-addr xkey type [
 				return xkey
@@ -405,10 +405,10 @@ ledger: context [
 		/local
 			coin_name input-segwit? addr-type data type trust-type
 			input-count tx-input tx-output pre-input pre-output ids output-count preout-script
-			signed temp pubkey
+			signed temp pubkey sig-script
 	][
 		signed: make binary! 800
-
+probe tx
 		coin_name: "Bitcoin"
 		if tx/inputs/1/path/2 = (80000000h + 1) [
 			coin_name: "Testnet"
@@ -453,23 +453,24 @@ ledger: context [
 			pubkey: get-real-pubkey tx-input/pubkey tx-input/addr addr-type
 			append signed btc-addr/pubkey-to-script pubkey
 			append data reverse skip i256-to-bin pre-output/value 24
-			if input-segwit? [append data #{00}]
+			;-- #{00}: place holder for sign
+			append data #{00}
 			start-hash-input type data
 
 			clear data
-			append data temp: to-bin32/little select tx-input/info/inputs/1 'sequence
+			;append data temp: to-bin32/little select tx-input/info/inputs/1 'sequence
+			append data temp: #{FFFFFF00}
 			append signed temp
 			start-hash-input type data
 		]
 
-		;-- the change address is treated as output data
-		;clear data
-		;ids: tx-input/path
-		;append data collect [
-		;	keep length? ids
-		;	forall ids [keep to-bin32 pick ids 1]
-		;]
-		;final-hash-input FFh data
+		clear data
+		ids: select last tx/outputs 'path
+		append data collect [
+			keep length? ids
+			forall ids [keep to-bin32 pick ids 1]
+		]
+		final-hash-input FFh data
 
 		probe tx/outputs
 		clear data
@@ -484,7 +485,11 @@ ledger: context [
 		]
 		append signed data
 		probe data
-		final-hash-input 0 data
+		while [50 < length? data][
+			final-hash-input 0 copy/part data 50
+			data: skip data 50
+		]
+		final-hash-input 80h data
 
 		type: 80h
 		print ["num: " input-count]
@@ -506,13 +511,15 @@ ledger: context [
 			]
 			append data to-bin32/little j - 1
 			append data reverse skip i256-to-bin pre-output/value 24
-			preout-script: debase/base pre-output/script-hex 16
-			append data length? preout-script
+			pubkey: get-real-pubkey tx-input/pubkey tx-input/addr addr-type
+			sig-script: rejoin [#{76 A9 14} btc-addr/hash160 pubkey #{88 AC}]
+			append data length? sig-script
 
 			start-hash-input type data
 			clear data
-			append data preout-script
-			append data to-bin32/little select tx-input/info/inputs/1 'sequence
+			append data sig-script
+			;append data to-bin32/little select tx-input/info/inputs/1 'sequence
+			append data #{FFFFFF00}
 			start-hash-input type data
 
 			clear data
@@ -526,9 +533,9 @@ ledger: context [
 			append data 1
 			append signed 2
 			temp: sign-untrusted-hash data
+			poke temp 1 temp/1 and FEh
 			append signed length? temp
 			append signed temp
-			pubkey: get-real-pubkey tx-input/pubkey tx-input/addr addr-type
 			append signed length? pubkey
 			append signed pubkey
 		]
@@ -575,10 +582,9 @@ ledger: context [
 		append chunk data
 		write-apdu chunk
 		chunk: read-apdu 50
-		case [
-			type = FFh [if chunk <> #{9000} [new-error 'final-hash-input "unknown" chunk]]
-			true [chunk]
-		]
+		if 2 > length? chunk [new-error 'final-hash-input "too short" chunk]
+		if #{9000} <> back back tail chunk [new-error 'final-hash-input "unknown" chunk]
+		copy/part chunk (length? chunk) - 2
 	]
 
 	sign-untrusted-hash: func [data [binary!]
