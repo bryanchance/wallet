@@ -35,10 +35,7 @@ ledger: context [
 	buffer:		make binary! MAX_APDU_SIZE
 	data-frame: make binary! PACKET_SIZE
 
-	pin-ret: none
 	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/DeviceError
-	req-reason: none
-	req-unit-name: none
 
 	btc-coin-version: context [
 		payToAddressVersion: none
@@ -81,105 +78,45 @@ ledger: context [
 		]
 	]
 
-	init: does [
-		request-pin-state: 'Init
+	init: func [unitname [string!] return: [word!] /local res] [
+		case [
+			any [unitname = "ETH" unitname = "RED"] [
+				if string? res: get-eth-public-address [8000002Ch 8000003Ch 80000000h 0 0] [return 'success]
+				res
+			]
+			unitname = "BTC" [
+				if string? res: get-btc-public-address [80000031h 80000000h 80000000h 0 0] [
+					btc-get-coin-version
+					if btc-coin-version/shortCoinId <> unitname [
+						return 'app
+					]
+					return 'success
+				]
+				res
+			]
+			unitname = "TEST" [
+				if string? res: get-btc-public-address [80000031h 80000001h 80000000h 0 0] [
+					btc-get-coin-version
+					if btc-coin-version/shortCoinId <> unitname [
+						return 'app
+					]
+					return 'success
+				]
+				res
+			]
+			true [
+				new-error 'init 'unknown unitname
+			]
+		]
 	]
 
 	close-pin-requesting: does [
-		if request-pin-state = 'Requesting [
-			unview/only unlock-dev-dlg
-		]
 		request-pin-state: 'Init
 	]
 
-	request-pin: func [unitname [string!] return: [word!]] [
-		;if request-pin-state <> 'Init [return request-pin-state]
-
-		req-unit-name: unitname
-		request-pin-state: try [request-pin-cmd]
-		if error? request-pin-state [return request-pin-state: 'DeviceError]
-
-		if request-pin-state = 'Requesting [
-			view/no-wait/flags unlock-dev-dlg 'modal
-		]
-
+	request-pin: func [return: [word!]] [
+		request-pin-state: 'HasRequested
 		request-pin-state
-	]
-
-	request-pin-cmd: func [return: [word!] /local res] [
-		case [
-			any [req-unit-name = "ETH" req-unit-name = "RED"] [
-				if string? res: get-eth-public-address [8000002Ch 8000003Ch 80000000h 0 0] [return 'HasRequested]
-				req-reason/text: case [
-					res = 'browser-support-on [{Open the Ethereum app, ensure "Browser support" is "No".}]
-					res = 'locked [{Please unlock your Ledger key}]
-					any [
-						res = 'plug
-						res = 'app
-						res = 'unknown
-						true
-					] [{Please open the Ethereum app}]
-				]
-				return 'Requesting
-			]
-			req-unit-name = "BTC" [
-				if string? res: get-btc-public-address [80000031h 80000000h 80000000h 0 0] [
-					btc-get-coin-version
-					if btc-coin-version/shortCoinId <> req-unit-name [
-						req-reason/text: {Please open the Bitcoin app}
-						return 'Requesting
-					]
-					return 'HasRequested
-				]
-				req-reason/text: case [
-					res = 'locked [{Please unlock your Ledger key}]
-					any [
-						res = 'plug
-						res = 'app
-						res = 'unknown
-						true
-					] [{Please open the Bitcoin app}]
-				]
-				return 'Requesting
-			]
-			req-unit-name = "TEST" [
-				if string? res: get-btc-public-address [80000031h 80000001h 80000000h 0 0] [
-					btc-get-coin-version
-					if btc-coin-version/shortCoinId <> req-unit-name [
-						req-reason/text: {Please open the Bitcoin Test app}
-						return 'Requesting
-					]
-					return 'HasRequested
-				]
-				req-reason/text: case [
-					res = 'locked [{Please unlock your Ledger key}]
-					any [
-						res = 'plug
-						res = 'app
-						res = 'unknown
-						true
-					] [{Please open the Bitcoin Test app}]
-				]
-				return 'Requesting
-			]
-			true [
-				req-reason/text: rejoin ["unknown unit-name: " req-unit-name]
-				new-error 'request-pin-cmd 'unknown req-unit-name
-			]
-		]
-	]
-
-	unlock-dev-dlg: layout [
-		title "Unlock your key"
-		on-close [request-pin-state: 'DeviceError]
-		req-reason: text font-size 12 {Open the Ethereum app, ensure "Browser support" is "No".} rate 0:0:3 on-time [
-			request-pin-state: try [request-pin-cmd]
-			if error? request-pin-state [request-pin-state: 'DeviceError exit]
-			if request-pin-state = 'HasRequested [
-				unview
-				exit
-			]
-		]
 	]
 
 	read-apdu: func [

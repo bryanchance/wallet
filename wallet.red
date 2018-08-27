@@ -84,11 +84,27 @@ wallet: context [
 			exit
 		]
 
-		if error? try [key/init][
+		if error? res: try [key/init unit-name][
 			info-msg/text: "Initialize the key failed..."
 			exit
 		]
-		if 'DeviceError = key/request-pin unit-name [
+		if res <> 'success [
+			info-msg/text: case [
+				res = 'browser-support-on [{Open the Ethereum app, ensure "Browser support" is "No".}]
+				res = 'locked [{Please unlock your Ledger key}]
+				;-- plug app and unknown all show 'please open app'
+				true [
+					case [
+						any [unit-name = "ETH" unit-name = "RED"][{Please open the Ethereum app}]
+						unit-name = "BTC" [{Please open the Bitcoin app}]
+						unit-name = "TEST" [{Please open the Bitcoin TEST app}]
+						true [form [{unknow unit-name: } unit-name]]
+					]
+				]
+			]
+			exit
+		]
+		if 'DeviceError = key/request-pin [
 			info-msg/text: "Unlock the key failed..."
 			exit
 		]

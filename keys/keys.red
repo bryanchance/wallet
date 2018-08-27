@@ -166,10 +166,10 @@ key: context [
 		dongle: none
 	]
 
-	init: does [
+	init: func [unitname [string!] return: [word!]] [
 		case [
-			device-name = ledger/name [ledger/init]
-			device-name = trezor/name [trezor/init]
+			device-name = ledger/name [ledger/init unitname]
+			device-name = trezor/name [trezor/init unitname]
 			true [new-error 'init "not found" device-name]
 		]
 	]
@@ -182,10 +182,10 @@ key: context [
 		]
 	]
 
-	request-pin: func [unitname [string!] return: [word!]][
+	request-pin: func [return: [word!]][
 		case [
-			device-name = ledger/name [ledger/request-pin unitname]
-			device-name = trezor/name [trezor/request-pin unitname]
+			device-name = ledger/name [ledger/request-pin]
+			device-name = trezor/name [trezor/request-pin]
 			true [new-error 'request-pin "not found" device-name]
 		]
 	]
