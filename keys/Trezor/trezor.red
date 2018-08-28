@@ -36,6 +36,10 @@ trezor: context [
 	request-pin-state: 'Init							;-- Init/Requesting/HasRequested/DeviceError
 	serialized_tx: make binary! 500
 
+	no-wait?: false
+	passphrase-in: none
+	confirm-passphrase: none
+
 	filter?: func [
 		_id				[integer!]
 		_usage			[integer!]
@@ -87,7 +91,13 @@ trezor: context [
 		if error? request-pin-state [return request-pin-state: 'DeviceError]
 
 		if request-pin-state = 'Requesting [
-			view/no-wait/flags pin-dlg 'modal
+			either trezor-driver/msg-id = trezor-message/get-id 'PinMatrixRequest [
+				no-wait?: true
+				view/no-wait/flags pin-dlg 'modal
+			][
+				no-wait?: true
+				view/no-wait/flags passphrase-dlg 'modal
+			]
 		]
 
 		request-pin-state
@@ -100,10 +110,13 @@ trezor: context [
 		if trezor-driver/msg-id = trezor-message/get-id 'EthereumAddress [ 
 			return 'HasRequested
 		]
-		if trezor-driver/msg-id <> trezor-message/get-id 'PinMatrixRequest [
-			return 'DeviceError
+		if trezor-driver/msg-id = trezor-message/get-id 'PinMatrixRequest [
+			return 'Requesting
 		]
-		'Requesting
+		if trezor-driver/msg-id = trezor-message/get-id 'PassphraseRequest [
+			return 'Requesting
+		]
+		'DeviceError
 	]
 
 	get-eth-address: func [
@@ -543,8 +556,15 @@ trezor: context [
 			clear pin-get
 			pin-req: req
 			pin-msg: req-msg
-
+			no-wait?: false
 			view/flags pin-dlg 'modal
+		]
+
+		if trezor-driver/msg-id = trezor-message/get-id 'PassphraseRequest [
+			clear passphrase-in/text
+			clear confirm-passphrase/text
+			no-wait?: false
+			view/flags passphrase-dlg 'modal
 		]
 
 		if trezor-driver/msg-id = trezor-message/get-id res-msg [
@@ -637,12 +657,65 @@ trezor: context [
 					clear pin-get
 					exit
 				]
+				if trezor-driver/msg-id = trezor-message/get-id 'PassphraseRequest [
+					no-wait?: false
+					either no-wait? [
+						view/no-wait/flags passphrase-dlg 'modal
+					][
+						view/flags passphrase-dlg 'modal
+					]
+				]
 				request-pin-state: 'HasRequested
 			]
+			clear pin-show/text
+			clear pin-get
 			unview
 		]
 		do [
 			clear pin-show/text
+		]
+	]
+
+	passphrase-dlg: layout [
+		title "Please enter your passphrase"
+		style label: text 220 middle
+		pad 15x0 header: label "Note: Passphrase is case-sensitive"
+		return
+		text "Passphrase"
+		return
+		passphrase-in: field ""
+		return
+		text "Confirm Passphrase"
+		return
+		confirm-passphrase: field ""
+		return
+		check "Show passphrase"
+		return
+		button "Enter" middle [
+			if request-pin-state = 'Requesting [
+				if passphrase-in/text <> confirm-passphrase/text [
+					header/text: "Input Passphrase Failure! Enter again."
+					clear passphrase-in/text
+					clear confirm-passphrase/text
+					exit
+				]
+				pin-ret: try [encode-and-write 'PassphraseAck make map! reduce ['passphrase confirm-passphrase/text]]
+				if error? pin-ret [
+					request-pin-state: 'DeviceError
+					unview
+					exit
+				]
+				pin-ret: try [trezor-driver/message-read clear command-buffer]
+				if any [error? pin-ret trezor-driver/msg-id = trezor-message/get-id 'Failure] [
+					request-pin-state: 'DeviceError
+					unview
+					exit
+				]
+				request-pin-state: 'HasRequested
+			]
+			clear passphrase-in/text
+			clear confirm-passphrase/text
+			unview
 		]
 	]
 
