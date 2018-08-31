@@ -11,6 +11,7 @@ Red [
 #do [_eth-api_red_: yes]
 #include %JSON.red
 #include %int256.red
+#include %int-encode.red
 
 eth-api: context [
 
@@ -164,7 +165,7 @@ eth-api: context [
 		if all [speed <> 'standard speed <> 'fastest speed <> 'safeLow speed <> 'fast][return none]
 		network: https://www.etherchain.org/api/gasPriceOracle
 		either all [map? res: try [get-url network] res: select res speed][
-			gwei-to-wei to-i256 res
+			string-to-i256 res 9
 		][none]
 	]
 ]
