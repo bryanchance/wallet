@@ -98,7 +98,7 @@ eth-ui: context [
 			addr-from/text: current/addr
 			gas-limit/text: either token-contract ["79510"]["21000"]
 			if all [not error? gas-price-wei: try [eth-api/get-gas-price 'standard] gas-price-wei][
-				gas-price/text: form-i256/nopad gas-price-wei 9 0
+				gas-price/text: form-i256/nopad gas-price-wei 9 2
 			]
 			reset-sign-button
 			label-unit/text: unit-name
