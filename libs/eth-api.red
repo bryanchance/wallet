@@ -162,7 +162,7 @@ eth-api: context [
 
 	get-gas-price: func [speed [word!] return: [vector! none!] /local network res][
 		if all [speed <> 'standard speed <> 'fastest speed <> 'safeLow speed <> 'fast][return none]
-		network: https://dev.blockscale.net/api/gasexpress.json
+		network: https://www.etherchain.org/api/gasPriceOracle
 		either all [map? res: try [get-url network] res: select res speed][
 			gwei-to-wei to-i256 res
 		][none]
